@@ -85,3 +85,35 @@
 %%% Various table goodies
 \newcommand{\pulrad}[1]{\raisebox{1.5ex}[0pt]{#1}}
 \newcommand{\mc}[1]{\multicolumn{1}{c}{#1}}
+
+%%% My macros
+
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\trace}{trace}
+\DeclareMathOperator{\conv}{conv}
+%\DeclareMathOperator{\R}{\mathbb{R}}
+\DeclareMathOperator{\bigO}{\mathcal{O}}
+\DeclarePairedDelimiter{\ev}{\operatorname{E}[}{]}
+\DeclarePairedDelimiter{\prob}{\operatorname{P}[}{]}
+%\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\scal}{\langle}{\rangle}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+
+% ROS node API formatting
+\newcommand{\ROStopic}[3]{\begin{sloppypar} \noindent\texttt{#1} (#2) \end{sloppypar} \par \hangindent=15pt \hangafter=0 \noindent #3}
+\newcommand{\ROSparam}[4]{\begin{sloppypar} \noindent\texttt{#1} (#3, default: \texttt{#2}) \end{sloppypar} \par \hangindent=15pt \hangafter=0 \noindent #4}
+\newcommand{\ROStransform}[3]{\begin{sloppypar} \noindent\texttt{#1} $\rightarrow$ \texttt{#2} \end{sloppypar} \par \hangindent=15pt \hangafter=0 \noindent #3}
+
+% allow hyphenation after underscore
+\let\oldunderscore\_
+\renewcommand{\_}{\oldunderscore\-}
+
+\hyphenation{mer-ged}
+\hyphenation{cost-map}
+

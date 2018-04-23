@@ -51,6 +51,14 @@
 \usepackage{paralist}       % improved enumerate and itemize
 \usepackage[usenames]{xcolor}  % typesetting in color
 
+%% my packages
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{mathtools}
+\usepackage[acronym,toc]{glossaries}
+\usepackage[toc,page,titletoc]{appendix}
+% \usepackage{dirtree}
+
 %%% Basic information on the thesis
 
 % Thesis title in English (exactly as in the formal assignment)
@@ -102,6 +110,11 @@ Abstract.
 \hypersetup{unicode}
 \hypersetup{breaklinks=true}
 
+% create a glossary
+\makeglossaries
+% Definitions of acronyms
+\include{abbreviations}
+
 % Definitions of macros (see description inside)
 \include{macros}
 
@@ -115,8 +128,9 @@ Abstract.
 
 %%% Each chapter is kept in a separate file
 \include{introduction}
+\include{algorithm}
 \include{chap01}
-\include{chap02}
+% \include{chap02}
 
 \include{epilog}
 
@@ -128,11 +142,12 @@ Abstract.
 
 %%% Tables used in the thesis (consider if this is needed)
 %%% In mathematical theses, it could be better to move the list of tables to the beginning of the thesis.
-\listoftables
+% \listoftables
 
 %%% Abbreviations used in the thesis, if any, including their explanation
 %%% In mathematical theses, it could be better to move the list of abbreviations to the beginning of the thesis.
-\chapwithtoc{List of Abbreviations}
+% \chapwithtoc{List of Abbreviations}
+\printglossary[title=List of Abbreviations,type=\acronymtype]
 
 %%% Attachments to the master thesis, if any. Each attachment must be
 %%% referred to at least once from the text of the thesis. Attachments
@@ -145,10 +160,13 @@ Abstract.
 %%% source code, data files, interactive charts, etc.). Electronic attachments
 %%% should be uploaded to SIS and optionally also included in the thesis on a~CD/DVD.
 %%% Allowed file formats are specified in provision of the rector no. 72/2017.
-\appendix
-\chapter{Attachments}
+% \appendix
+% \chapter{Attachments}
 
-\section{First Attachment}
+% \section{First Attachment}
+\begin{appendices}
+\include{map_merge_3d_wiki}
+\end{appendices}
 
 \openright
 \end{document}
