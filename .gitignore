@@ -17,6 +17,7 @@
 *.gls
 *.sublime-*
 *.pdf
+*.xmpi
 vzor-dp
 papers
 !img/*.pdf
