@@ -18,6 +18,9 @@
 *.sublime-*
 *.pdf
 *.xmpi
+*.fdb_latexmk
+*.fls
+*.synctex.gz
 vzor-dp
 papers
 !img/*.pdf
