@@ -1,4 +1,76 @@
 \chapter{Merging algorithm}
 \label{chap:mergingalgorithm}
 
-a \gls{RANSAC} \gls{ROS} \gls{BFS}
+% TODO add visualisation
+
+\begin{algorithm}
+    \caption[Pair-wise transformation estimation]{Estimates pair-wise transformation between two points-clouds}
+    \label{alg:estimate-pair}
+    \begin{algorithmic}[1]
+        \Require $2$ maps represented as pointclouds
+        \Ensure transformation estimate between $2$ maps
+        \Procedure{estimateTransform}{$map1, map2$}
+            \State down-sample to working resolution
+            \State remove outliers
+            \State detect keypoints
+            \State detect normals
+            \State compute descriptor for each keypoint
+            \State match descriptors and compute initial transformation
+            \State refine transformation with \gls{ICP}
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+This section presents an algorithm for estimating transformations between $n$ pointclouds and merging them together. As discussed in the chapter~\ref{chap:analysis}, we work with maps represented as pointclouds, possibly with RGB information for each point.
+
+There are two core problems for estimating the transformation. First we need to able to estimate pair-wise transformation for $2$ maps using only geometrical and possibly colour information available within pointclouds. We discuss our method in section~\ref{sec:estimate-pair-wise}. Second, we want to get a transformation for each of the maps to the selected reference frame. This is discussed in section~\ref{sec:estimate-global}.
+
+After we have estimated the transformations we can stitch them to create the global map.
+
+\section{Estimating pair-wise transformation}
+\label{sec:estimate-pair-wise}
+
+Algorithm~\ref{alg:estimate-pair} describes a pipeline of pointcloud algorithms to estimate the pair-wise transformation. Every step is discussed in the following sections.
+
+\subsection{Down-sampling}
+
+As we are working with possibly large-scale maps, input pointclouds may contain millions of points. To reduce computation times it is highly desirable to reduce number of points. As discussed in section~\ref{chap:analysis}, in multi-robot system this step is typically performed by \gls{SLAM} running on each robot before publishing the map, thus saving bandwidth of the communication. However for the purpose of transformation estimation, we might want reduce resolution even further to reduce computation time (for example each robot might publish a map with typical resolution $0.05 m/\text{voxel}$, but for estimation we might work with resolution $0.1 m/\text{voxel}$).
+
+We show is the section~\ref{chap:evaluation} that our algorithm can reliable estimate the transformation in just $0.1 m/\text{voxel}$ resolution.
+
+Common technique for reducing resolution of pointcloud is voxelisation, which produces a voxel grid. The voxel grid is a regularly spaced, three-dimensional grid. We can represent the voxel grid as a normal pointcloud, with each point representing a voxel of the voxel grid. We don't usually save empty space information, so the grid is sparse.
+
+Algorithm for voxelisation is simple. For each voxel (size of the voxel is determined by the resolution) we take all points contained in the voxel and approximate them with their centroid.
+
+\subsection{Removing outliers}
+
+Although the voxelisation can deal some some of the noise and inaccuracies, during experiments it has been beneficial to perform further outliers filtering to remove far laying outliers. Far-laying outliers may end-up being detected as keypoints, but they are usually not matched. Reducing the number of detected keypoints speeds up the later phases of estimation.
+
+I have selected to use a simple radius-based outlier removal. This method searches for neighbour of each point with certain radius and removes points that have neighbours count below certain threshold.
+
+Because the radius outlier removal removes only the points with few close neighbours, it does not reduce the robustness of the estimation. Because descriptors of the outlier points are based on just a few points, they didn't produced a robust matching candidates during experiments.
+
+For example on $2$ maps from \gls{AAU} dataset (see section~\ref{sec:aau-dataset}), outlier removal removes $326$ and $271$ points respectively ($7.29\%$, $6.16\%$), but number of detected keypoints decreases from $66, 63$ to $51, 56$ ($22.73\%$, $11.11\%$). Outlier removal didn't impact the estimation process negatively.
+
+\subsection{Estimating surface normals}
+
+The last preprocessing step is to estimate surface normals. Surface normals are used in later steps to compute descriptors and by Harris keypoint detector.
+
+Algorithm for estimating surface normals is described in~\cite{RusuDoctoralDissertation}. The most important parameter for normals estimation is the size of the neighbourhood which is used for the estimation. This can be configured by the user.
+
+\subsection{Detecting keypoints}
+
+% TODO we need to detect keypoints
+
+There are two families of keypoints detectors that are being used with pointclouds. Most of the approaches has been adapted from keypoints detectors that has been originally developed to work on images.
+
+First class of detectors uses RGB colour information stored for each point in the pointcloud. This approach suppose that the pointcloud has been obtained with detector that provide the colour information such as stereo rig camera setup, active RGB-D cameras etc. For our approach we use \gls{SIFT} keypoint detector, which is an adapted algorithm from~\cite{lowe2004distinctive} that works on pointclouds with RGB information.
+
+Second class of algorithms works with just geometrical information and is therefore able to work with pointclouds that do not store any additional information for points. These algorithms can be used with pointclouds composed of laser scans. Our algorithm implements Harris 3D keypoint detector for this purpose, which is an adapted algorithm from~\cite{harris1988combined}. Instead of using image gradients, which are not available in the pointcloud without colour information, it uses surface normals, that capture geometrical properties of the point neighbourhood.
+
+\subsection{Computing descriptors}
+
+
+
+\section{Estimating global transformations}
+\label{sec:estimate-global}
