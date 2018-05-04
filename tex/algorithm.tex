@@ -60,7 +60,7 @@ Algorithm for estimating surface normals is described in~\cite{RusuDoctoralDisse
 
 \subsection{Detecting keypoints}
 
-% TODO we need to detect keypoints
+Even after the down-sampling the maps contain usually too many points to work with all of them in later steps. We need to reduce the number of points further. Common technique used in the area of computer vision and robotics is to search for keypoints that identify suitable points for later matching.
 
 There are two families of keypoints detectors that are being used with pointclouds. Most of the approaches has been adapted from keypoints detectors that has been originally developed to work on images.
 
@@ -70,7 +70,9 @@ Second class of algorithms works with just geometrical information and is theref
 
 \subsection{Computing descriptors}
 
+Next step is computing a local descriptor around each detected keypoint to be able to match keypoints between maps. Unlike the keypoint detection algorithms, algorithms for computing descriptors has been mostly designed from scratch to work on pointclouds.
 
+Most of the descriptors does not use the colour information and uses only local geometry around the point. \gls{PFH} descriptors~\cite{rusu2008pfh}
 
 \section{Estimating global transformations}
 \label{sec:estimate-global}
