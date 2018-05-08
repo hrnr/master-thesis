@@ -70,9 +70,61 @@ Second class of algorithms works with just geometrical information and is theref
 
 \subsection{Computing descriptors}
 
-Next step is computing a local descriptor around each detected keypoint to be able to match keypoints between maps. Unlike the keypoint detection algorithms, algorithms for computing descriptors has been mostly designed from scratch to work on pointclouds.
+Next step is computing a local descriptor around each detected keypoint to be able to match keypoints between maps. Unlike the keypoint detection algorithms, algorithms for computing descriptors has been mostly designed from scratch to work on pointclouds. Comprehensive review of the descriptors is given in~\cite{YasirThesis}.
 
-Most of the descriptors does not use the colour information and uses only local geometry around the point. \gls{PFH} descriptors~\cite{rusu2008pfh}
+Most of the descriptors does not use the colour information and uses only local geometry around the point. Widely used \gls{PFH} descriptors~\cite{rusu2008pfh} use a multi-dimensional histogram with $125$ bins to provide an informative signature of a point neighbourhood. The histogram captures relationships between estimated surface normals (from previous step). It uses relationships between all pairs of points in the neighbourhood and therefore has complexity $\bigO(k^2)$, where $k$ is number of points in the neighbourhood. There is a variant of \gls{PFH} descriptors \gls{PFHRGB} that stores also colour information in the extended histogram of $2 \times 125$ bins.
+
+Main disadvantage of the \gls{PFH} descriptors is the high algorithmic complexity and therefore the slow processing speed~\cite{rusu2009fpfh}. We support also \gls{FPFH}~\cite{rusu2009fpfh}, \gls{SHOT} with colour~\cite{tombari2011shot}, \gls{RSD}~\cite{marton2010rsd} and \gls{SC3D}~\cite{frome2004sc3d} novel descriptors which offer better processing speed compared to \gls{PFHRGB} and \gls{PFH}.
+
+\subsection{Matching descriptors}
+
+Next step in the pipeline is the descriptors matching, which will yield a transformation estimate. I uses the features extracted from pointclouds in the previous steps.
+
+We match two sets of descriptors from two pointclouds. For each descriptors from the first set we want to find a descriptor in the second set, which describe the same place (in the second pointcloud). This step is challenging, because the descriptors might be less descriptive than optimal. Therefore the correct match might not be always the closest descriptor, but the $k$-nearest descriptor.
+
+To overcome the issue \gls{SAC-IA} algorithm has been proposed in~\cite{rusu2009fpfh}. The algorithm is shown in figure~\ref{alg:sac-ia}.
+
+\begin{algorithm}
+    \caption[\gls{SAC-IA}]{\gls{SAC-IA} algorithm from~\cite{rusu2009fpfh}.}
+    \label{alg:sac-ia}
+    \begin{algorithmic}[1]
+        \Require $D_1, D_2$ set of descriptors
+        \Ensure rigid transformation estimate
+        \Function{\gls{SAC-IA}}{$D_1, D_2$}
+            \Loop repeat $N$ times
+                \State $K \gets$ draw $n$ descriptors from $D_1$
+                \ForAll{$d_i \in K$}
+                    \State $M \gets k$-nearest matches from $D_2$
+                    \State $m_i \gets$ random sample from $M$
+                \EndFor
+                \State estimate rigid transformation for selected samples
+                \State determine inliers
+            \EndLoop
+            \State \Return transformation with the most inliers.
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+The algorithm combines random matching of $k$-nearest descriptors and \gls{RANSAC}~\cite{fischler1981ransac}.
+
+The algorithm was originally developed to work with \gls{FPFH} descriptors, that are fast to compute, but less descriptive that \gls{PFH}. With \gls{PFH} and \gls{PFHRGB} descriptors \gls{SAC-IA} sometimes yields sub-optimal transformation, even when there are good potential matches available in the descriptors sets. This let us to development a new matching algorithm. The new matching algorithm is deterministic to avoid problems caused by the use of randomness in \gls{SAC-IA}. Our algorithm is described in figure~\ref{alg:cross-match}.
+
+The algorithm is based on the idea of reciprocal match validation. When we are considering match $d_i \rightarrow d_j$, we try to match also $d_j \rightarrow d_i$. We consider all $k$-nearest neighbours for matching to deal with potential low descriptiveness and then select the best match with reciprocal match validation. We do not include \gls{RANSAC} in the scheme.
+
+\begin{algorithm}
+    \caption[Reciprocal $k$-nearest matching]{Our matching approach using $k$-nearest matches validated with reciprocal matching}
+    \label{alg:cross-match}
+    \begin{algorithmic}[1]
+        \Require $D_1, D_2$ set of descriptors
+        \Ensure set of matches between $D_1, D_2$
+        \Function{matchKReciprocal}{$D_1, D_2$}
+            \ForAll{$d_i \in D_1$}
+                \State find $k$-nearest neighbours of $d_i$ in $D_2$
+                \State $m_i \gets$ random sample from $M$
+            \EndFor
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
 
 \section{Estimating global transformations}
 \label{sec:estimate-global}
