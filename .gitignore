@@ -21,6 +21,7 @@
 *.fdb_latexmk
 *.fls
 *.synctex.gz
+*.loa
 vzor-dp
 papers
 !img/*.pdf

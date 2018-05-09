@@ -77,6 +77,7 @@ Most of the descriptors does not use the colour information and uses only local 
 Main disadvantage of the \gls{PFH} descriptors is the high algorithmic complexity and therefore the slow processing speed~\cite{rusu2009fpfh}. We support also \gls{FPFH}~\cite{rusu2009fpfh}, \gls{SHOT} with colour~\cite{tombari2011shot}, \gls{RSD}~\cite{marton2010rsd} and \gls{SC3D}~\cite{frome2004sc3d} novel descriptors which offer better processing speed compared to \gls{PFHRGB} and \gls{PFH}.
 
 \subsection{Matching descriptors}
+\label{sec:matching}
 
 Next step in the pipeline is the descriptors matching, which will yield a transformation estimate. I uses the features extracted from pointclouds in the previous steps.
 
@@ -137,13 +138,19 @@ Notice that our algorithm does not need any threshold for the maximum match dist
 
 Both \gls{SAC-IA} and our reciprocal matching algorithm need to quickly find $k$-nearest neighbours. To achieve a good performance we use a approximative nearest neighbour search based on~\cite{muja2014flann}. This solution allows us to match large number of descriptors quickly, even though computational complexity rises significantly with $k$. During our experiments the matching step takes usually just a fraction of time needed to extract keypoints and descriptors.
 
-\section{Estimating the final pairwise transformation}
+\section{Estimating the final transformation}
 
 \gls{SAC-IA} embeds \gls{RANSAC} into its algorithm and therefore provides directly an initial transformation estimate. When we use our matching scheme as per algorithm~\ref{alg:cross-match}, we need to run \gls{RANSAC} step with rigid transformation model after the matching to get inliers matches. In the typical scenario most of the matches will be outliers, so without the \gls{RANSAC} step it would not be possible to estimate a consistent transformation.
 
 \gls{RANSAC} transformation estimate is always based on the minimum number of points required to estimate the model (rigid transformation). To get better estimate for all inliers pairs we recompute the transformation estimate using least-squares on inlier pairs. We use \gls{SVD} to compute the new estimate, the technique is described in~\cite{golub1970svd}. Another widely used technique in Computer Vision is to use a non-linear least squares approach, such as Levenberg-Marquardt algorithm described in~\cite{more1978levmarq}, to optimize the transformation estimate re-projection error considering all inliers. Because we refine the transformation further with \gls{ICP}, there hasn't been any observed difference between using Levenberg-Marquardt or \gls{SVD}-based technique. Our implementation uses \gls{SVD} to refine the transformation on inliers.
 
+So far we have used only detected keypoints and descriptors computed around the keypoints to estimate the transformation. To refine the transformation using all points in the pointcloud we use \gls{ICP} algorithm introduced in~\cite{besl1992icp}. \gls{ICP} algorithm tries to minimize euclidean error distance between estimated corresponding points. The estimated transformation from either \gls{SAC-IA} or our matching scheme presented in section~\ref{sec:matching} is used as an initial guess for \gls{ICP}.
 
+The initial guess is usually close to the final transformation estimated by \gls{ICP}, especially when using our algorithm~\ref{alg:cross-match} and \gls{RANSAC} for estimation. Even though we use possibly many points with \gls{ICP}, because of the proximity of the guess to the final transformation only a couple of iterations is needed for \gls{ICP} to converge, so the refinement does not impact overall performance significantly.
+
+Since the introduction of \gls{ICP} many \gls{ICP}-derived algorithms have been introduced to overcome issues associated with \gls{ICP}, especially to avoid local minima. A comprehensive review is given in~\cite{pomerleau2015reviewregistration}. Because our initial transformation is usually very close to the final transformation, the original \gls{ICP} algorithm performed well for our usecase during experiments.
+
+\gls{ICP} refinement is the last step in estimating pairwise transformation. We use the output of the \gls{ICP} as the final estimated transformation between two maps.
 
 \section{Estimating global transformations}
 \label{sec:estimate-global}
