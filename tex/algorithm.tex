@@ -138,7 +138,7 @@ Notice that our algorithm does not need any threshold for the maximum match dist
 
 Both \gls{SAC-IA} and our reciprocal matching algorithm need to quickly find $k$-nearest neighbours. To achieve a good performance we use a approximative nearest neighbour search based on~\cite{muja2014flann}. This solution allows us to match large number of descriptors quickly, even though computational complexity rises significantly with $k$. During our experiments the matching step takes usually just a fraction of time needed to extract keypoints and descriptors.
 
-\section{Estimating the final transformation}
+\subsection{Estimating the final transformation}
 
 \gls{SAC-IA} embeds \gls{RANSAC} into its algorithm and therefore provides directly an initial transformation estimate. When we use our matching scheme as per algorithm~\ref{alg:cross-match}, we need to run \gls{RANSAC} step with rigid transformation model after the matching to get inliers matches. In the typical scenario most of the matches will be outliers, so without the \gls{RANSAC} step it would not be possible to estimate a consistent transformation.
 
@@ -152,5 +152,67 @@ Since the introduction of \gls{ICP} many \gls{ICP}-derived algorithms have been 
 
 \gls{ICP} refinement is the last step in estimating pairwise transformation. We use the output of the \gls{ICP} as the final estimated transformation between two maps.
 
+\subsection{Evaluating the estimated transformation}
+\label{sec:transform-evaluation}
+
 \section{Estimating global transformations}
 \label{sec:estimate-global}
+
+Map-merging problem for two maps is discussed in section~\ref{sec:estimate-pair-wise}. To be able to merge more than two maps we consider a map-merging graph, definition~\ref{def:map-merging-graph}.
+
+\begin{defn}[Map-merging graph]
+    \label{def:map-merging-graph}
+    A graph whose nodes correspond to robots' maps and whose edges represent pair-wise transformation estimates between the maps.
+\end{defn}
+
+To construct a map-merging graph for $n$ maps we need to estimate $\bigO(n^2)$ pair-wise transformations. Depending on the environment and maps relations map-merging graph might be dense of sparse, but typically will be missing some the edges, because some of the transformations could not be estimated, or could be estimated only with low confidence, see section~\ref{sec:transform-evaluation}.
+
+Once we have constructed the map-merging graph, the global merged map can be computed by finding the spatial configuration of the nodes (maps) that is mostly consistent with the transformations represented by the edges. We want find a transformation for each map from the global reference frame to the the particular map consistent with the pairwise transformations.
+
+\subsection{Map-merging as graph-based SLAM}
+
+The idea of map-merging graph is similar to the idea of the pose graph used in graph-based \gls{SLAM}. Graph-based \gls{SLAM} uses a so-called graph-based formulation of the \gls{SLAM} problem. ``Solving a graph-based \gls{SLAM} problem involves to construct a graph whose nodes represent robot poses or landmarks and in which an edge between two nodes encodes a sensor measurement that constrains the connected poses.''~\cite{grisetti2010tutorial}.
+
+In the graph-based \gls{SLAM} graph we have poses at different points in time, in the map-merging graph we have maps with origins in unknown positions. In the map-merging graph we associate our pairwise transformations estimates with edges and in the \gls{SLAM} graph we use usually direct sensor measurements. In both graphs we want to find the spatial configuration of the nodes of the graph that is the most consistent with constrains represented by the edges. If we are able to construct the map-merging graph (for which we need to do $\bigO(n^2)$ pair-wise transformation estimates), we can apply the graph-based \gls{SLAM} techniques on the map-merging graph to find the spatial configuration of the nodes that is consistent with our pair-wise estimates. Typically Gauss-Newton~\cite{fletcher2013practical} or Levenberg-Marquardt~\cite{more1978levmarq} algorithm is used to optimize the pose graph.
+
+To support graph-based \gls{SLAM} approaches there exist libraries specifically focusing on graph optimization under constraints such as \texttt{G2O}~\cite{kummerle2011g2o} and \texttt{TORO}~\cite{grisetti2007toro}. These libraries can be leveraged to solve the map-merging problem for $n$ maps.
+
+\subsection{Solving map-merging problem without loop closures}
+
+Graph optimizing techniques benefit from the presence of loop closures in the graph. During \gls{SLAM} mapping a loop closure occurs when the robot revisits a node in the graph. Loops in the map-merging graph are require robot to be able to estimate pair-wise transformation with at least two neighbours. For example for the shortest loop in the graph, triangle with $3$ robots, we need each robot to be able to estimate both pair-wise transformations to remaining robots.
+
+Loops in the map-merging graph will usually only occur in fairly large environment and when using great number of robots. Further on the loop closures are not critical for good performance of the map-merging algorithm. In the \gls{SLAM} graph we expect measurements associated with the edges to be subject to the Gaussian noise and corrections based on loop closures are usually vital for good \gls{SLAM} performance. In the map-merging graph we have pair-wise estimates associated with edges based on geometry of the whole maps containing large number of points. The pairwise estimates tend to be quite precise, because they consider large portions of the environment. There is also available evaluation metric for the pair-wise estimates (see section~\ref{sec:transform-evaluation}), so that the we can use only robust matches in the graph.
+
+Taking advantage of the accurate matches in the map-merging graph we may extract the global poses using a simple, fast, non-iterative algorithm. The algorithm~\ref{alg:global-transforms} does not take any advantage of the loops in the graph.
+
+
+\begin{algorithm}
+    \caption[Global poses extraction]{The algorithm to extract global poses of the maps from the map-merging graph (definition~\ref{def:map-merging-graph}).}
+    \label{alg:global-transforms}
+    \begin{algorithmic}[1]
+        \Require weighted map-merging graph
+        \Ensure Transformation for each map from global reference frame to the map reference frame
+        \Function{extractGlobalPoses}{$G = (V, E)$ map-merging graph, $P_e \forall e \in E$ pair-wise transformations estimates}
+            \State $C = (V_C, E_C) \gets$ largest connected component in $G$
+            \State $T \gets$ maximum spanning tree of $C$ using confidences as weights
+            \State $r \gets$ any node from $T$, selected as reference frame
+            \State $E_s \gets$ edges of $T$ sorted by distance from $r$
+            \State $A_r \gets I$
+            \ForAll{$(i,j) \in E_s$}
+                \State $A_j \gets A_i P_{(i,j)}$
+            \EndFor
+            \State $\forall i \not\in V_C: A_i \gets 0$
+            \State \Return $A_0, A_1, \dots A_n$
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+Because only the maps in the same component of the map-merging graph can be related to the same reference frame first step in the algorithm is to extract the largest connected component from the graph. In our setup we expect robots to ultimately form a one component and the transformations are computed only for this component. Remaining transformations are set to null transformation. If the robots are expected to operate for the longer time in multiple components, it might be beneficial for coordination to compute transformations in all the components, each component having its own reference frame.
+
+Next step in the algorithm is to extract the maximum spanning tree. The edges are weighted with estimated confidence for each pair-wise transformation, so that the most confident estimates are used. The possible loops are removed in this step and the non-tree edges are not used.
+
+We can select any node from the spanning tree as the future global reference frame. All the transformations will be computed to this reference frame.
+
+Last step is to compute the transformations to the selected reference frame. For computing the transformation of the node (map) we need transformations on the path from the reference frame (tree root) to the current node to be computed first (actually we need just the preceding transformation, but that implies computing all the transformations). To achieve this we can sort the edges by distance from the reference node, or just traverse the tree using \gls{BFS} or \gls{DFS} and compute the transformations during the traversal.
+
+
