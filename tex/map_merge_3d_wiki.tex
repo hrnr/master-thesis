@@ -18,7 +18,7 @@ Merging multiple 3D maps, represented as pointclouds, without knowledge of initi
 
 \section{Overview}
 
-This package provides a 3D global map for multiple robots and the respective transformations between robots. It merges robots individual maps based on the overlapping space in the maps and requires no dependencies on a particular SLAM or communication between the robots.
+This package provides a 3D global map for multiple robots and the respective transformations between robots. It merges robots' individual maps based on the overlapping space in the maps and requires no dependencies on a particular \gls{SLAM} or communication between the robots.
 
 \begin{figure}
     \centering
@@ -27,9 +27,9 @@ This package provides a 3D global map for multiple robots and the respective tra
     \label{fig:mapmergescreenshot}
 \end{figure}
 
-The ROS node can merge maps from the arbitrary number of robots. It expects maps from individual robots as ROS topics and does impose any particular messaging between robots. If your run multiple robots under the same ROS master then \texttt{map\_merge\_3d} will probably work for you out-of-the-box, this makes it easy to setup a simulation experiment.
+The \gls{ROS} node can merge maps from the arbitrary number of robots. It expects maps from individual robots as \gls{ROS} topics and does not impose any particular messaging between robots. If your run multiple robots under the same \gls{ROS} master then \texttt{map\_merge\_3d} may work for you out-of-the-box, this makes it easy to setup a simulation experiment.
 
-In the multi-robot exploration scenario your robots will probably run multiple ROS masters and you need to setup a communication between robots. Common solution might be \href{http://wiki.ros.org/multimaster_fkie}{multimaster\_fkie}. You need to provide maps from your robots on local topics (under the same master). Also if you want to distribute merged map and \href{http://wiki.ros.org/tf}{tf} transformations back to robots your communication must take care of it.
+In the multi-robot exploration scenario your robots probably run multiple \gls{ROS} masters and you need to setup a communication link between robots. Common solution might be \href{http://wiki.ros.org/multimaster_fkie}{multimaster\_fkie} package. You need to provide maps from your robots on local topics (under the same master). Also if you want to distribute merged map and \href{http://wiki.ros.org/tf}{tf} transformations back to robots your communication must take care of it.
 
 \section{Architecture}
 
@@ -42,13 +42,13 @@ In the multi-robot exploration scenario your robots will probably run multiple R
     \label{fig:architecture}
 \end{figure}
 
-Recommended topics names for robot maps are \texttt{/robot1/map}, \texttt{/robot2/map} etc. However the names are configurable. All robots are expected to publish map under \texttt{<robot\_namespace>/map}, where topic name (\texttt{map}) is configurable, but must be same for all robots. For each robot \texttt{<robot\_namespace>} will be of cause different, but does not need to follow any pattern. Further, you can exclude some topics using \texttt{robot\_namespace} parameter, to avoid merging unrelated pointclouds.
+Recommended topics names for robot maps are \texttt{/robot1/map}, \texttt{/robot2/map} etc. However the names are configurable. All robots are expected to publish map under \texttt{<robot\_namespace>/map}, where topic name (\texttt{map}) is configurable, but must be the same for all robots. For each robot \texttt{<robot\_namespace>} is of cause different, but it does not need to follow any pattern. Further, you can exclude some topics using \texttt{robot\_namespace} parameter, to avoid merging unrelated pointclouds.
 
 \section{Estimation}
 
 Transformations between maps are estimated by feature-matching algorithm and therefore it is required to have sufficient amount of overlapping space between maps to make a high-probability match. If maps don't have enough overlapping space to make a solid match, merger might reject those matches.
 
-Estimating transforms between maps is cpu-intesive so you might want to tune \texttt{estimation\_rate} parameter to run re-estimation less often.
+Estimating transforms between maps is cpu-intesive so you might want to tune \texttt{estimation\_rate} parameter to run the re-estimation less often.
 
 \section{ROS API}
 
@@ -58,7 +58,7 @@ Provides map merging services offered by this package. Dynamically looks for new
 
 \subsubsection{Subscribed Topics}
 
-\ROStopic{<robot\_namespace>/map}{sensor\_msgs/PointCloud2}{Local map for specific robot.}
+\ROStopic{<robot\_namespace>/map}{sensor\_msgs/PointCloud2}{Local map for a specific robot.}
 
 \subsubsection{Published Topics}
 
@@ -69,32 +69,32 @@ Provides map merging services offered by this package. Dynamically looks for new
 
 Parameters affecting general setup of the node.
 
-\ROSparam{\~{}robot\_map\_topic}{map}{string}{Name of robot map topic without namespaces (last component of topic name). Only topics with this name will be considered when looking for new maps to merge. This topics may be subject to further filtering (see below).}
+\ROSparam{\~{}robot\_map\_topic}{map}{string}{Name of robot map topic without namespaces (last component of the topic name). Only topics with this name are considered when looking for new maps to merge. This topics may be subject to further filtering (see below).}
 
 \ROSparam{\~{}robot\_namespace}
 {<empty string>}
 {string}
-{Fixed part of robot map topic. You can employ this parameter to further limit which topics will be considered during dynamic lookup for robots. Only topics which contain (anywhere) this string will be considered for lookup. Unlike \texttt{robot\_map\_topic} you are not limited by namespace logic. Topics will be filtered using text-based search. Therefore \texttt{robot\_namespace} does not need to be ROS namespace, but can contain slashes etc. This must be common part of all robots map topics name (all robots for which you want to merge map).}
+{Fixed part of the robot map topic. You can employ this parameter to further limit which topics are considered during dynamic lookup for robots. Only topics which contain (anywhere) this string are considered for lookup. Unlike \texttt{robot\_map\_topic} you are not limited by namespace logic. Topics are filtered using text-based search. Therefore \texttt{robot\_namespace} does not need to be a \gls{ROS} namespace, but it can contain slashes etc. This string must be a common part of all maps topic name (all robots for which you want to merge map).}
 
 \ROSparam{\~{}merged\_map\_topic}
 {map}
 {string}
-{Topic name where merged map will be published.}
+{Topic name where merged map is published.}
 
 \ROSparam{\~{}world\_frame}
 {world}
 {string}
-{Frame id (in \href{http://wiki.ros.org/tf}{tf} tree) which will be assigned to published merged map and used as reference frame for tf transforms.}
+{Frame id (in \href{http://wiki.ros.org/tf}{tf} tree) which is assigned to published merged map and used as reference frame for tf transforms.}
 
 \ROSparam{\~{}compositing\_rate}
 {0.3}
 {double}
-{Rate in Hz. Basic frequency on which the node merges robots maps and publish merged map. Increase this value if you want faster updates.}
+{Rate in Hz. Basic frequency on which the node merges maps and publishes merged map. Increase this value if you want faster updates.}
 
 \ROSparam{\~{}discovery\_rate}
 {0.05}
 {double}
-{Rate in Hz. Frequency on which this node discovers new robots (maps). Increase this value if you need more agile behaviour when adding new robots. Robots will be discovered sooner.}
+{Rate in Hz. Frequency on which this node discovers new robots (maps). Increase this value if you need more agile behaviour when adding new robots.}
 
 \ROSparam{\~{}estimation\_rate}
 {0.01}
@@ -104,7 +104,7 @@ Parameters affecting general setup of the node.
 \ROSparam{\~{}publish\_tf}
 {true}
 {bool}
-{Whether to publish estimated transforms in \href{http://wiki.ros.org/tf}{tf} tree. See below.}
+{Whether to publish estimated transforms in the \href{http://wiki.ros.org/tf}{tf} tree. See below.}
 
 \paragraph{Registration Parameters}
 \label{sec:registration-param}
@@ -114,7 +114,7 @@ Parameters affecting only registration algorithm used for estimating transformat
 \ROSparam{\~{}resolution}
 {0.1}
 {double}
-{Resolution used for registration. Small values increase registration time.}
+{Resolution used for the registration. Small value increases registration time.}
 
 \ROSparam{\~{}descriptor\_radius}
 {resolution * 8.0}
@@ -124,7 +124,7 @@ Parameters affecting only registration algorithm used for estimating transformat
 \ROSparam{\~{}outliers\_min\_neighbours}
 {50}
 {int}
-{Minimum number for neighbours for a point to be kept in the map during outliers pruning.}
+{Minimum number of neighbours for a point to be kept in the map during outliers pruning.}
 
 \ROSparam{\~{}normal\_radius}
 {resolution * 6.0}
@@ -134,17 +134,17 @@ Parameters affecting only registration algorithm used for estimating transformat
 \ROSparam{\~{}keypoint\_type}
 {SIFT}
 {string}
-{Type of keypoints used. Possible values are \texttt{SIFT}, \texttt{HARRIS}.}
+{Type of keypoints used. Possible values are \gls{SIFT}, HARRIS.}
 
 \ROSparam{\~{}keypoint\_threshold}
 {5.0}
 {double}
-{Keypoints with lower response that this value will be pruned. Lower this threshold when using Harris keypoints (you can set $0.0$).}
+{Keypoints with lower response that this value are pruned. Lower this threshold when using Harris keypoints (you can set $0.0$).}
 
 \ROSparam{\~{}descriptor\_type}
 {PFH}
 {string}
-{Type of descriptors used. Possible values are \texttt{PFH}, \texttt{PFHRGB}, \texttt{FPFH}, \texttt{RSD}, \texttt{SHOT}, \texttt{SC3D}.}
+{Type of descriptors used. Possible values are \gls{PFH}, \gls{PFHRGB}, \gls{FPFH}, \gls{RSD}, \gls{SHOT}, \gls{SC3D}.}
 
 \ROSparam{\~{}estimation\_method}
 {MATCHING}
@@ -164,27 +164,27 @@ Parameters affecting only registration algorithm used for estimating transformat
 \ROSparam{\~{}max\_correspondence\_distance}
 {inlier\_threshold * 2.0}
 {double}
-{Maximum distance for a matched points to be considered the same point}
+{Maximum distance for matched points to be considered the same point.}
 
 \ROSparam{\~{}max\_iterations}
 {500}
 {int}
-{maximum iterations for \gls{RANSAC}}
+{Maximum iterations for \gls{RANSAC}.}
 
 \ROSparam{\~{}matching\_k}
 {5}
 {int}
-{number of nearest descriptors to consider for matching}
+{Number of the nearest descriptors to consider for matching.}
 
 \ROSparam{\~{}transform\_epsilon}
 {1e-2}
 {double}
-{the smallest change allowed until \gls{ICP} convergence.}
+{The smallest change allowed until \gls{ICP} convergence.}
 
 \ROSparam{\~{}confidence\_threshold}
 {0.0}
 {double}
-{Minimum confidence in the pair-wise transform estimate to be included in the transforms graph. Pair-wise transformations with lower confidence are not considered when computing global transforms. Increase this value if you are having problems with invalid transforms being estimated. The confidence value is computed as a reciprocal of Euclidean distance between transformed maps.}
+{Minimum confidence in the pair-wise transform estimate to be included in the map-merging graph. Pair-wise transformations with lower confidence are not considered when computing global transforms. Increase this value if you are having problems with invalid transforms being estimated. The confidence value is computed as a reciprocal of Euclidean distance between transformed maps.}
 
 \ROSparam{\~{}output\_resolution}
 {0.05}
@@ -194,13 +194,13 @@ Parameters affecting only registration algorithm used for estimating transformat
 \subsubsection{Provided tf Transforms}
 
 \ROStransform{world}{mapX\_frame}
-{Transformation from the world frame (which name can be configured using \texttt{world\_frame} parameter) to each of the maps. Each map must have a correct \texttt{frame\_id} set (instead \texttt{mapX\_frame}) in the \texttt{sensor\_msgs/PointCloud2} message. If the transformation could not be estimated, null transformation will be published.}
+{Transformation from the world frame (which name can be configured using \texttt{world\_frame} parameter) to each of the maps. Each map must have a correct \texttt{frame\_id} set (instead \texttt{mapX\_frame}) in the \texttt{sensor\_msgs/PointCloud2} message. If the transformation could not be estimated, null transformation is published.}
 
 \section{Tools}
 
-Alongside ROS node \texttt{map\_merge\_3d} provides command-line tools to work with pointcloud maps saved in \texttt{pcd} files. Both tools accept any of the registration parameters, section~\ref{sec:registration-param}.
+Alongside \gls{ROS} node \texttt{map\_merge\_3d} provides command-line tools to work with pointcloud maps saved in \texttt{pcd} files. Both tools accept any of the registration parameters described in section~\ref{sec:registration-param}.
 
-The tools use PCL command-line parsing module. PCL command-line parsing has some limits (PCL users won't be surprised): it supports only \texttt{--param value} format, \texttt{--param=value} is not accepted. Unknown options are ignored. Options may be arbitrarily mixed with filenames. There are no short versions for parameters.
+The tools use \gls{PCL} command-line parsing module. \gls{PCL} command-line parsing has some limits (\gls{PCL} users won't be surprised): it supports only \texttt{--param value} format, \texttt{--param=value} is not accepted. Unknown options are ignored. Options may be arbitrarily mixed with filenames. There are no short versions for parameters.
 
 \subsection{map\_merge\_tool}
 
@@ -222,7 +222,7 @@ map2.pcd map3.pcd
 
 \subsection{registration\_visualisation}
 
-Visualises pairwise transform estimation between 2 maps. Uses PCL visualiser for visualisation.
+Visualises pair-wise transform estimation between 2 maps. Uses \gls{PCL} visualiser for the visualisation.
 
 \subsubsection{Usage}
 
@@ -231,7 +231,7 @@ rosrun map_merge_3d registration_visualisation [--param value]
 map1.pcd map2.pcd
 \end{code}
 
-After one step of estimation a visualisation window appears. You can freely navigate the pointcloud, save screenshot or camera parameters (press \texttt{h} to see all shortcuts). After the window is closed, estimation continues with the next phase and next visualisation window appears. Details about estimation progress are printed to \texttt{stdout}.
+After one step of the estimation a visualisation window appears. You can freely navigate the pointcloud, save a screenshot or camera parameters (press \texttt{h} to see all shortcuts). After the window is closed, estimation continues with the next phase and the next visualisation window appears. Details about estimation progress are printed to \texttt{stdout}.
 
 \section{Acknowledgements}
 
