@@ -4,7 +4,7 @@
 % TODO add visualisation
 
 \begin{algorithm}
-    \caption[Pair-wise transformation estimation]{Estimates pair-wise transformation between two points-clouds}
+    \caption[Pair-wise transformation estimation]{Estimates pair-wise transformation between two maps}
     \label{alg:estimate-pair}
     \begin{algorithmic}[1]
         \Require $2$ maps represented as pointclouds
@@ -21,40 +21,43 @@
     \end{algorithmic}
 \end{algorithm}
 
-This section presents an algorithm for estimating transformations between $n$ pointclouds and merging them together. As discussed in the chapter~\ref{chap:analysis}, we work with maps represented as pointclouds, possibly with RGB information for each point.
+This section presents an algorithm for estimating transformations between $n$ maps and merging them together. As discussed in the chapter~\ref{chap:analysis}, we work with maps represented as pointclouds, possibly with RGB information for each point.
 
-There are two core problems for estimating the transformation. First we need to able to estimate pair-wise transformation for $2$ maps using only geometrical and possibly colour information available within pointclouds. We discuss our method in section~\ref{sec:estimate-pair-wise}. Second, we want to get a transformation for each of the maps to the selected reference frame. This is discussed in section~\ref{sec:estimate-global}.
+There are two core problems for estimating the transformations. First we need to be able to estimate pair-wise transformation for $2$ maps using only geometrical and possibly colour information available within pointclouds. We discuss our method in the section~\ref{sec:estimate-pair-wise}. Second, we want to get a transformation for each of the maps to the selected reference frame. This is discussed in the section~\ref{sec:estimate-global}.
 
 After we have estimated the transformations we can stitch them to create the global map.
 
 \section{Estimating pair-wise transformation}
 \label{sec:estimate-pair-wise}
 
-Algorithm~\ref{alg:estimate-pair} describes a pipeline of pointcloud algorithms to estimate the pair-wise transformation. Every step is discussed in the following sections.
+Algorithm~\ref{alg:estimate-pair} describes an algorithm pipeline to estimate the pair-wise transformation. Every step is discussed in the following sections.
 
 \subsection{Down-sampling}
 
-As we are working with possibly large-scale maps, input pointclouds may contain millions of points. To reduce computation times it is highly desirable to reduce number of points. As discussed in section~\ref{chap:analysis}, in multi-robot system this step is typically performed by \gls{SLAM} running on each robot before publishing the map, thus saving bandwidth of the communication. However for the purpose of transformation estimation, we might want reduce resolution even further to reduce computation time (for example each robot might publish a map with typical resolution $0.05 m/\text{voxel}$, but for estimation we might work with resolution $0.1 m/\text{voxel}$).
-
-We show is the section~\ref{chap:evaluation} that our algorithm can reliable estimate the transformation in just $0.1 m/\text{voxel}$ resolution.
+As we are working with possibly large-scale maps, input pointclouds may contain millions of points. To reduce computation times it is highly desirable to reduce number of points.
 
 Common technique for reducing resolution of pointcloud is voxelisation, which produces a voxel grid. The voxel grid is a regularly spaced, three-dimensional grid. We can represent the voxel grid as a normal pointcloud, with each point representing a voxel of the voxel grid. We don't usually save empty space information, so the grid is sparse.
 
-Algorithm for voxelisation is simple. For each voxel (size of the voxel is determined by the resolution) we take all points contained in the voxel and approximate them with their centroid.
+Algorithm for voxelisation is following. For each voxel (size of the voxel is determined by the resolution) we take all points contained in the voxel and approximate them with their centroid.
+
+As discussed in section~\ref{chap:analysis}, in multi-robot system the down-sampling is typically performed by \gls{SLAM} algorithm running on each robot before publishing the map, thus saving bandwidth of the communication. However in typical situation we might want to reduce the resolution even further for the purpose of transformation estimation to reduce the computation time (for example each robot might publish a map with typical resolution $0.05$ meter per voxel, but for estimation we work with resolution just $0.1$ meter per voxel).
+
+We show is the section~\ref{chap:evaluation} that our algorithm can reliable estimate the transformation when using $0.1$ meter per voxel resolution.
 
 \subsection{Removing outliers}
 
-Although the voxelisation can deal some some of the noise and inaccuracies, during experiments it has been beneficial to perform further outliers filtering to remove far laying outliers. Far-laying outliers may end-up being detected as keypoints, but they are usually not matched. Reducing the number of detected keypoints speeds up the later phases of estimation.
+Although the voxelisation can deal with some of the noise and inaccuracies, during experiments it has been beneficial to perform further outliers filtering to remove far laying points. Far-laying outliers may end-up being detected as keypoints, but they are usually not matched. Reducing the number of detected keypoints speeds up the later phases of estimation.
 
-I have selected to use a simple radius-based outlier removal. This method searches for neighbour of each point with certain radius and removes points that have neighbours count below certain threshold.
+I have selected to use a simple radius-based outlier removal. This method searches for neighbours of each point within certain radius and removes points that have below threshold neighbours count.
 
-Because the radius outlier removal removes only the points with few close neighbours, it does not reduce the robustness of the estimation. Because descriptors of the outlier points are based on just a few points, they didn't produced a robust matching candidates during experiments.
+Because descriptors of the outlier points are based on just a few points, which don't produce a robust matching candidates, and the radius outlier removal removes only the points with few neighbours, it does not reduce the robustness of the estimation.
 
 For example on $2$ maps from \gls{AAU} dataset (see section~\ref{sec:aau-dataset}), outlier removal removes $326$ and $271$ points respectively ($7.29\%$, $6.16\%$), but number of detected keypoints decreases from $66, 63$ to $51, 56$ ($22.73\%$, $11.11\%$). Outlier removal didn't impact the estimation process negatively.
 
 \subsection{Estimating surface normals}
+\label{sec:normal-estimation}
 
-The last preprocessing step is to estimate surface normals. Surface normals are used in later steps to compute descriptors and by Harris keypoint detector.
+The last preprocessing step is to estimate surface normals. Surface normals are vectors perpendicular to the surface in the neighbourhood of the point. Surface normals are used in later steps to compute descriptors and by Harris keypoint detector.
 
 Algorithm for estimating surface normals is described in~\cite{RusuDoctoralDissertation}. The most important parameter for normals estimation is the size of the neighbourhood which is used for the estimation. This can be configured by the user.
 
@@ -70,20 +73,20 @@ Second class of algorithms works with just geometrical information and is theref
 
 \subsection{Computing descriptors}
 
-Next step is computing a local descriptor around each detected keypoint to be able to match keypoints between maps. Unlike the keypoint detection algorithms, algorithms for computing descriptors has been mostly designed from scratch to work on pointclouds. Comprehensive review of the descriptors is given in~\cite{YasirThesis}.
+Next step is to compute a local descriptor around each detected keypoint to be able to match keypoints between maps. Unlike the keypoint detection algorithms, algorithms for computing descriptors has been mostly designed from scratch to work on pointclouds. Comprehensive review of the descriptors is given in~\cite{YasirThesis}.
 
-Most of the descriptors does not use the colour information and uses only local geometry around the point. Widely used \gls{PFH} descriptors~\cite{rusu2008pfh} use a multi-dimensional histogram with $125$ bins to provide an informative signature of a point neighbourhood. The histogram captures relationships between estimated surface normals (from previous step). It uses relationships between all pairs of points in the neighbourhood and therefore has complexity $\bigO(k^2)$, where $k$ is number of points in the neighbourhood. There is a variant of \gls{PFH} descriptors \gls{PFHRGB} that stores also colour information in the extended histogram of $2 \times 125$ bins.
+Most of the descriptors does not use the colour information and use only local geometry around the point. Widely used \gls{PFH} descriptors~\cite{rusu2008pfh} use a multi-dimensional histogram with $125$ bins to provide an informative signature of a point neighbourhood. The histogram captures relationships between estimated surface normals (see section~\ref{sec:normal-estimation}). It uses relationships between all pairs of points in the neighbourhood and therefore has complexity $\bigO(k^2)$, where $k$ is number of points in the neighbourhood. There is a variant of \gls{PFH} descriptors \gls{PFHRGB} that stores also colour information in the extended histogram of $2 \times 125$ bins.
 
-Main disadvantage of the \gls{PFH} descriptors is the high algorithmic complexity and therefore the slow processing speed~\cite{rusu2009fpfh}. We support also \gls{FPFH}~\cite{rusu2009fpfh}, \gls{SHOT} with colour~\cite{tombari2011shot}, \gls{RSD}~\cite{marton2010rsd} and \gls{SC3D}~\cite{frome2004sc3d} novel descriptors which offer better processing speed compared to \gls{PFHRGB} and \gls{PFH}.
+Main disadvantage of the \gls{PFH} descriptors is the high algorithmic complexity and therefore the slow processing speed~\cite{rusu2009fpfh}. Our implementation supports also \gls{FPFH}~\cite{rusu2009fpfh}, \gls{SHOT} with colour~\cite{tombari2011shot}, \gls{RSD}~\cite{marton2010rsd} and \gls{SC3D}~\cite{frome2004sc3d} novel descriptors which offer better processing speed compared to \gls{PFHRGB} and \gls{PFH}.
 
 \subsection{Matching descriptors}
 \label{sec:matching}
 
-Next step in the pipeline is the descriptors matching, which will yield a transformation estimate. I uses the features extracted from pointclouds in the previous steps.
+Next step in the pipeline is the descriptors matching, which yields an initial transformation estimate. It uses the features extracted from pointclouds in the previous steps.
 
-We match two sets of descriptors from two pointclouds. For each descriptors from the first set we want to find a descriptor in the second set, which describe the same place (in the second pointcloud). This step is challenging, because the descriptors might be less descriptive than optimal. Therefore the correct match might not be always the closest descriptor, but the $k$-nearest descriptor.
+We match two sets of descriptors from two pointclouds. For each descriptors from the first set we want to find a descriptor in the second set, which describe the same place (in the second pointcloud). This step is challenging, because the descriptors might be less descriptive than desired. Therefore the correct match might not be always the closest descriptor, but the $k$-nearest descriptor.
 
-To overcome the issue \gls{SAC-IA} algorithm~\ref{alg:sac-ia} has been proposed in~\cite{rusu2009fpfh}.
+To overcome the issue \gls{SAC-IA} algorithm (algorithm~\ref{alg:sac-ia}) has been proposed in~\cite{rusu2009fpfh}.
 
 \begin{algorithm}
     \caption[\gls{SAC-IA}]{\gls{SAC-IA} algorithm from~\cite{rusu2009fpfh}.}
@@ -92,7 +95,7 @@ To overcome the issue \gls{SAC-IA} algorithm~\ref{alg:sac-ia} has been proposed 
         \Require $D_1, D_2$ set of descriptors
         \Ensure rigid transformation estimate
         \Function{\gls{SAC-IA}}{$D_1, D_2$}
-            \Loop repeat $N$ times
+            \Loop~repeat $N$ times
                 \State $K \gets$ draw $n$ descriptors from $D_1$
                 \ForAll{$d_i \in K$}
                     \State $M \gets k$-nearest matches from $D_2$
@@ -106,14 +109,16 @@ To overcome the issue \gls{SAC-IA} algorithm~\ref{alg:sac-ia} has been proposed 
     \end{algorithmic}
 \end{algorithm}
 
-The algorithm combines random matching of $k$-nearest descriptors and \gls{RANSAC}~\cite{fischler1981ransac}.
+The algorithm combines random matching of $k$-nearest descriptors and \gls{RANSAC} algorithm~\cite{fischler1981ransac}.
 
-The algorithm was originally developed to work with \gls{FPFH} descriptors, that are fast to compute, but less descriptive that \gls{PFH}. With \gls{PFH} and \gls{PFHRGB} descriptors \gls{SAC-IA} sometimes yields sub-optimal transformation, even when there are good potential matches available in the descriptors sets. This let us to development a new matching algorithm~\ref{alg:cross-match}. The new matching algorithm is deterministic to avoid problems caused by the use of randomness in \gls{SAC-IA}.
+% TODO describe why wanted the new algorithm
 
-The algorithm is based on the idea of reciprocal match validation. When we are considering match $d_i \rightarrow d_j$, we try to match also $d_j \rightarrow d_i$. We consider all $k$-nearest neighbours for matching to deal with potential low descriptiveness and then select the best match with reciprocal match validation. We do not include \gls{RANSAC} in the scheme, output of our algorithm are just matched pairs of descriptors.
+The algorithm was originally developed to work with \gls{FPFH} descriptors, that are fast to compute, but less descriptive that \gls{PFH}. With \gls{PFH} and \gls{PFHRGB} descriptors \gls{SAC-IA} sometimes yields sub-optimal transformation, even when there are good potential matches available in the descriptors sets, because it selects matching candidates randomly instead of preferring better matches. This lets us to development a new matching algorithm (algorithm~\ref{alg:cross-match}). This algorithm is deterministic to avoid problems caused by the randomness in \gls{SAC-IA}.
+
+The algorithm is based on the idea of reciprocal match validation. When we are considering match $d_i \rightarrow d_j$, we try to match also $d_j \rightarrow d_i$. We consider all $k$-nearest neighbours for matching to deal with potential low descriptiveness and then select the best match with reciprocal match validation. We do not include \gls{RANSAC} in the scheme, output of the algorithm are just matched pairs of descriptors.
 
 \begin{algorithm}
-    \caption[Reciprocal $k$-nearest matching]{Our matching approach using $k$-nearest matches validated with reciprocal matching}
+    \caption[Reciprocal $k$-nearest matching]{My matching approach using $k$-nearest matches validated with reciprocal matching}
     \label{alg:cross-match}
     \begin{algorithmic}[1]
         \Require $D_1, D_2$ set of descriptors
@@ -136,17 +141,17 @@ The algorithm is based on the idea of reciprocal match validation. When we are c
 
 Notice that our algorithm does not need any threshold for the maximum match distance and can therefore work with various kinds of descriptors without any need for a specific configuration. The only parameter is $k$ -- number of neighbours. As discussed in section~\ref{chap:evaluation} our approach shows better performance when there are enough good possible matches and is not influenced by randomness.
 
-Both \gls{SAC-IA} and our reciprocal matching algorithm need to quickly find $k$-nearest neighbours. To achieve a good performance we use a approximative nearest neighbour search based on~\cite{muja2014flann}. This solution allows us to match large number of descriptors quickly, even though computational complexity rises significantly with $k$. During our experiments the matching step takes usually just a fraction of time needed to extract keypoints and descriptors.
+Both \gls{SAC-IA} and our reciprocal matching algorithm need to quickly find $k$-nearest neighbours. To achieve a good performance we use a approximative nearest neighbour search based on~\cite{muja2014flann}. This solution allows us to match large number of descriptors quickly, even though computational complexity rises significantly with $k$. During the experiments the matching step takes usually just a fraction of time needed to extract keypoints and descriptors.
 
 \subsection{Estimating the final transformation}
 
-\gls{SAC-IA} embeds \gls{RANSAC} into its algorithm and therefore provides directly an initial transformation estimate. When we use our matching scheme as per algorithm~\ref{alg:cross-match}, we need to run \gls{RANSAC} step with rigid transformation model after the matching to get inliers matches. In the typical scenario most of the matches will be outliers, so without the \gls{RANSAC} step it would not be possible to estimate a consistent transformation.
+\gls{SAC-IA} embeds \gls{RANSAC} into its algorithm and therefore provides directly an initial transformation estimate. When we use our matching scheme as per algorithm~\ref{alg:cross-match}, we need to run \gls{RANSAC} step with rigid transformation model after the matching to get inlier matches. In the typical scenario most of the matches will be outliers, so without the \gls{RANSAC} step it would not be possible to estimate a consistent transformation.
 
-\gls{RANSAC} transformation estimate is always based on the minimum number of points required to estimate the model (rigid transformation). To get better estimate for all inliers pairs we recompute the transformation estimate using least-squares on inlier pairs. We use \gls{SVD} to compute the new estimate, the technique is described in~\cite{golub1970svd}. Another widely used technique in Computer Vision is to use a non-linear least squares approach, such as Levenberg-Marquardt algorithm described in~\cite{more1978levmarq}, to optimize the transformation estimate re-projection error considering all inliers. Because we refine the transformation further with \gls{ICP}, there hasn't been any observed difference between using Levenberg-Marquardt or \gls{SVD}-based technique. Our implementation uses \gls{SVD} to refine the transformation on inliers.
+\gls{RANSAC} transformation estimate is always based on the minimum number of points required to estimate the model (rigid transformation). To get better estimate for all inliers pairs we recompute the transformation estimate using least-squares on inlier pairs. We use \gls{SVD} to compute the new estimate, the technique is described in~\cite{golub1970svd}. Another widely used technique in Computer Vision is to use a non-linear least squares approach, such as Levenberg-Marquardt algorithm described in~\cite{more1978levmarq}, to optimize the transformation estimate re-projection error considering all inliers. Because we refine the transformation further with \gls{ICP}, there hasn't been any observed difference between using Levenberg-Marquardt or \gls{SVD}-based technique. The implementation uses \gls{SVD} to refine the transformation on inliers.
 
-So far we have used only detected keypoints and descriptors computed around the keypoints to estimate the transformation. To refine the transformation using all points in the pointcloud we use \gls{ICP} algorithm introduced in~\cite{besl1992icp}. \gls{ICP} algorithm tries to minimize euclidean error distance between estimated corresponding points. The estimated transformation from either \gls{SAC-IA} or our matching scheme presented in section~\ref{sec:matching} is used as an initial guess for \gls{ICP}.
+So far we have used only detected keypoints and descriptors computed around the keypoints to estimate the transformation. To refine the transformation using all the points in the pointcloud we use \gls{ICP} algorithm introduced in~\cite{besl1992icp}. \gls{ICP} algorithm tries to minimize euclidean error distance between estimated corresponding points. The estimated transformation from either \gls{SAC-IA} or the reciprocal matching scheme presented in section~\ref{sec:matching} is used as an initial guess for \gls{ICP}.
 
-The initial guess is usually close to the final transformation estimated by \gls{ICP}, especially when using our algorithm~\ref{alg:cross-match} and \gls{RANSAC} for estimation. Even though we use possibly many points with \gls{ICP}, because of the proximity of the guess to the final transformation only a couple of iterations is needed for \gls{ICP} to converge, so the refinement does not impact overall performance significantly.
+The initial guess is usually close to the final transformation estimated by \gls{ICP}, especially when using the reciprocal matching algorithm~\ref{alg:cross-match} and \gls{RANSAC} for the estimation. Even though we use all the points with \gls{ICP}, because of the proximity of the guess to the final transformation only a couple of iterations is needed for \gls{ICP} to converge, so the refinement does not impact overall performance significantly.
 
 Since the introduction of \gls{ICP} many \gls{ICP}-derived algorithms have been introduced to overcome issues associated with \gls{ICP}, especially to avoid local minima. A comprehensive review is given in~\cite{pomerleau2015reviewregistration}. Because our initial transformation is usually very close to the final transformation, the original \gls{ICP} algorithm performed well for our usecase during experiments.
 
@@ -154,6 +159,19 @@ Since the introduction of \gls{ICP} many \gls{ICP}-derived algorithms have been 
 
 \subsection{Evaluating the estimated transformation}
 \label{sec:transform-evaluation}
+
+To ensure robustness in real-world applications it is valuable to have a confidence measure for the estimated transformation. Commonly used measure for \gls{RANSAC}-based estimates is to use the number of inliers to access the algorithm performance. In~\cite{brown2007automatic} authors propose a probabilistic model for image match verification based on the number of inliers. The authors used model with chosen $\alpha = 8.0$ and $\beta = 0.3$ given by equation~\eqref{eq:confidence-measure}, where $m$ is number of matches and $\psi$ is number of inliers in \gls{RANSAC}.
+
+\begin{equation}
+\label{eq:confidence-measure}
+\frac{\psi}{8 + 0.3 \cdot m}
+\end{equation}
+
+Another possible confidence measure is to use distance error between the $2$ pointclouds. This approach is common with pointclouds and is implemented in \gls{PCL}. We typically use the Euclidean distance to have a natural metric estimate. This approach have two main issues. Because we do not know the correspondences between two maps we need to use the nearest neighbour for each point to compute the distance. Moreover to deal with occlusions (points outside intersection of the pointclouds) we need to introduce cut-off threshold to deal with too large distances caused by points outside of the intersection.
+
+In the implementation I use Euclidean distance to evaluate transformation estimate, because the implementation of \gls{SAC-IA} in \gls{PCL} does not provide information about inliers count.
+
+% TODO write algorith for this?
 
 \section{Estimating global transformations}
 \label{sec:estimate-global}
@@ -167,24 +185,25 @@ Map-merging problem for two maps is discussed in section~\ref{sec:estimate-pair-
 
 To construct a map-merging graph for $n$ maps we need to estimate $\bigO(n^2)$ pair-wise transformations. Depending on the environment and maps relations map-merging graph might be dense of sparse, but typically will be missing some the edges, because some of the transformations could not be estimated, or could be estimated only with low confidence, see section~\ref{sec:transform-evaluation}.
 
-Once we have constructed the map-merging graph, the global merged map can be computed by finding the spatial configuration of the nodes (maps) that is mostly consistent with the transformations represented by the edges. We want find a transformation for each map from the global reference frame to the the particular map consistent with the pairwise transformations.
+Once we have constructed the map-merging graph, the global merged map can be computed by finding a spatial configuration of the nodes (maps) that is consistent with the transformations represented by the edges. In other words we want to find a transformation for each map from the global reference frame to the particular map consistent with the pairwise transformations.
 
 \subsection{Map-merging as graph-based SLAM}
 
 The idea of map-merging graph is similar to the idea of the pose graph used in graph-based \gls{SLAM}. Graph-based \gls{SLAM} uses a so-called graph-based formulation of the \gls{SLAM} problem. ``Solving a graph-based \gls{SLAM} problem involves to construct a graph whose nodes represent robot poses or landmarks and in which an edge between two nodes encodes a sensor measurement that constrains the connected poses.''~\cite{grisetti2010tutorial}.
 
-In the graph-based \gls{SLAM} graph we have poses at different points in time, in the map-merging graph we have maps with origins in unknown positions. In the map-merging graph we associate our pairwise transformations estimates with edges and in the \gls{SLAM} graph we use usually direct sensor measurements. In both graphs we want to find the spatial configuration of the nodes of the graph that is the most consistent with constrains represented by the edges. If we are able to construct the map-merging graph (for which we need to do $\bigO(n^2)$ pair-wise transformation estimates), we can apply the graph-based \gls{SLAM} techniques on the map-merging graph to find the spatial configuration of the nodes that is consistent with our pair-wise estimates. Typically Gauss-Newton~\cite{fletcher2013practical} or Levenberg-Marquardt~\cite{more1978levmarq} algorithm is used to optimize the pose graph.
+In the graph-based \gls{SLAM} graph we have poses at different points in time, in the map-merging graph we have maps with origins in unknown positions. In the map-merging graph we associate our pairwise transformations estimates with edges and in the \gls{SLAM} graph we use usually direct sensor measurements. In both graphs we want to find the spatial configuration of the nodes of the graph that is the most consistent with constrains represented by the edges. If we are able to construct the map-merging graph (for which we need to do $\bigO(n^2)$ pair-wise transformation estimates), we can apply the graph-based \gls{SLAM} techniques on the map-merging graph to find the spatial configuration of the nodes that is consistent with our pair-wise estimates. Typically Gauss-Newton~\cite{fletcher2013practical} or Levenberg-Marquardt~\cite{more1978levmarq} algorithm is used to optimize the pose graph in graph-based \gls{SLAM}.
 
 To support graph-based \gls{SLAM} approaches there exist libraries specifically focusing on graph optimization under constraints such as \texttt{G2O}~\cite{kummerle2011g2o} and \texttt{TORO}~\cite{grisetti2007toro}. These libraries can be leveraged to solve the map-merging problem for $n$ maps.
 
 \subsection{Solving map-merging problem without loop closures}
 
-Graph optimizing techniques benefit from the presence of loop closures in the graph. During \gls{SLAM} mapping a loop closure occurs when the robot revisits a node in the graph. Loops in the map-merging graph are require robot to be able to estimate pair-wise transformation with at least two neighbours. For example for the shortest loop in the graph, triangle with $3$ robots, we need each robot to be able to estimate both pair-wise transformations to remaining robots.
+Graph optimizing techniques benefit from the presence of loop closures in the graph. During \gls{SLAM} mapping a loop closure occurs when the robot revisits a node in the graph. Loops in the map-merging graph require robot to be able to estimate pair-wise transformation with at least two neighbours. For example for the shortest loop in the graph, triangle with $3$ robots, we need each robot to be able to estimate both pair-wise transformations to remaining robots.
 
-Loops in the map-merging graph will usually only occur in fairly large environment and when using great number of robots. Further on the loop closures are not critical for good performance of the map-merging algorithm. In the \gls{SLAM} graph we expect measurements associated with the edges to be subject to the Gaussian noise and corrections based on loop closures are usually vital for good \gls{SLAM} performance. In the map-merging graph we have pair-wise estimates associated with edges based on geometry of the whole maps containing large number of points. The pairwise estimates tend to be quite precise, because they consider large portions of the environment. There is also available evaluation metric for the pair-wise estimates (see section~\ref{sec:transform-evaluation}), so that the we can use only robust matches in the graph.
+Loops in the map-merging graph will usually only occur in fairly large environments and when using many robots. Further on, unlike in graph-based \gls{SLAM}, loop closures may not be critical for good performance of the map-merging algorithm in the typical setup. In the \gls{SLAM} graph we expect measurements associated with the edges to be subject to the Gaussian noise and corrections based on loop closures are usually vital for good \gls{SLAM} performance. In the map-merging graph we have pair-wise estimates associated with edges based on the geometry of whole maps containing large number of points. The pairwise estimates tend to be quite precise, because they consider large portions of the environment. There are also available evaluation metrics for the pair-wise estimates (see section~\ref{sec:transform-evaluation}), which allow us to use only robust estimates in the graph.
 
-Taking advantage of the accurate matches in the map-merging graph we may extract the global poses using a simple, fast, non-iterative algorithm. The algorithm~\ref{alg:global-transforms} does not take any advantage of the loops in the graph.
+Taking advantage of accurate pair-wise estimates in the map-merging graph we may avoid estimating all $\bigO(n^2)$ pair-wise estimates, especially since the pair-wise estimation is the most time-demanding step. To save time we can avoid pair-wise estimates introducing loops in the graph. We can stop pair-wise estimation when the nodes are within one connected component of the graph. We may want to employ a suitable heuristic for selecting the order of pair-wise estimates. Using this approach we might need just $\bigO(n)$ pair-wise estimates to estimate global transformations for the maps.
 
+Below I present fast, non-iterative algorithm (algorithm~\ref{alg:global-transforms}) for extracting the global poses of maps from the map-merging graph suitable for use in such setup. The algorithm does not take any advantage of the loops in the graph (we expect the use with the approach mentioned above, which avoids loop closures). The algorithm, however, can work with graphs containing loops.
 
 \begin{algorithm}
     \caption[Global poses extraction]{The algorithm to extract global poses of the maps from the map-merging graph (definition~\ref{def:map-merging-graph}).}
@@ -207,7 +226,7 @@ Taking advantage of the accurate matches in the map-merging graph we may extract
     \end{algorithmic}
 \end{algorithm}
 
-Because only the maps in the same component of the map-merging graph can be related to the same reference frame first step in the algorithm is to extract the largest connected component from the graph. In our setup we expect robots to ultimately form a one component and the transformations are computed only for this component. Remaining transformations are set to null transformation. If the robots are expected to operate for the longer time in multiple components, it might be beneficial for coordination to compute transformations in all the components, each component having its own reference frame.
+Because only the maps in the same component of the map-merging graph can be related to the same reference frame, first step in the algorithm is to extract the largest connected component from the graph. In our setup we expect robots to ultimately form a one component and the transformations are computed only for this component. Remaining transformations are set to null transformation. If the robots are expected to operate for a longer period of time separately in multiple components, it might be beneficial for the coordination to compute transformations in all the components, each component having its own reference frame.
 
 Next step in the algorithm is to extract the maximum spanning tree. The edges are weighted with estimated confidence for each pair-wise transformation, so that the most confident estimates are used. The possible loops are removed in this step and the non-tree edges are not used.
 
