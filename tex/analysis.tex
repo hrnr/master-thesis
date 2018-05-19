@@ -1,3 +1,51 @@
 \chapter{Analysis}
 \label{chap:analysis}
 
+Knowledge of the positions of robots and the knowledge of the environment is essential for solving complex tasks efficiently in multirobot systems. Over time various techniques evolved to acquire this knowledge.
+
+\section{Map-merging}
+
+This work focuses on multirobot systems consisting of mobile robots, each capable of building a 3D map of the surrounding environment. Typically each robot uses a \gls{SLAM} algorithm to create a map and is equipped with appropriate sensor such as stereo camera rig, active RGB-D (depth) camera or laser scanner. Such sensors are available in wide weight and cost range enabling large variety of \gls{SLAM}-capable robots operating both on the ground and in the air. This variety leads to possible heterogeneous teams of robots capable of solving wide range of tasks.
+
+The \textit{map-merging problem} for multirobot systems, which is a focus of this work, is to estimate positions of the robots in the environment and to merge the maps from individual robots to produce a single globally consistent map.
+
+\section{The map representation}
+
+Three-dimensional maps are becoming more common in the robotics as the suitable sensors are getting more affordable and suitable for many applications. Unlike 2D occupancy grids used extensively in the past, 3D maps enable cooperation of robots, that are not fixed to a 2D plane, such as aerial vehicles, humanoid robots, outdoor robots operating in a rough terrain as well as traditional ground-based platforms. This allows us to create a possibly heterogeneous multirobot teams, that are able to take advantage of their different strengths and weaknesses to solve the assigned task efficiently. For example a robotic team can consist from aerial vehicles, capable of fast reconnaissance in large-scale outdoor environments, and ground-based vehicles carrying heavy equipment.
+
+This work expects maps represented as pointclouds (definition~\ref{def:pointcloud}). Pointclouds can be implemented as an array of points, making them suitable for serialisation and exchange between robots. Points in the pointcloud can have assigned additional information, such as RGB colour information or reflection intensity, based on the available sensor. Especially colour information, that is provided by stereo camera rigs and active RGB-D cameras is commonly exploited for further processing.
+
+\begin{defn}[Pointcloud]
+\label{def:pointcloud}
+A pointcloud is a set of data points in space.
+\end{defn}
+
+Other datastructures used in the 3D mapping, such as octree-based maps used in~\cite{hornung2013octomap}, can be converted to pointclouds without any loss of information, because pointclouds do not pose any restrictions on the geometry of the points and it is easy to add metadata associated with the points. This makes pointclouds suitable datastructure for exchange between different mapping approached, even when they use different representations internally.
+
+Pointclouds data messages are supported and well established in the \gls{ROS} framework. There are mature libraries to work with pointclouds, such as \gls{PCL}. This makes pointclouds suitable map representation for multi-robot systems.
+
+\section{Direct map-merging}
+
+Early map-merging techniques can be classified as \textit{direct map-merging}~\cite{lee2012survey}, which use direct sensor measurements to compute the transformation between robots. This involves especially the case of robot rendezvous~\cite{zhou2006rendezvous}, which relies on robots' ability to sense each other position directly. Popular technique uses camera and special recognizable markers on the robots to compute the transformation using computer vision algorithms.
+
+A robot rendezvous might be hard to achieve in large-scale environments, especially if the robots are starting from different locations or in a different time (for example to react to increasing demands for a service). Such applications typically need map-merging to be able to work only with sensed surrounding environment instead of the presence of other robots in the same space.
+
+Direct map-merging also involves techniques relying on global localization in the environment being available. This involves a purpose-adapted environments with installed markers or beacons to locate robots within environment and systems using global localization such as \gls{GPS}.
+
+While purpose-adapted environments may greatly simplify map-merging problem, they make deployment of the multirobot systems harder and might introduce severe costs. For applications such as space exploration, disaster rescue, victim search and mine cleaning any modifications of the environment are not conceivable and in many more applications such as unmanned delivery the modifications are usually not practical.
+
+Global localization systems are usually not available indoor and while such systems are a great aid for navigating large-scale outdoor environments, the provided accuracy is usually not high enough for merging high resolution pointcloud maps. The position from global localization system can be however used as an initial guess for map-merging algorithms.
+
+\section{Map-merging on occupancy grids}
+
+Later developed techniques work with 2D maps, usually represented as occupancy grids. \cite{lee2012survey}~categorizes this techniques as \textit{indirect map-merging}. These techniques rely on overlapping areas in maps for map-merging.
+
+Using 2D maps limits operational space of robots and practically limits multirobot teams to only ground-based vehicles operating indoor or in light terrain flat environments. Particularly 2D maps prohibits promising multirobot teams consisting of aerial and ground-based vehicles.
+
+Map-merging techniques on occupancy grinds involves spectra-based approach of~\cite{carpin2008spectra} and image feature-based approach of~\cite{Horner2016}. The latter algorithm is available in the \gls{ROS} distribution as ready-made solution for merging 2D maps.
+
+\section{Map-merging as distributed SLAM}
+
+Map-merging algorithms has been also implemented as distributed \gls{SLAM} algorithms. These techniques takes advantage of the research in the area of \gls{SLAM} algorithms and use loop-closure techniques developed for \gls{SLAM} to implement map-merging.
+
+Establishing a loop-closure to from loop
