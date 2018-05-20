@@ -46,6 +46,8 @@ Map-merging techniques on occupancy grinds involves spectra-based approach of~\c
 
 \section{Map-merging as distributed SLAM}
 
-Map-merging algorithms has been also implemented as distributed \gls{SLAM} algorithms. These techniques takes advantage of the research in the area of \gls{SLAM} algorithms and use loop-closure techniques developed for \gls{SLAM} to implement map-merging.
+Map-merging algorithms has been also implemented as distributed \gls{SLAM} algorithms. These techniques takes advantage of the research in the area of \gls{SLAM} algorithms and use loop-closure techniques developed for \gls{SLAM} to implement map-merging. Especially graph-based \gls{SLAM} implementations can be naturally extended to merge maps from multiple robots, nodes from other robots can be added to the graph and connected through the loop-closures with the existing nodes to form a single map.
 
-Establishing a loop-closure to from loop
+When a loop-closure between 2 maps is detected, it can be used to compute the transformation between maps. We need to extend the loop detection to work across map boundaries, not only within a single map as usual in the \gls{SLAM}, which typically requires exchanging implementation-specific data between robots. This poses several disadvantages. Based on the \gls{SLAM} loop-closure approach the internal \gls{SLAM} data may be quite large, stressing communication bandwidth. Exchanging implementation-specific data usually leads to running the same \gls{SLAM} algorithm on all robots in the multirobot system, or the implementations must be adapted to exchange compatible loop-closure data. This is challenging for heterogeneous multirobot systems, when individual robots use different sensors, which is often the case when using both ground-based and aerial robots. For example if ground-based robots are equipped with accurate heavy 3D laser scanner and aerial vehicles use lightweight stereo rig cameras, the \gls{SLAM} approaches are typically different and the loop-closure data are incompatible (image features and 3D laser scans). In such scenarios we need to use different approach.
+
+
