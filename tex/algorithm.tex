@@ -21,7 +21,7 @@
     \end{algorithmic}
 \end{algorithm}
 
-This section presents an algorithm for estimating transformations between $n$ maps and merging them together. As discussed in the chapter~\ref{chap:analysis}, we work with maps represented as pointclouds, possibly with RGB information for each point.
+This section presents an algorithm for estimating transformations between $n$ maps and merging them together. As discussed in the chapter~\ref{chap:analysis}, we work with maps represented as pointclouds, possibly with \gls{RGB} information for each point.
 
 There are two core problems for estimating the transformations. First we need to be able to estimate pair-wise transformation for $2$ maps using only geometrical and possibly colour information available within pointclouds. We discuss our method in the section~\ref{sec:estimate-pair-wise}. Second, we want to get a transformation for each of the maps to the selected reference frame. This is discussed in the section~\ref{sec:estimate-global}.
 
@@ -67,7 +67,7 @@ Even after the down-sampling the maps contain usually too many points to work wi
 
 There are two families of keypoints detectors that are being used with pointclouds. Most of the approaches has been adapted from keypoints detectors that has been originally developed to work on images.
 
-First class of detectors uses RGB colour information stored for each point in the pointcloud. This approach suppose that the pointcloud has been obtained with detector that provide the colour information such as stereo rig camera setup, active \gls{RGB-D} cameras etc. For our approach we use \gls{SIFT} keypoint detector, which is an adapted algorithm from~\citet{lowe2004distinctive} that works on pointclouds with RGB information.
+First class of detectors uses \gls{RGB} colour information stored for each point in the pointcloud. This approach suppose that the pointcloud has been obtained with detector that provide the colour information such as stereo rig camera setup, active \gls{RGB-D} cameras etc. For our approach we use \gls{SIFT} keypoint detector, which is an adapted algorithm from~\citet{lowe2004distinctive} that works on pointclouds with \gls{RGB} information.
 
 Second class of algorithms works with just geometrical information and is therefore able to work with pointclouds that do not store any additional information for points. These algorithms can be used with pointclouds composed of laser scans. Our algorithm implements Harris \gls{3D} keypoint detector for this purpose, which is an adapted algorithm from~\citet{harris1988combined}. Instead of using image gradients, which are not available in the pointcloud without colour information, it uses surface normals, that capture geometrical properties of the point neighbourhood.
 
