@@ -5,7 +5,7 @@ This is a reproduction of the text available online at \url{http://wiki.ros.org/
 
 \section{Package Summary}
 
-Merging multiple 3D maps, represented as pointclouds, without knowledge of initial positions of robots.
+Merging multiple \gls{3D} maps, represented as pointclouds, without knowledge of initial positions of robots.
 
 \begin{itemize}
     \item Maintainer status: developed
@@ -18,7 +18,7 @@ Merging multiple 3D maps, represented as pointclouds, without knowledge of initi
 
 \section{Overview}
 
-This package provides a 3D global map for multiple robots and the respective transformations between robots. It merges robots' individual maps based on the overlapping space in the maps and requires no dependencies on a particular \gls{SLAM} or communication between the robots.
+This package provides a \gls{3D} global map for multiple robots and the respective transformations between robots. It merges robots' individual maps based on the overlapping space in the maps and requires no dependencies on a particular \gls{SLAM} or communication between the robots.
 
 \begin{figure}
     \centering
@@ -33,7 +33,7 @@ In the multi-robot exploration scenario your robots probably run multiple \gls{R
 
 \section{Architecture}
 
-\texttt{map\_merge\_3d} finds robot maps automatically and new robots can be added to the system at any time. 3D maps are expected as \texttt{sensor\_msgs/PointCloud2}, other map messages are not supported.
+\texttt{map\_merge\_3d} finds robot maps automatically and new robots can be added to the system at any time. \gls{3D} maps are expected as \texttt{sensor\_msgs/PointCloud2}, other map messages are not supported.
 
 \begin{figure}
     \centering
