@@ -3,6 +3,17 @@
 
 % TODO add visualisation
 
+This section presents an algorithm for estimating transformations between $n$ maps and merging them together. As discussed in the chapter~\ref{chap:analysis}, we work with maps represented as pointclouds, possibly with \gls{RGB} information for each point.
+
+There are two core problems for estimating the transformations. First we need to be able to estimate pair-wise transformation for $2$ maps using only geometrical and possibly colour information available within pointclouds. We discuss our method in the section~\ref{sec:estimate-pair-wise}. Second, we want to get a transformation for each of the maps to the selected reference frame. This is discussed in the section~\ref{sec:estimate-global}.
+
+After we have estimated the transformations we can stitch them to create the global map.
+
+\section{Estimating pair-wise transformation}
+\label{sec:estimate-pair-wise}
+
+Algorithm~\ref{alg:estimate-pair} describes an algorithm pipeline to estimate the pair-wise transformation. Every step is discussed in the following sections.
+
 \begin{algorithm}
     \caption[Pair-wise transformation estimation]{Estimates pair-wise transformation between two maps}
     \label{alg:estimate-pair}
@@ -20,17 +31,6 @@
         \EndProcedure
     \end{algorithmic}
 \end{algorithm}
-
-This section presents an algorithm for estimating transformations between $n$ maps and merging them together. As discussed in the chapter~\ref{chap:analysis}, we work with maps represented as pointclouds, possibly with \gls{RGB} information for each point.
-
-There are two core problems for estimating the transformations. First we need to be able to estimate pair-wise transformation for $2$ maps using only geometrical and possibly colour information available within pointclouds. We discuss our method in the section~\ref{sec:estimate-pair-wise}. Second, we want to get a transformation for each of the maps to the selected reference frame. This is discussed in the section~\ref{sec:estimate-global}.
-
-After we have estimated the transformations we can stitch them to create the global map.
-
-\section{Estimating pair-wise transformation}
-\label{sec:estimate-pair-wise}
-
-Algorithm~\ref{alg:estimate-pair} describes an algorithm pipeline to estimate the pair-wise transformation. Every step is discussed in the following sections.
 
 \subsection{Down-sampling}
 
