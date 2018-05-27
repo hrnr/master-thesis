@@ -12,7 +12,9 @@ After we have estimated the transformations we can stitch them to create the glo
 \section{Estimating pair-wise transformation}
 \label{sec:estimate-pair-wise}
 
-Algorithm~\ref{alg:estimate-pair} describes an algorithm pipeline to estimate the pair-wise transformation. Every step is discussed in the following sections.
+Algorithm~\ref{alg:estimate-pair} describes an algorithm pipeline to estimate the pair-wise transformation. The algorithm first down-samples the pointcloud (section~\ref{sec:downsampling}), then it filters the outliers (section~\ref{sec:outlier-removal}), after filtering, surface normals are estimated for the whole pointcloud (section~\ref{sec:normal-estimation}). To reduce number of points for further processing, keypoints are detected using either \gls{SIFT}-based or Harris keypoint detector (section~\ref{sec:detect-keypoints}). To match keypoints between pointclouds, each keypoint is assigned a descriptor (section~\ref{sec:compute-descriptors}). Using assigned descriptors, keypoints are then matched and initial rigid transformation between pointclouds is estimated (section~\ref{sec:matching}). After matching, the transformation is refined using all points in the filtered pointcloud with local minimisation method (section~\ref{sec:final-estimation}).
+
+To deal with inaccurate estimates each transformation estimate is evaluated using confidence measure (section~\ref{sec:transform-evaluation}).
 
 \begin{algorithm}
     \caption[Pair-wise transformation estimation]{Estimates pair-wise transformation between two maps}
@@ -23,8 +25,8 @@ Algorithm~\ref{alg:estimate-pair} describes an algorithm pipeline to estimate th
         \Procedure{estimateTransform}{$map1, map2$}
             \State down-sample to working resolution
             \State remove outliers
+            \State estimate surface normals
             \State detect keypoints
-            \State detect normals
             \State compute descriptor for each keypoint
             \State match descriptors and compute initial transformation
             \State refine transformation with \gls{ICP}
@@ -33,6 +35,7 @@ Algorithm~\ref{alg:estimate-pair} describes an algorithm pipeline to estimate th
 \end{algorithm}
 
 \subsection{Down-sampling}
+\label{sec:downsampling}
 
 As we are working with possibly large-scale maps, input pointclouds may contain millions of points. To reduce computation times it is highly desirable to reduce number of points.
 
@@ -45,6 +48,7 @@ As discussed in section~\ref{chap:analysis}, in multi-robot system the down-samp
 We show is the section~\ref{chap:evaluation} that our algorithm can reliable estimate the transformation when using $0.1$ meter per voxel resolution.
 
 \subsection{Removing outliers}
+\label{sec:outlier-removal}
 
 Although the voxelisation can deal with some of the noise and inaccuracies, during experiments it has been beneficial to perform further outliers filtering to remove far laying points. Far-laying outliers may end-up being detected as keypoints, but they are usually not matched. Reducing the number of detected keypoints speeds up the later phases of estimation.
 
@@ -62,6 +66,7 @@ The last preprocessing step is to estimate surface normals. Surface normals are 
 Algorithm for estimating surface normals is described in~\citet{RusuDoctoralDissertation}. The most important parameter for normals estimation is the size of the neighbourhood which is used for the estimation. This can be configured by the user.
 
 \subsection{Detecting keypoints}
+\label{sec:detect-keypoints}
 
 Even after the down-sampling the maps contain usually too many points to work with all of them in later steps. We need to reduce the number of points further. Common technique used in the area of computer vision and robotics is to search for keypoints that identify suitable points for later matching.
 
@@ -72,6 +77,7 @@ First class of detectors uses \gls{RGB} colour information stored for each point
 Second class of algorithms works with just geometrical information and is therefore able to work with pointclouds that do not store any additional information for points. These algorithms can be used with pointclouds composed of laser scans. Our algorithm implements Harris \gls{3D} keypoint detector for this purpose, which is an adapted algorithm from~\citet{harris1988combined}. Instead of using image gradients, which are not available in the pointcloud without colour information, it uses surface normals, that capture geometrical properties of the point neighbourhood.
 
 \subsection{Computing descriptors}
+\label{sec:compute-descriptors}
 
 Next step is to compute a local descriptor around each detected keypoint to be able to match keypoints between maps. Unlike the keypoint detection algorithms, algorithms for computing descriptors has been mostly designed from scratch to work on pointclouds. Comprehensive review of the descriptors is given in~\citet{YasirThesis}.
 
@@ -144,6 +150,7 @@ Notice that our algorithm does not need any threshold for the maximum match dist
 Both \gls{SAC-IA} and our reciprocal matching algorithm need to quickly find $k$-nearest neighbours. To achieve a good performance we use a approximative nearest neighbour search based on~\citet{muja2014flann}. This solution allows us to match large number of descriptors quickly, even though computational complexity rises significantly with $k$. During the experiments the matching step takes usually just a fraction of time needed to extract keypoints and descriptors.
 
 \subsection{Estimating the final transformation}
+\label{sec:final-estimation}
 
 \gls{SAC-IA} embeds \gls{RANSAC} into its algorithm and therefore provides directly an initial transformation estimate. When we use our matching scheme as per algorithm~\ref{alg:cross-match}, we need to run \gls{RANSAC} step with rigid transformation model after the matching to get inlier matches. In the typical scenario most of the matches will be outliers, so without the \gls{RANSAC} step it would not be possible to estimate a consistent transformation.
 
