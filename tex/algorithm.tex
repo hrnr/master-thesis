@@ -39,7 +39,14 @@ To deal with inaccurate estimates each transformation estimate is evaluated usin
 
 As we are working with possibly large-scale maps, input pointclouds may contain millions of points. To reduce computation times it is highly desirable to reduce number of points.
 
-Common technique for reducing resolution of pointcloud is voxelisation, which produces a voxel grid. The voxel grid is a regularly spaced, three-dimensional grid. We can represent the voxel grid as a normal pointcloud, with each point representing a voxel of the voxel grid. We don't usually save empty space information, so the grid is sparse.
+Common technique for reducing resolution of pointcloud is voxelisation, which produces a voxel grid. The voxel grid is a regularly spaced, three-dimensional grid (figure~\ref{fig:v1-downsampled}). We can represent the voxel grid as a normal pointcloud, with each point representing a voxel of the voxel grid. We don't usually save empty space information, so the grid is sparse.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{../img/v1-downsampled.png}
+    \caption[Voxelised pointcloud map]{Pointcloud map voxelised to resolution 0.05 meter per voxel. Notice the regular spacing between points.}
+    \label{fig:v1-downsampled}
+\end{figure}
 
 Algorithm for voxelisation is following. For each voxel (size of the voxel is determined by the resolution) we take all points contained in the voxel and approximate them with their centroid.
 
@@ -68,7 +75,14 @@ Algorithm for estimating surface normals is described by~\citet{RusuDoctoralDiss
 \subsection{Detecting keypoints}
 \label{sec:detect-keypoints}
 
-Even after the down-sampling the maps contain usually too many points to work with all of them in later steps. We need to reduce the number of points further. Common technique used in the area of computer vision and robotics is to search for keypoints that identify suitable points for later matching.
+Even after the down-sampling the maps contain usually too many points to work with all of them in later steps. We need to reduce the number of points further. Common technique used in the area of computer vision and robotics is to search for keypoints that identify suitable points for later matching (figure~\ref{fig:v1-keypoints}).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{../img/v1-keypoints.png}
+    \caption[Detected keypoints]{\gls{SIFT} keypoints (red) detected in the pointcloud map (green).}
+    \label{fig:v1-keypoints}
+\end{figure}
 
 There are two families of keypoints detectors that are being used with pointclouds. Most of the approaches has been adapted from keypoints detectors that has been originally developed to work on images.
 
@@ -90,7 +104,14 @@ Main disadvantage of the \gls{PFH} descriptors is the high algorithmic complexit
 
 Next step in the pipeline is the descriptors matching, which yields an initial transformation estimate. It uses the features extracted from pointclouds in the previous steps.
 
-We match two sets of descriptors from two pointclouds. For each descriptors from the first set we want to find a descriptor in the second set, which describe the same place (in the second pointcloud). This step is challenging, because the descriptors might be less descriptive than desired. Therefore the correct match might not be always the closest descriptor, but the $k$-nearest descriptor.
+We match two sets of descriptors from two pointclouds (figure~\ref{fig:v1-matching}). For each descriptors from the first set we want to find a descriptor in the second set, which describe the same place (in the second pointcloud). This step is challenging, because the descriptors might be less descriptive than desired. Therefore the correct match might not be always the closest descriptor, but the $k$-nearest descriptor.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{../img/v1-matching.png}
+    \caption[Keypoint matches]{Matched keypoint descriptors between two pointcloud maps (green, blue). Only inlier matches from \gls{RANSAC} are shown.}
+    \label{fig:v1-matching}
+\end{figure}
 
 To overcome the issue, \gls{SAC-IA} algorithm has been proposed by~\citet{rusu2009fpfh} (algorithm~\ref{alg:sac-ia}).
 
@@ -156,7 +177,14 @@ Both \gls{SAC-IA} and our reciprocal matching algorithm need to quickly find $k$
 
 \gls{RANSAC} transformation estimate is always based on the minimum number of points required to estimate the model (rigid transformation). To get better estimate for all inliers pairs we recompute the transformation estimate using least-squares on inlier pairs. We use \gls{SVD} to compute the new estimate, the technique is described by~\citet{golub1970svd}. Another widely used technique in Computer Vision is to use a non-linear least squares approach, such as Levenberg-Marquardt algorithm described by~\citet{more1978levmarq}, to optimize the transformation estimate re-projection error considering all inliers. Because we refine the transformation further with \gls{ICP}, there hasn't been any observed difference between using Levenberg-Marquardt or \gls{SVD}-based technique. The implementation uses \gls{SVD} to refine the transformation on inliers.
 
-So far we have used only detected keypoints and descriptors computed around the keypoints to estimate the transformation. To refine the transformation using all the points in the pointcloud we use \gls{ICP} algorithm introduced by~\citet{besl1992icp}. \gls{ICP} algorithm tries to minimize euclidean error distance between estimated corresponding points. The estimated transformation from either \gls{SAC-IA} or the reciprocal matching scheme presented in section~\ref{sec:matching} is used as an initial guess for \gls{ICP}.
+So far we have used only detected keypoints and descriptors computed around the keypoints to estimate the transformation. To refine the transformation using all the points in the pointcloud we use \gls{ICP} algorithm introduced by~\citet{besl1992icp}. \gls{ICP} algorithm tries to minimize euclidean error distance between estimated corresponding points (figure~\ref{fig:v1-refined}). The estimated transformation from either \gls{SAC-IA} or the reciprocal matching scheme presented in section~\ref{sec:matching} is used as an initial guess for \gls{ICP}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{../img/v1-refined.png}
+    \caption[Aligned pointclouds]{Two pointclouds maps (green, blue) aligned after refining initial transformation with \gls{ICP}. Initial transformation was computed from matches shown in figure~\ref{fig:v1-matching}.}
+    \label{fig:v1-refined}
+\end{figure}
 
 The initial guess is usually close to the final transformation estimated by \gls{ICP}, especially when using the reciprocal matching algorithm~\ref{alg:cross-match} and \gls{RANSAC} for the estimation. Even though we use all the points with \gls{ICP}, because of the proximity of the guess to the final transformation only a couple of iterations is needed for \gls{ICP} to converge, so the refinement does not impact overall performance significantly.
 

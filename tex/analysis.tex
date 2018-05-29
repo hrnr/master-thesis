@@ -13,7 +13,14 @@ The \textit{map-merging problem} for multirobot systems, which is the focus of t
 
 \Gls{3D} maps are becoming more common in the robotics as the capable sensors are getting more affordable and suitable for many applications. Unlike \gls{2D} occupancy grids used extensively in the past, \gls{3D} maps enable cooperation of robots, that are not fixed to a \gls{2D} plane, such as aerial vehicles, humanoid robots, outdoor robots operating in a rough terrain as well as traditional ground-based platforms. This allows us to create a possibly heterogeneous multirobot teams, that are able to take advantage of their different strengths and weaknesses to solve the assigned task efficiently. For example a robotic team can consist from aerial vehicles, capable of fast reconnaissance in large-scale outdoor environments, and ground-based vehicles carrying heavy equipment.
 
-This work expects maps represented as pointclouds (definition~\ref{def:pointcloud}). Pointclouds can be implemented as an array of points, making them suitable for serialisation and exchange between robots. Points in the pointcloud can have assigned additional information, such as \gls{RGB} colour information or reflection intensity, based on the available sensor. Especially colour information, that is provided by stereo camera rigs and active \gls{RGB-D} cameras is commonly exploited for further processing.
+This work expects maps represented as pointclouds (definition~\ref{def:pointcloud}). Pointclouds can be implemented as an array of points, making them suitable for serialisation and exchange between robots. Points in the pointcloud can have assigned additional information, such as \gls{RGB} colour information or reflection intensity, based on the available sensor. Especially colour information, that is provided by stereo camera rigs and active \gls{RGB-D} cameras is commonly exploited for further processing (figure~\ref{fig:v1-greyscale}).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{../img/v1-greyscale.png}
+    \caption[Pointcloud map with greyscale colours]{Partial pointcloud map of a room created from aerial vehicle equipped with greyscale stereo cameras rig. Intensity captured by camera is stored alongside the points and visualised in greyscale.}
+    \label{fig:v1-greyscale}
+\end{figure}
 
 \begin{defn}[Pointcloud]
 \label{def:pointcloud}
