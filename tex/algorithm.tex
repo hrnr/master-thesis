@@ -68,7 +68,14 @@ For example on $2$ maps from \gls{AAU} dataset (see section~\ref{sec:aau-dataset
 \subsection{Estimating surface normals}
 \label{sec:normal-estimation}
 
-The last preprocessing step is to estimate surface normals. Surface normals are vectors perpendicular to the surface in the neighbourhood of the point. Surface normals are used in later steps to compute descriptors and by Harris keypoint detector.
+The last preprocessing step is to estimate surface normals (figure~\ref{fig:v1-normals}). Surface normals are vectors perpendicular to the surface in the neighbourhood of the point. Surface normals are used in later steps to compute descriptors and by Harris keypoint detector.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{../img/v1-normals.png}
+    \caption[Pointcloud map with estimated surface normals]{Voxelised pointcloud map with estimated surface normals (red). Only each fifth normal is visualised.}
+    \label{fig:v1-normals}
+\end{figure}
 
 Algorithm for estimating surface normals is described by~\citet{RusuDoctoralDissertation}. The most important parameter for normals estimation is the size of the neighbourhood which is used for the estimation. This can be configured by the user.
 
