@@ -1,2 +1,30 @@
 \chapter{Implementation}
 \label{chap:implementation}
+
+I have implemented the map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) in the \gls{ROS} framework (section~\ref{sec:ros}). This allows the implementation to be used with various readily available \gls{SLAM} algorithms and inter-robot communications.
+
+Pointcloud algorithms are implemented with \gls{PCL} (section~\ref{sec:pcl}). \gls{PCL} is a popular open-source library for manipulating point-cloud data.
+
+\section{Robot Operating System}
+\label{sec:ros}
+
+\gls{ROS} is a popular open-source robotics middleware and distribution of community-maintained robotics software. \gls{ROS} provides hardware abstraction, low-level sensors control, implementations of commonly-used robotics algorithms, including several variants of \gls{SLAM}, message-passing between processes, and package and build management.
+
+Core of the \gls{ROS} is a messaging system, that allows loose coupling between sensors, robotic algorithms and actuators. There are many community-established standard message formats for various sensor types, visualisation, maps, robot state, linear algebra etc., which allows software reuse.
+
+Software in the \gls{ROS} project is organised in the form of community-maintained packages. First type of packages integrate particular hardware sensors, actuators or entire robot platforms with \gls{ROS} and provide a message interface using standard \gls{ROS} messages. Second type of packages implement robotics algorithms, that usually depend only on standard \gls{ROS} messages, making them reusable between robots. The \gls{ROS} project builds and distributes binary packages for Linux.
+
+\section{\texttt{map\_merge\_3d} package}
+
+\subsection{Communication}
+
+\subsection{Map representation}
+
+\subsection{Configuration}
+
+\subsection{Estimation}
+
+% \section{Point Cloud Library}
+% \label{sec:pcl}
+
+% \gls{PCL} is an open-source library for pointcloud processing. It contains routines for
