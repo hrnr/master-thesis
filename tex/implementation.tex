@@ -16,15 +16,53 @@ Software in the \gls{ROS} project is organised in the form of community-maintain
 
 \section{\texttt{map\_merge\_3d} package}
 
+The software for this thesis is organised in a \gls{ROS} package \texttt{map\_merge\_3d}. This package contains \gls{ROS} node for online map-merging as well as command-line applications for offline map-merging of pointcloud files.
+
+The \texttt{map\_merge\_3d} package is distributed within \gls{ROS} starting from \gls{ROS} Melodic release. Package documentation is maintained as wiki text available online, reproduction of the documentation is attached (attachement~\ref{chap:map_merge-wiki}).
+
 \subsection{Communication}
+
+The \gls{ROS} node is designed work with any communication solution between robots. This allows user to use any kind of communication media and software solution that is available for a given application. The package therefore does not provide nor expect any particular communication between robots.
+
+To achieve loose coupling with communication setup, the node expects map topics to be available within local \gls{ROS} graph. User of the package is then expected to setup communication between robots that publishes robot maps within local \gls{ROS} graph.
+
+\gls{ROS} natively supports sending messages between multiple computers connected in the same network. However as the \gls{ROS} master directory listing (broker) service is not distributed, it needs to run on one of these computers. This single point-of-failure is not acceptable for unreliable communication media.
+
+To achieve reliable multi-robot communication \gls{ROS} Multimaster Special Interest Group was formed with intent to support running multiple \gls{ROS} master broker services. \citet{hernadez2015multi} developed a \texttt{multimaster\_fkie} package, that deals with most of the problems of multi-robot setup. This package can be used together with \texttt{map\_merge\_3d} to run online map-merging for multiple robots.
+
+Users are free to choose any other communication solution meeting their needs for the particular application, \texttt{map\_merge\_3d} does not depend on any particular multi-master setup and can run also under single-master setup, for example in simulated multi-robot environment.
 
 \subsection{Map representation}
 
+Choosing a correct map representation is important to allow interoperability and re-usability within the \gls{ROS} ecosystem. We need to select a map format that is supported by the most \gls{SLAM} implementations in \gls{ROS} to be able to consume maps from the robots.
+
+Widespread \gls{3D} \gls{SLAM} approaches in \gls{ROS} produce maps as \texttt{sensor\_msgs/PointCloud2} messages, which is now de-facto standard for representing \gls{3D} maps in \gls{ROS}. This representation is suitable for the presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}).
+
+Unfortunately there is no standard message format in \gls{ROS} to represent map as a pose graph of pointclouds, which would allow to implement map-merging on pointcloud pose graph discussed in section~\ref{sec:map-merging-on-pointclouds}, which allows to repair mapping errors.
+
+The map-merging node therefore uses maps represented in \texttt{sensor\_msgs/PointCloud2} messages, which always encodes whole map.
+
+% todo diasdvantages, rtabmap, google cartographer
+
 \subsection{Configuration}
+
+% auto discovery
 
 \subsection{Estimation}
 
-% \section{Point Cloud Library}
-% \label{sec:pcl}
+% threading model of the node
 
-% \gls{PCL} is an open-source library for pointcloud processing. It contains routines for
+\subsection{Offline map-merging}
+
+The \gls{ROS} packages contains also two command-line applications beside the main \gls{ROS} node. The applications works with pointclouds saved in \texttt{pcd} files.
+
+\texttt{map\_merge\_tool} can be used for offline map-merging. It accepts $n$ pointcloud files and produces a single merged map saved to a file. It uses the same algorithm for map-merging as the \gls{ROS} node. Typical usage might include multi-session mapping of large environment with a single robot and producing a large map for further robot deployment.
+
+The second tool, \texttt{registration\_visualisation}, accepts two pointclouds and visualises pair-wise transformation estimations as described in chapter~\ref{chap:mergingalgorithm}. Each step of the estimation is visualised in \gls{3D}, user is able to freely navigate the pointclouds or save the visualisation as an image. This application can be used for estimation parameter tuning and learning about the map-merging process.
+
+% todo screenshot
+
+\section{Point Cloud Library}
+\label{sec:pcl}
+
+\gls{PCL} is an open-source library for pointcloud processing. It contains routines for
