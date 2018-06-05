@@ -17,9 +17,9 @@ Software in the \gls{ROS} project is organised in a form of community-maintained
 \section{Point Cloud Library}
 \label{sec:pcl}
 
-\gls{PCL} is an open-source library for pointcloud processing. It contains routines for feature estimation, surface reconstruction, registration, nearest neighbour search, model fitting, including \gls{RANSAC} algorithm, and segmentation. \Gls{PCL} is supported in \gls{ROS}, with \gls{PCL} pointcloud format being supported for message serialisation into \gls{ROS} messages.
+\gls{PCL} is an open-source library for pointcloud processing. It contains routines for feature estimation, surface reconstruction, registration, nearest neighbour search, model fitting, including \gls{RANSAC} algorithm, and segmentation. The library offers serialisation of pointclouds to its native, but widely supported \texttt{pcd} file format. \Gls{PCL} is supported in \gls{ROS}, with \gls{PCL} pointcloud format being supported for message serialisation into \gls{ROS} messages.
 
-I have used \gls{PCL} to implement the presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) and to read \texttt{pcd} files for the command-line tools (section~\ref{sec:commandline-tools}).
+I have used \gls{PCL} to implement the presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) and to read and save \texttt{pcd} files for the command-line tools (section~\ref{sec:commandline-tools}).
 
 \section{\texttt{map\_merge\_3d} package}
 
@@ -49,11 +49,11 @@ Users are free to choose any other communication solution meeting their needs fo
 
 Choosing a correct map representation is important to allow interoperability and re-usability within the \gls{ROS} ecosystem. We need to select a map format that is supported by the most \gls{SLAM} implementations in \gls{ROS} to be able to consume maps from the robots.
 
-Widespread \gls{3D} \gls{SLAM} approaches in \gls{ROS} produce maps as \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which is now de-facto standard for representing \gls{3D} maps in \gls{ROS}. This representation is suitable for the presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}).
+Widespread \gls{3D} \gls{SLAM} approaches in \gls{ROS} produce maps as \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which are now de-facto standard for representing \gls{3D} maps in \gls{ROS}. This representation is suitable for the presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}).
 
-Unfortunately there is no standard message format in \gls{ROS} to represent map as a pose graph of pointclouds, which would allow to implement map-merging on pointcloud pose graph discussed in section~\ref{sec:map-merging-on-pointclouds}, which allows to repair mapping errors.
+Unfortunately there is no standard message format in \gls{ROS} to represent maps as a pose graph of pointclouds, which would allow to implement map-merging on pointcloud pose graph discussed in section~\ref{sec:map-merging-on-pointclouds}, which allows to repair mapping errors.
 
-The map-merging node therefore uses maps represented in \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which always encode whole map, to allow the highest degree of interoperability with existing \gls{ROS} packages.
+The map-merging node therefore uses monolithic maps represented in \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which always encode whole map, to allow the highest degree of interoperability with existing \gls{ROS} packages.
 
 Apart from not being able to correct mapping errors, a monolithic map representation also causes unnecessary transfers of already-explored space, that slows map update rate for large-scale maps. A standardised pose graph map representation in \gls{ROS} might help to solve both issues.
 
@@ -64,7 +64,7 @@ Apart from not being able to correct mapping errors, a monolithic map representa
 
 The \gls{ROS} node supports merging maps from an arbitrary number of robots. To make configuration of the node easy, maps for map-merging are auto-discovered by the \gls{ROS} node.
 
-The node periodically scans the \gls{ROS} graph to discover map topics, which are then subscribed and passed to map-merging procedure. This also enables robots to be added to the multi-robot system later, for example to tackle a high demand for the service.
+The node periodically scans the \gls{ROS} graph to discover map topics, which are then subscribed and passed to the map-merging procedure. This mechanism also enables robots to be added to the multi-robot system later, for example to tackle a high demand for the service.
 
 Full documentation of this mechanism is described in attachment~\ref{chap:map_merge-wiki}.
 
@@ -73,19 +73,19 @@ Full documentation of this mechanism is described in attachment~\ref{chap:map_me
 
 Estimating transformations between maps using the map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) is computationally intensive and can take a long time, especially when merging many large-scale maps.
 
-To achieve high update rates of the merged map, the \gls{ROS} node uses an asynchronous architecture. Because the map origins does not change, we don't need to re-estimate transformations between maps every time we need to update the merged map, we can use the previous estimates to update the map.
+To achieve high update rates of the merged map, the \gls{ROS} node uses an asynchronous architecture. Because the map origins does not change, we don't need to re-estimate transformations between maps every time we are updating the merged map, we can use the previous estimates to update the map.
 
-The node runs asynchronously the map composition and the transformations estimation tasks, both of the tasks are run periodically with user-settable frequencies. The map composition uses already estimated transformations between maps, transforms the input maps and concatenates the maps to produce the merged map. This process is fast and allows the node to achieve high update rates of the merged map to quickly incorporate newly-discovered areas by the robots.
+The node runs asynchronously the map composition and the transformations estimation tasks, both of the tasks run periodically with user-settable frequencies. The map composition uses already estimated transformations between maps, transforms the input maps and concatenates the maps to produce the merged map. This process is fast and allows the node to achieve high update rates of the merged map to quickly incorporate newly-discovered areas by the robots.
 
-The transformations estimation task uses computationally demanding algorithm (chapter~\ref{chap:mergingalgorithm}) to find the transformations between maps with enough overlapping space. This task can be run with lower frequency to save computational resources.
+The transformations estimation task uses computationally demanding algorithm (chapter~\ref{chap:mergingalgorithm}) to find the transformations between maps with enough overlapping space. This task can run with lower frequency to save computational resources.
 
 \subsection{Offline map-merging and visualisation}
 \label{sec:commandline-tools}
 
-The \gls{ROS} packages contains also two command-line applications beside the main \gls{ROS} node. The applications works with pointclouds saved in \texttt{pcd} files.
+The \gls{ROS} package contains also two command-line applications beside the main \gls{ROS} node. The applications works with pointclouds saved in \texttt{pcd} files.
 
-\texttt{map\_merge\_tool} can be used for offline map-merging. It accepts $n$ pointcloud files and produces a single merged map saved to a file. It uses the same algorithm for map-merging as the \gls{ROS} node. Typical usage might include multi-session mapping of large environment with a single robot and producing a large map for further robot deployment.
+\texttt{map\_merge\_tool} can be used for offline map-merging. It accepts $n$ pointcloud files and produces a single merged map saved to a file. It uses the same algorithm for map-merging as the \gls{ROS} node. Typical usage might include multi-session mapping of large environment with a single robot and producing a complete map for later robot deployment.
 
-The second tool, \texttt{registration\_visualisation}, accepts two pointclouds and visualises pair-wise transformation estimations as described in chapter~\ref{chap:mergingalgorithm}. The tool is mostly controlled by the command-line arguments, but the visualisation window is graphical. Each step of the estimation is visualised in \gls{3D}, user is able to freely navigate the pointclouds or save the visualisation as an image. This application can be used for estimation parameter tuning and learning about the map-merging process.
+The second tool, \texttt{registration\_visualisation}, accepts two pointclouds and visualises pair-wise transformation estimation algorithm as described in chapter~\ref{chap:mergingalgorithm}. The tool is mostly controlled by the command-line arguments, but the visualisation window is graphical. Each step of the estimation is visualised in \gls{3D}, user is able to freely navigate the pointclouds or save the visualisation as an image. This application can be used for estimation parameter tuning and learning about the map-merging process.
 
 % todo screenshot
