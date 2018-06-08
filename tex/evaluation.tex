@@ -21,7 +21,7 @@ The publicly available dataset introduced by~\citet{Burri2016} was collected on-
 
 \subsection{Dataset description}
 
-The cameras produce a WVGA monochrome (greyscale) images at $20$ frames per second. Cameras have a global shutter. The automatic exposure control is independent for both cameras. According to the published errata~\citep{Burri2016}, this resulted in different shutter times and in turn in different image brightnesses, rendering stereo matching and feature tracking more challenging.
+The cameras produce a WVGA monochrome (greyscale) images at $20$ frames per second. Cameras have a global shutter. The automatic exposure control is independent for both cameras. According to the published errata~\citep{Burri2016}, this ``resulted in different shutter times and in turn in different image brightnesses, rendering stereo matching and feature tracking more challenging''.
 
 The dataset contains $11$ mapping sessions in $3$ different environments (``Machine Hall'', ``Vicon Room 1'', ``Vicon Room 2''). Each mapping session is available in a single \gls{ROS} bag file. First $5$ sessions were captured in ETH machine hall (figure~\ref{fig:eth-machine-hall}), a fairly large industrial environment featuring piping, reservoirs and many different types of surfaces. Second and third batch of datasets were captured in a smaller furnished rectangular room. For the second and the third batch the furnishing was different.
 
@@ -102,3 +102,34 @@ Maps (figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the si
 
 \section{MFF dataset}
 \label{sec:mff-dataset}
+
+\section{Accuracy}
+
+For both the aerial datasets the map-merging is able to correctly merge the maps. The euclidean error scores, according to section~\ref{sec:transform-evaluation}, are small across the datasets (figure~\ref{fig:plot:euc_dist}). There are larger errors for the ``AAU forest'' and ``Machine Hall'' datasets caused by the outliers and mapping errors in those datasets, as those datasets has been recorded in tough conditions. Considering the artefacts in the datasets the alignment almost perfect and would allow precise coordination of the robots.
+
+The ``Vicon Room 1''
+
+\begin{figure}
+  \centering
+  \input{../img/plots/euc_dist}
+  \caption{Euclidean error scores (sum of euclidean distances for corresponding points) across the datasets. A threshold of $1.0$ has been used to cut-off fair laying point in non-overlapping areas, see section~\ref{sec:transform-evaluation} for details. The map-merging run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints. The first two scores are for initial estimation using descriptors matching, using my reciprocal matching scheme and \gls{SAC-IA} algorithm respectively (section~\ref{sec:matching}). The last score is the euclidean error after final refining with \gls{ICP} (section~\ref{sec:final-estimation}), the initial estimate from the reciprocal matching has been used for the \gls{ICP} refinement.}
+  \label{fig:plot:euc_dist}
+\end{figure}
+
+\section{Estimation robustness}
+
+\begin{figure}
+  \centering
+  \input{../img/plots/inliers}
+  \caption{Number of descriptor matches and number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (section~\ref{sec:matching}) has been used for matching.}
+  \label{fig:plot:inliers}
+\end{figure}
+
+\section{Performance}
+
+\begin{figure}
+  \centering
+  \input{../img/plots/perf}
+  \caption{Runtime performance characteristics for the respective parts of the map-merging algorithm (section~\ref{sec:estimate-pair-wise}) across the datasets. The data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and do not incorporate measurements from multiple runs to deal with various sources of non-determinism, although the runtime of the algorithm has been observed to be quite stable. The data are intended to show order of magnitude differences of processing time between particular parts of the algorithm. The map-merging algorithm has been run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints.}
+  \label{fig:plot:perf}
+\end{figure}

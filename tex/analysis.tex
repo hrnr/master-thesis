@@ -69,7 +69,7 @@ The algorithm presented in chapter~\ref{chap:mergingalgorithm} works exclusively
 Using pointclouds can also save communication bandwidth especially compared to image-based loop closure methods, which may require to exchange significant amount of data. Size comparison between local database size used for map-merging by~\citet{labbe2014online}, implemented in popular \texttt{RTAB-Map} \gls{SLAM}, and pointcloud representation of the same maps is shown in table~\ref{tabl:rtabmap-db-vs-pointclouds}. The maps have been recorded at Charles University campus, see section~\ref{sec:mff-dataset} for details. The pointclouds are significantly smaller with resolution $0.05$ meter per voxel. The presented merging algorithm can work with resolution of just $0.1$ meter per voxel in which pointclouds are even smaller, so we could save more bandwidth if necessary.
 
 \begin{table}[b!]
-	\label{tabl:rtabmap-db-vs-pointclouds}
+
 	\centering
 	\begin{tabular}{lrr D{.}{.}{3}}
 	\toprule
@@ -82,6 +82,7 @@ Using pointclouds can also save communication bandwidth especially compared to i
 	\bottomrule
 	\end{tabular}
 	\caption{Table comparing sizes of the local database of loop closure data for map-merging used by~\citet{labbe2014online} and the pointcloud representation of the same maps. Ratio denotes fraction of the pointcloud size to the database size. The maps are presented in section~\ref{sec:mff-dataset}.}
+	\label{tabl:rtabmap-db-vs-pointclouds}
 \end{table}
 
 Note that the local database has been used only in multi-session \gls{SLAM} and might not be size-optimised. Still the table demonstrates order of magnitude differences between the two representations.
