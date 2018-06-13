@@ -107,7 +107,9 @@ Maps (figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the si
 
 For both the aerial datasets the map-merging is able to correctly merge the maps. The euclidean error scores, according to section~\ref{sec:transform-evaluation}, are small across the datasets (figure~\ref{fig:plot:euc_dist}). There are larger errors for the ``AAU forest'' and ``Machine Hall'' datasets caused by the outliers and mapping errors in those datasets, as those datasets has been recorded in tough conditions. Considering the artefacts in the datasets the alignment almost perfect and would allow precise coordination of the robots.
 
-The ``Vicon Room 1''
+Both ``Vicon Room'' datasets show very small Euclidean error, well beyond the size of one voxel ($0.05$ m).
+
+The Euclidean error for the initial estimate is significantly lower for the presented reciprocal matching method (section~\ref{sec:matching}). For the \gls{SAC-IA} algorithm the error is higher because the randomness used in the algorithm introduces additional errors in case of well-performing \gls{PFH} descriptors. The initial estimate produced by the presented matching method is close to the final estimate refined with \gls{ICP}. The \gls{ICP} refinement is then very fast without negative impact on the overall time of the map-merging algorithm (figure~\ref{fig:plot:perf}).
 
 \begin{figure}
   \centering
@@ -117,6 +119,10 @@ The ``Vicon Room 1''
 \end{figure}
 
 \section{Estimation robustness}
+
+Important measure of estimation robustness is the number of inliers (figure~\ref{fig:plot:inliers}) in the \gls{RANSAC} estimate (section~\ref{sec:transform-evaluation}). Inliers are the points which are ultimately used for computing transformation estimate. Estimates based on small number of inliers might be severely affected by the noise. On the other hand estimates based on large number of inliers, especially with high inliers ratio to all points, are supposed to be reasonably confident in typical applications.
+
+
 
 \begin{figure}
   \centering
@@ -133,3 +139,7 @@ The ``Vicon Room 1''
   \caption{Runtime performance characteristics for the respective parts of the map-merging algorithm (section~\ref{sec:estimate-pair-wise}) across the datasets. The data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and do not incorporate measurements from multiple runs to deal with various sources of non-determinism, although the runtime of the algorithm has been observed to be quite stable. The data are intended to show order of magnitude differences of processing time between particular parts of the algorithm. The map-merging algorithm has been run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints.}
   \label{fig:plot:perf}
 \end{figure}
+
+\section{Descriptors}
+
+\section{Initial estimate algorithm}
