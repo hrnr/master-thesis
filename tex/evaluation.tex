@@ -122,16 +122,38 @@ The Euclidean error for the initial estimate is significantly lower for the pres
 
 Important measure of estimation robustness is the number of inliers (figure~\ref{fig:plot:inliers}) in the \gls{RANSAC} estimate (section~\ref{sec:transform-evaluation}). Inliers are the points which are ultimately used for computing transformation estimate. Estimates based on small number of inliers might be severely affected by the noise. On the other hand estimates based on large number of inliers, especially with high inliers ratio to all points, are supposed to be reasonably confident in typical applications.
 
+The inlier ratio to number of matches is quite low, even for \gls{PFH} descriptors (figure~\ref{fig:plot:inliers}), the similar ratios has been observed for all the descriptors. This is partially caused by the matching scheme designed to accept also more distant matches to improve inlier ratio for less descriptive descriptors as discussed din section~\ref{sec:matching}. The same behaviour causes number of matches to be relatively high compared to number of keypoints (figure~\ref{fig:plot:inliers}).
 
+The ``AAU forest'' and ``Vicon Room 2'' datasets have low numbers of inliers, which might impact robustness in such environments. The ``AAU forest'' is a relatively small, difficult environment for mapping containing noise and mapping errors. Only a few regions in maps are suitable for producing reliable matching points, which leads to small number of inliers.
+
+For the ``Vicon Room 2'' dataset colour-based descriptors exhibited generally better performance (figure~\ref{fig:plot:desc_inliers}) allow robust estimation for this dataset. The ``Vicon Room 2'' maps also contain noise caused by the dynamic motion of the aerial vehicle.
+
+Interestingly in both cases with limited number of inliers, the map-merging algorithm has been able to produce an accurate merge (figure~\ref{fig:plot:euc_dist}), even before \gls{ICP} refining. The inliers proved to be the correct matches.
 
 \begin{figure}
   \centering
   \input{../img/plots/inliers}
-  \caption{Number of descriptor matches and number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (section~\ref{sec:matching}) has been used for matching.}
+  \caption{Number of keypoints, descriptor matches and number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (section~\ref{sec:matching}) has been used for matching. Keypoints are shown for the first map of each environment.}
   \label{fig:plot:inliers}
 \end{figure}
 
-\section{Performance}
+\begin{figure}
+  \centering
+  \input{../img/plots/desc_inliers}
+  \caption{Number of inliers across the datasets for different descriptor algorithms. Apart from descriptors algorithms, the default parameters has been used including \gls{SIFT} keypoints and the reciprocal matching algorithm (section~\ref{sec:matching}). The \gls{PCL} implementation of \gls{SC3D} descriptors crashed on ``Machine Hall'' and ``Vicon Room 2'' datasets. This might indicate that the implementation in \gls{PCL} is probably not as mature as the remaining descriptors, but I have not investigated further.}
+  \label{fig:plot:desc_inliers}
+\end{figure}
+
+\section{Descriptors}
+
+As already noted in the previous section, the performance of the descriptors varies significantly in some cases (figure~\ref{fig:plot:desc_inliers}). The \gls{PFHRGB} descriptors exhibited the highest number of inliers across the datasets (figure~\ref{fig:plot:desc_inliers}). The \gls{SHOT} descriptors with colour also exhibited decent amount of inliers, especially considering the fast processing speed (section~\ref{sec:runtime-perf}).
+
+The lowest number of inliers have been produced by \gls{SC3D} descriptors. Moreover the \gls{PCL} implementation of \gls{SC3D} crashed in two instances. Together with \gls{RSD} descriptors, which has not been able to produce any inliers and are not shown in the plots, the \gls{SC3D} may not be suitable for map-merging in the evaluated setup.
+
+
+
+\section{Runtime performance}
+\label{sec:runtime-perf}
 
 \begin{figure}
   \centering
@@ -139,7 +161,5 @@ Important measure of estimation robustness is the number of inliers (figure~\ref
   \caption{Runtime performance characteristics for the respective parts of the map-merging algorithm (section~\ref{sec:estimate-pair-wise}) across the datasets. The data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and do not incorporate measurements from multiple runs to deal with various sources of non-determinism, although the runtime of the algorithm has been observed to be quite stable. The data are intended to show order of magnitude differences of processing time between particular parts of the algorithm. The map-merging algorithm has been run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints.}
   \label{fig:plot:perf}
 \end{figure}
-
-\section{Descriptors}
 
 \section{Initial estimate algorithm}
