@@ -114,7 +114,7 @@ For both the aerial datasets the map-merging is able to correctly merge the maps
 \begin{figure}
   \centering
   \input{../img/plots/euc_dist}
-  \caption{Euclidean error scores (sum of euclidean distances for corresponding points) across the datasets. A threshold of $1.0$ has been used to cut-off fair laying point in non-overlapping areas, see section~\ref{sec:transform-evaluation} for details. The map-merging run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints. The first two scores are for initial estimation using descriptors matching, using my reciprocal matching scheme and \gls{SAC-IA} algorithm respectively (section~\ref{sec:matching}). The last score is the euclidean error after final refining with \gls{ICP} (section~\ref{sec:final-estimation}), the initial estimate from the reciprocal matching has been used for the \gls{ICP} refinement.}
+  \caption[Euclidean error scores for aerial datasets]{Euclidean error scores (sum of euclidean distances for corresponding points) across the datasets. A threshold of $1.0$ has been used to cut-off fair laying point in non-overlapping areas, see section~\ref{sec:transform-evaluation} for details. The map-merging run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints. The first two scores are for initial estimation using descriptors matching, using my reciprocal matching scheme and \gls{SAC-IA} algorithm respectively (section~\ref{sec:matching}). The last score is the euclidean error after final refining with \gls{ICP} (section~\ref{sec:final-estimation}), the initial estimate from the reciprocal matching has been used for the \gls{ICP} refinement.}
   \label{fig:plot:euc_dist}
 \end{figure}
 
@@ -129,7 +129,7 @@ Important measure of estimation robustness is the number of inliers (figure~\ref
 \begin{figure}
   \centering
   \input{../img/plots/inliers}
-  \caption{Number of keypoints, descriptor matches and number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (section~\ref{sec:matching}) has been used for matching. Keypoints are shown for the first map of each environment.}
+  \caption[Number of keypoints, matches and inliers for aerial datasets]{Number of keypoints, descriptor matches and number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (section~\ref{sec:matching}) has been used for matching. Keypoints are shown for the first map of each environment.}
   \label{fig:plot:inliers}
 \end{figure}
 
@@ -148,7 +148,7 @@ As already noted in the previous section, the performance of the descriptors var
 \begin{figure}
   \centering
   \input{../img/plots/desc_inliers}
-  \caption{Number of inliers across the datasets for different descriptor algorithms. Apart from descriptors algorithms, the default parameters has been used including \gls{SIFT} keypoints and the reciprocal matching algorithm (section~\ref{sec:matching}). The \gls{PCL} implementation of \gls{SC3D} descriptors crashed on ``Machine Hall'' and ``Vicon Room 2'' datasets. This might indicate that the implementation in \gls{PCL} is probably not as mature as the remaining descriptors, but I have not investigated further.}
+  \caption[Number of inliers per descriptors]{Number of inliers across the datasets for different descriptor algorithms. Apart from descriptors algorithms, the default parameters has been used including \gls{SIFT} keypoints and the reciprocal matching algorithm (section~\ref{sec:matching}). The \gls{PCL} implementation of \gls{SC3D} descriptors crashed on ``Machine Hall'' and ``Vicon Room 2'' datasets. This might indicate that the implementation in \gls{PCL} is probably not as mature as the remaining descriptors, but I have not investigated further.}
   \label{fig:plot:desc_inliers}
 \end{figure}
 
@@ -159,7 +159,7 @@ Euclidean error distances (figure~\ref{fig:plot:desc_dist}) mostly reflects numb
 \begin{figure}
   \centering
   \input{../img/plots/desc_dist}
-  \caption{Euclidean error scores (sum of euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similarly to figure~\ref{fig:plot:euc_dist} the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using initial estimate from the reciprocal matching algorithm.}
+  \caption[Euclidean error scores per descriptors]{Euclidean error scores (sum of euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similarly to figure~\ref{fig:plot:euc_dist} the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using initial estimate from the reciprocal matching algorithm.}
   \label{fig:plot:desc_dist}
 \end{figure}
 
@@ -171,7 +171,7 @@ Although the runtime performance was not a primary concern of the presented algo
 \begin{figure}
   \centering
   \input{../img/plots/perf}
-  \caption{Runtime performance characteristics for the respective parts of the map-merging algorithm (section~\ref{sec:estimate-pair-wise}) across the datasets. The data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and do not incorporate measurements from multiple runs to deal with various sources of non-determinism, although the runtime of the algorithm has been observed to be quite stable. The data are intended to show order of magnitude differences of processing time between particular parts of the algorithm. The map-merging algorithm has been run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints.}
+  \caption[Processing time per algorithm parts]{Processing time for the respective parts of the map-merging algorithm (section~\ref{sec:estimate-pair-wise}) across the datasets. The data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and do not incorporate measurements from multiple runs to deal with various sources of non-determinism, although the runtime of the algorithm has been observed to be quite stable. The data are intended to show order of magnitude differences of processing time between particular parts of the algorithm. The map-merging algorithm has been run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints.}
   \label{fig:plot:perf}
 \end{figure}
 
@@ -182,7 +182,7 @@ The \gls{SHOT} descriptors with colour are very fast, which makes them compellin
 \begin{figure}
   \centering
   \input{../img/plots/desc_perf}
-  \caption{Processing time for descriptors algorithms across the datasets. Similarly to figure~\ref{fig:plot:perf}, the data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and are intended to show order of magnitude differences of processing time between particular descriptors.}
+  \caption[Processing time per descriptors]{Processing time for descriptors algorithms across the datasets. Similarly to figure~\ref{fig:plot:perf}, the data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and are intended to show order of magnitude differences of processing time between particular descriptors.}
   \label{fig:plot:desc_perf}
 \end{figure}
 
