@@ -25,3 +25,4 @@
 vzor-dp
 papers
 !img/*.pdf
+!img/plots/*.pdf

@@ -107,10 +107,6 @@ Maps (figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the si
 
 For both the aerial datasets the map-merging is able to correctly merge the maps. The euclidean error scores, according to section~\ref{sec:transform-evaluation}, are small across the datasets (figure~\ref{fig:plot:euc_dist}). There are larger errors for the ``AAU forest'' and ``Machine Hall'' datasets caused by the outliers and mapping errors in those datasets, as those datasets has been recorded in tough conditions. Considering the artefacts in the datasets the alignment almost perfect and would allow precise coordination of the robots.
 
-Both ``Vicon Room'' datasets show very small Euclidean error, well beyond the size of one voxel ($0.05$ m).
-
-The Euclidean error for the initial estimate is significantly lower for the presented reciprocal matching method (section~\ref{sec:matching}). For the \gls{SAC-IA} algorithm the error is higher because the randomness used in the algorithm introduces additional errors in case of well-performing \gls{PFH} descriptors. The initial estimate produced by the presented matching method is close to the final estimate refined with \gls{ICP}. The \gls{ICP} refinement is then very fast without negative impact on the overall time of the map-merging algorithm (figure~\ref{fig:plot:perf}).
-
 \begin{figure}
   \centering
   \input{../img/plots/euc_dist}
@@ -118,9 +114,20 @@ The Euclidean error for the initial estimate is significantly lower for the pres
   \label{fig:plot:euc_dist}
 \end{figure}
 
+Both ``Vicon Room'' datasets show very small Euclidean error, well beyond the size of one voxel ($0.05$ m).
+
+The Euclidean error for the initial estimate is significantly lower for the presented reciprocal matching method (section~\ref{sec:matching}). For the \gls{SAC-IA} algorithm the error is higher because the randomness used in the algorithm introduces additional errors in case of well-performing \gls{PFH} descriptors. The initial estimate produced by the presented matching method is close to the final estimate refined with \gls{ICP}. The \gls{ICP} refinement is then very fast without negative impact on the overall time of the map-merging algorithm (figure~\ref{fig:plot:perf}).
+
 \section{Estimation robustness}
 
 Important measure of estimation robustness is the number of inliers (figure~\ref{fig:plot:inliers}) in the \gls{RANSAC} estimate (section~\ref{sec:transform-evaluation}). Inliers are the points which are ultimately used for computing transformation estimate. Estimates based on small number of inliers might be severely affected by the noise. On the other hand estimates based on large number of inliers, especially with high inliers ratio to all points, are supposed to be reasonably confident in typical applications.
+
+\begin{figure}
+  \centering
+  \input{../img/plots/inliers}
+  \caption{Number of keypoints, descriptor matches and number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (section~\ref{sec:matching}) has been used for matching. Keypoints are shown for the first map of each environment.}
+  \label{fig:plot:inliers}
+\end{figure}
 
 The inlier ratio to number of matches is quite low, even for \gls{PFH} descriptors (figure~\ref{fig:plot:inliers}), the similar ratios has been observed for all the descriptors. This is partially caused by the matching scheme designed to accept also more distant matches to improve inlier ratio for less descriptive descriptors as discussed din section~\ref{sec:matching}. The same behaviour causes number of matches to be relatively high compared to number of keypoints (figure~\ref{fig:plot:inliers}).
 
@@ -130,12 +137,9 @@ For the ``Vicon Room 2'' dataset colour-based descriptors exhibited generally be
 
 Interestingly in both cases with limited number of inliers, the map-merging algorithm has been able to produce an accurate merge (figure~\ref{fig:plot:euc_dist}), even before \gls{ICP} refining. The inliers proved to be the correct matches.
 
-\begin{figure}
-  \centering
-  \input{../img/plots/inliers}
-  \caption{Number of keypoints, descriptor matches and number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (section~\ref{sec:matching}) has been used for matching. Keypoints are shown for the first map of each environment.}
-  \label{fig:plot:inliers}
-\end{figure}
+\section{Descriptors}
+
+As already noted in the previous section, the performance of the descriptors varies significantly in some cases (figure~\ref{fig:plot:desc_inliers}). The \gls{PFHRGB} descriptors exhibited the highest number of inliers across the datasets (figure~\ref{fig:plot:desc_inliers}). The \gls{SHOT} descriptors with colour also exhibited decent amount of inliers, especially considering the fast processing speed (section~\ref{sec:runtime-perf}).
 
 \begin{figure}
   \centering
@@ -144,16 +148,21 @@ Interestingly in both cases with limited number of inliers, the map-merging algo
   \label{fig:plot:desc_inliers}
 \end{figure}
 
-\section{Descriptors}
-
-As already noted in the previous section, the performance of the descriptors varies significantly in some cases (figure~\ref{fig:plot:desc_inliers}). The \gls{PFHRGB} descriptors exhibited the highest number of inliers across the datasets (figure~\ref{fig:plot:desc_inliers}). The \gls{SHOT} descriptors with colour also exhibited decent amount of inliers, especially considering the fast processing speed (section~\ref{sec:runtime-perf}).
-
 The lowest number of inliers have been produced by \gls{SC3D} descriptors. Moreover the \gls{PCL} implementation of \gls{SC3D} crashed in two instances. Together with \gls{RSD} descriptors, which has not been able to produce any inliers and are not shown in the plots, the \gls{SC3D} may not be suitable for map-merging in the evaluated setup.
 
+Euclidean error distances (figure~\ref{fig:plot:desc_dist}) mostly reflects number of inliers for respective descriptors, with \gls{PFHRGB} descriptors generally providing the best initial transformation. With one exception, the \gls{ICP} refining was able to produce high-quality alignment for all descriptors with small error differences, neglecting the differences between initial alignments for different descriptors. For the \gls{FPFH} descriptors the initial estimate in ``Machine Hall'' dataset has significantly higher error and the \gls{ICP} refining stuck in the local extreme.
 
+\begin{figure}
+  \centering
+  \input{../img/plots/desc_dist}
+  \caption{Euclidean error scores (sum of euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similarly to figure~\ref{fig:plot:euc_dist} the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using initial estimate from the reciprocal matching algorithm.}
+  \label{fig:plot:desc_dist}
+\end{figure}
 
 \section{Runtime performance}
 \label{sec:runtime-perf}
+
+Although the runtime performance was not a primary concern of the presented algorithm, it is interesting to take a look on the processing time. In the default configuration (figure~\ref{fig:plot:perf}), there are order of magnitude differences between algorithm steps as presented in section~\ref{sec:estimate-pair-wise}. Most of the processing time is taken by the \gls{SIFT} keypoints detection and computation of \gls{PFH} descriptors.
 
 \begin{figure}
   \centering
@@ -162,4 +171,19 @@ The lowest number of inliers have been produced by \gls{SC3D} descriptors. Moreo
   \label{fig:plot:perf}
 \end{figure}
 
+There are, however, significant differences between descriptors regarding processing time (figure~\ref{fig:plot:desc_perf}). All \gls{PFH}-family descriptors require order of magnitude higher processing time. There are also significant differences between the \gls{PFH}-family, the processing time nearly doubles between \gls{FPFH}, \gls{PFH} and \gls{PFHRGB} descriptors.
+
+The \gls{SHOT} descriptors with colour are very fast, which makes them compelling choice, considering also they showed good robustness (figure~\ref{fig:plot:desc_inliers}). \gls{PFHRGB} descriptors exhibited the best robustness, but also the longest processing time.
+
+\begin{figure}
+  \centering
+  \input{../img/plots/desc_perf}
+  \caption{Processing time for descriptors algorithms across the datasets. Similarly to figure~\ref{fig:plot:perf}, the data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and are intended to show order of magnitude differences of processing time between particular descriptors.}
+  \label{fig:plot:desc_perf}
+\end{figure}
+
 \section{Initial estimate algorithm}
+
+Comparing the presented reciprocal matching algorithm with \gls{SAC-IA}, the reciprocal matching algorithm produces better initial estimate in most of the evaluated cases (figure~\ref{fig:plot:desc_dist}). Significantly worse initial estimate was produced only for the \gls{FPFH} descriptors in ``Machine Hall'' dataset, which may not come as a surprise as the \gls{SAC-IA} algorithm was introduced with the \gls{FPFH} descriptors.
+
+For \gls{PFH}, \gls{FPFH} and \gls{SHOT} descriptors the reciprocal matching algorithm produced better initial estimates in evaluation than the \gls{SAC-IA} algorithm. Especially for the \gls{PFH} and \gls{PFHRGB} descriptors the Euclidean error distance is significantly lower for the initial estimates produced by the reciprocal matching algorithm.
