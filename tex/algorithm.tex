@@ -3,16 +3,16 @@
 
 % TODO add visualisation
 
-This section presents an algorithm for estimating transformations between $n$ maps and merging them together. As discussed in the chapter~\ref{chap:analysis}, we work with maps represented as pointclouds, possibly with \gls{RGB} information for each point.
+This section presents an algorithm for estimating transformations between $n$ maps and merging them together. As discussed in the chapter~\ref{chap:analysis}, we work with maps represented as point clouds, possibly with \gls{RGB} information for each point.
 
-There are two core problems for estimating the transformations. First we need to be able to estimate pair-wise transformation for $2$ maps using only geometrical and possibly colour information available within pointclouds. We discuss our method in the section~\ref{sec:estimate-pair-wise}. Second, we want to get a transformation for each of the maps to the selected reference frame. This is discussed in the section~\ref{sec:estimate-global}.
+There are two core problems for estimating the transformations. First we need to be able to estimate pair-wise transformation for $2$ maps using only geometrical and possibly colour information available within point clouds. We discuss our method in the section~\ref{sec:estimate-pair-wise}. Second, we want to get a transformation for each of the maps to the selected reference frame. This is discussed in the section~\ref{sec:estimate-global}.
 
 After we have estimated the transformations we can stitch them to create the global map.
 
 \section{Estimating pair-wise transformation}
 \label{sec:estimate-pair-wise}
 
-Algorithm~\ref{alg:estimate-pair} describes an algorithm pipeline to estimate the pair-wise transformation. The algorithm first down-samples the pointcloud (section~\ref{sec:downsampling}), then it filters the outliers (section~\ref{sec:outlier-removal}), after filtering, surface normals are estimated for the whole pointcloud (section~\ref{sec:normal-estimation}). To reduce number of points for further processing, keypoints are detected using either \gls{SIFT}-based or Harris keypoint detector (section~\ref{sec:detect-keypoints}). To match keypoints between pointclouds, each keypoint is assigned a descriptor (section~\ref{sec:compute-descriptors}). Using assigned descriptors, keypoints are then matched and initial rigid transformation between pointclouds is estimated (section~\ref{sec:matching}). After matching, the transformation is refined using all points in the filtered pointcloud with local minimisation method (section~\ref{sec:final-estimation}).
+Algorithm~\ref{alg:estimate-pair} describes an algorithm pipeline to estimate the pair-wise transformation. The algorithm first down-samples the point cloud (section~\ref{sec:downsampling}), then it filters the outliers (section~\ref{sec:outlier-removal}), after filtering, surface normals are estimated for the whole point cloud (section~\ref{sec:normal-estimation}). To reduce number of points for further processing, keypoints are detected using either \gls{SIFT}-based or Harris keypoint detector (section~\ref{sec:detect-keypoints}). To match keypoints between point clouds, each keypoint is assigned a descriptor (section~\ref{sec:compute-descriptors}). Using assigned descriptors, keypoints are then matched and initial rigid transformation between point clouds is estimated (section~\ref{sec:matching}). After matching, the transformation is refined using all points in the filtered point cloud with local minimisation method (section~\ref{sec:final-estimation}).
 
 To deal with inaccurate estimates each transformation estimate is evaluated using confidence measure (section~\ref{sec:transform-evaluation}).
 
@@ -20,7 +20,7 @@ To deal with inaccurate estimates each transformation estimate is evaluated usin
     \caption[Pair-wise transformation estimation]{Estimates pair-wise transformation between two maps}
     \label{alg:estimate-pair}
     \begin{algorithmic}[1]
-        \Require $2$ maps represented as pointclouds
+        \Require $2$ maps represented as point clouds
         \Ensure transformation estimate between $2$ maps
         \Procedure{estimateTransform}{$map1, map2$}
             \State down-sample to working resolution
@@ -37,14 +37,14 @@ To deal with inaccurate estimates each transformation estimate is evaluated usin
 \subsection{Down-sampling}
 \label{sec:downsampling}
 
-As we are working with possibly large-scale maps, input pointclouds may contain millions of points. To reduce computation times it is highly desirable to reduce number of points.
+As we are working with possibly large-scale maps, input point clouds may contain millions of points. To reduce computation times it is highly desirable to reduce number of points.
 
-Common technique for reducing resolution of pointcloud is voxelisation, which produces a voxel grid. The voxel grid is a regularly spaced, three-dimensional grid (figure~\ref{fig:v1-downsampled}). We can represent the voxel grid as a normal pointcloud, with each point representing a voxel of the voxel grid. We don't usually save empty space information, so the grid is sparse.
+Common technique for reducing resolution of point cloud is voxelisation, which produces a voxel grid. The voxel grid is a regularly spaced, three-dimensional grid (figure~\ref{fig:v1-downsampled}). We can represent the voxel grid as a normal point cloud, with each point representing a voxel of the voxel grid. We don't usually save empty space information, so the grid is sparse.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/v1-downsampled.png}
-    \caption[Voxelised pointcloud map]{Pointcloud map voxelised to resolution 0.05 meter per voxel. Notice the regular spacing between points.}
+    \caption[Voxelised point cloud map]{Point cloud map voxelised to resolution 0.05 meter per voxel. Notice the regular spacing between points.}
     \label{fig:v1-downsampled}
 \end{figure}
 
@@ -73,7 +73,7 @@ The last preprocessing step is to estimate surface normals (figure~\ref{fig:v1-n
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/v1-normals.png}
-    \caption[Pointcloud map with estimated surface normals]{Voxelised pointcloud map with estimated surface normals (red). Only each fifth normal is visualised.}
+    \caption[Point cloud map with estimated surface normals]{Voxelised point cloud map with estimated surface normals (red). Only each fifth normal is visualised.}
     \label{fig:v1-normals}
 \end{figure}
 
@@ -87,20 +87,20 @@ Even after the down-sampling the maps contain usually too many points to work wi
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/v1-keypoints.png}
-    \caption[Detected keypoints]{\gls{SIFT} keypoints (red) detected in the pointcloud map (green).}
+    \caption[Detected keypoints]{\gls{SIFT} keypoints (red) detected in the point cloud map (green).}
     \label{fig:v1-keypoints}
 \end{figure}
 
-There are two families of keypoints detectors that are being used with pointclouds. Most of the approaches has been adapted from keypoints detectors that has been originally developed to work on images.
+There are two families of keypoints detectors that are being used with point clouds. Most of the approaches has been adapted from keypoints detectors that has been originally developed to work on images.
 
-First class of detectors uses \gls{RGB} colour information stored for each point in the pointcloud. This approach suppose that the pointcloud has been obtained with detector that provide the colour information such as stereo rig camera setup, active \gls{RGB-D} cameras etc. For our approach we use \gls{SIFT} keypoint detector, which is an adapted algorithm from~\citet{lowe2004distinctive} that works on pointclouds with \gls{RGB} information.
+First class of detectors uses \gls{RGB} colour information stored for each point in the point cloud. This approach suppose that the point cloud has been obtained with detector that provide the colour information such as stereo rig camera setup, active \gls{RGB-D} cameras etc. For our approach we use \gls{SIFT} keypoint detector, which is an adapted algorithm from~\citet{lowe2004distinctive} that works on point clouds with \gls{RGB} information.
 
-Second class of algorithms works with just geometrical information and is therefore able to work with pointclouds that do not store any additional information for points. These algorithms can be used with pointclouds composed of laser scans. Our algorithm implements Harris \gls{3D} keypoint detector for this purpose, which is an adapted algorithm from~\citet{harris1988combined}. Instead of using image gradients, which are not available in the pointcloud without colour information, it uses surface normals, that capture geometrical properties of the point neighbourhood.
+Second class of algorithms works with just geometrical information and is therefore able to work with point clouds that do not store any additional information for points. These algorithms can be used with point clouds composed of laser scans. Our algorithm implements Harris \gls{3D} keypoint detector for this purpose, which is an adapted algorithm from~\citet{harris1988combined}. Instead of using image gradients, which are not available in the point cloud without colour information, it uses surface normals, that capture geometrical properties of the point neighbourhood.
 
 \subsection{Computing descriptors}
 \label{sec:compute-descriptors}
 
-Next step is to compute a local descriptor around each detected keypoint to be able to match keypoints between maps. Unlike the keypoint detection algorithms, algorithms for computing descriptors has been mostly designed from scratch to work on pointclouds. Comprehensive review of the descriptors is given by~\citet{YasirThesis}.
+Next step is to compute a local descriptor around each detected keypoint to be able to match keypoints between maps. Unlike the keypoint detection algorithms, algorithms for computing descriptors has been mostly designed from scratch to work on point clouds. Comprehensive review of the descriptors is given by~\citet{YasirThesis}.
 
 Most of the descriptors does not use the colour information and use only local geometry around the point. Widely used \gls{PFH} descriptors, introduced by~\citet{rusu2008pfh}, use a multi-dimensional histogram with $125$ bins to provide an informative signature of a point neighbourhood. The histogram captures relationships between estimated surface normals (see section~\ref{sec:normal-estimation}). It uses relationships between all pairs of points in the neighbourhood and therefore has complexity $\bigO(k^2)$, where $k$ is number of points in the neighbourhood. There is a variant of \gls{PFH} descriptors \gls{PFHRGB} that stores also colour information in the extended histogram of $2 \times 125$ bins.
 
@@ -109,14 +109,14 @@ Main disadvantage of the \gls{PFH} descriptors is the high algorithmic complexit
 \subsection{Matching descriptors}
 \label{sec:matching}
 
-Next step in the pipeline is the descriptors matching, which yields an initial transformation estimate. It uses the features extracted from pointclouds in the previous steps.
+Next step in the pipeline is the descriptors matching, which yields an initial transformation estimate. It uses the features extracted from point clouds in the previous steps.
 
-We match two sets of descriptors from two pointclouds (figure~\ref{fig:v1-matching}). For each descriptors from the first set we want to find a descriptor in the second set, which describe the same place (in the second pointcloud). This step is challenging, because the descriptors might be less descriptive than desired. Therefore the correct match might not be always the closest descriptor, but the $k$-nearest descriptor.
+We match two sets of descriptors from two point clouds (figure~\ref{fig:v1-matching}). For each descriptors from the first set we want to find a descriptor in the second set, which describe the same place (in the second point cloud). This step is challenging, because the descriptors might be less descriptive than desired. Therefore the correct match might not be always the closest descriptor, but the $k$-nearest descriptor.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/v1-matching.png}
-    \caption[Keypoint matches]{Matched keypoint descriptors between two pointcloud maps (green, blue). Only inlier matches from \gls{RANSAC} are shown.}
+    \caption[Keypoint matches]{Matched keypoint descriptors between two point cloud maps (green, blue). Only inlier matches from \gls{RANSAC} are shown.}
     \label{fig:v1-matching}
 \end{figure}
 
@@ -184,12 +184,12 @@ Both \gls{SAC-IA} and our reciprocal matching algorithm need to quickly find $k$
 
 \gls{RANSAC} transformation estimate is always based on the minimum number of points required to estimate the model (rigid transformation). To get better estimate for all inliers pairs we recompute the transformation estimate using least-squares on inlier pairs. We use \gls{SVD} to compute the new estimate, the technique is described by~\citet{golub1970svd}. Another widely used technique in Computer Vision is to use a non-linear least squares approach, such as Levenberg-Marquardt algorithm described by~\citet{more1978levmarq}, to optimize the transformation estimate re-projection error considering all inliers. Because we refine the transformation further with \gls{ICP}, there hasn't been any observed difference between using Levenberg-Marquardt or \gls{SVD}-based technique. The implementation uses \gls{SVD} to refine the transformation on inliers.
 
-So far we have used only detected keypoints and descriptors computed around the keypoints to estimate the transformation. To refine the transformation using all the points in the pointcloud we use \gls{ICP} algorithm introduced by~\citet{besl1992icp}. \gls{ICP} algorithm tries to minimize euclidean error distance between estimated corresponding points (figure~\ref{fig:v1-refined}). The estimated transformation from either \gls{SAC-IA} or the reciprocal matching scheme presented in section~\ref{sec:matching} is used as an initial guess for \gls{ICP}.
+So far we have used only detected keypoints and descriptors computed around the keypoints to estimate the transformation. To refine the transformation using all the points in the point cloud we use \gls{ICP} algorithm introduced by~\citet{besl1992icp}. \gls{ICP} algorithm tries to minimize euclidean error distance between estimated corresponding points (figure~\ref{fig:v1-refined}). The estimated transformation from either \gls{SAC-IA} or the reciprocal matching scheme presented in section~\ref{sec:matching} is used as an initial guess for \gls{ICP}.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/v1-refined.png}
-    \caption[Aligned pointclouds]{Two pointclouds maps (green, blue) aligned after refining initial transformation with \gls{ICP}. Initial transformation was computed from matches shown in figure~\ref{fig:v1-matching}.}
+    \caption[Aligned point clouds]{Two point clouds maps (green, blue) aligned after refining initial transformation with \gls{ICP}. Initial transformation was computed from matches shown in figure~\ref{fig:v1-matching}.}
     \label{fig:v1-refined}
 \end{figure}
 
@@ -209,7 +209,7 @@ To ensure robustness in real-world applications it is valuable to have a confide
 \frac{\psi}{8 + 0.3 \cdot m}
 \end{equation}
 
-Another possible confidence measure is to use distance error between the $2$ pointclouds. This approach is common with pointclouds and is implemented in \gls{PCL}. We typically use the Euclidean distance to have a natural metric estimate. This approach have two main issues. Because we do not know the correspondences between two maps we need to use the nearest neighbour for each point to compute the distance. Moreover to deal with occlusions (points outside intersection of the pointclouds) we need to introduce cut-off threshold to deal with too large distances caused by points outside of the intersection.
+Another possible confidence measure is to use distance error between the $2$ point clouds. This approach is common with point clouds and is implemented in \gls{PCL}. We typically use the Euclidean distance to have a natural metric estimate. This approach have two main issues. Because we do not know the correspondences between two maps we need to use the nearest neighbour for each point to compute the distance. Moreover to deal with occlusions (points outside intersection of the point clouds) we need to introduce cut-off threshold to deal with too large distances caused by points outside of the intersection.
 
 In the implementation I use Euclidean distance to evaluate transformation estimate, because the implementation of \gls{SAC-IA} in \gls{PCL} does not provide information about inliers count.
 

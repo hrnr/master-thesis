@@ -5,7 +5,7 @@ This is a reproduction of the text available online at \url{http://wiki.ros.org/
 
 \section{Package Summary}
 
-Merging multiple \gls{3D} maps, represented as pointclouds, without knowledge of initial positions of robots.
+Merging multiple \gls{3D} maps, represented as point clouds, without knowledge of initial positions of robots.
 
 \begin{itemize}
     \item Maintainer status: developed
@@ -42,7 +42,7 @@ In the multi-robot exploration scenario your robots probably run multiple \gls{R
     \label{fig:architecture}
 \end{figure}
 
-Recommended topics names for robot maps are \texttt{/robot1/map}, \texttt{/robot2/map} etc. However the names are configurable. All robots are expected to publish map under \texttt{<robot\_namespace>/map}, where topic name (\texttt{map}) is configurable, but must be the same for all robots. For each robot \texttt{<robot\_namespace>} is of cause different, but it does not need to follow any pattern. Further, you can exclude some topics using \texttt{robot\_namespace} parameter, to avoid merging unrelated pointclouds.
+Recommended topics names for robot maps are \texttt{/robot1/map}, \texttt{/robot2/map} etc. However the names are configurable. All robots are expected to publish map under \texttt{<robot\_namespace>/map}, where topic name (\texttt{map}) is configurable, but must be the same for all robots. For each robot \texttt{<robot\_namespace>} is of cause different, but it does not need to follow any pattern. Further, you can exclude some topics using \texttt{robot\_namespace} parameter, to avoid merging unrelated point clouds.
 
 \section{Estimation}
 
@@ -198,7 +198,7 @@ Parameters affecting only registration algorithm used for estimating transformat
 
 \section{Tools}
 
-Alongside \gls{ROS} node \texttt{map\_merge\_3d} provides command-line tools to work with pointcloud maps saved in \texttt{pcd} files. Both tools accept any of the registration parameters described in section~\ref{sec:registration-param}.
+Alongside \gls{ROS} node \texttt{map\_merge\_3d} provides command-line tools to work with point cloud maps saved in \texttt{pcd} files. Both tools accept any of the registration parameters described in section~\ref{sec:registration-param}.
 
 The tools use \gls{PCL} command-line parsing module. \gls{PCL} command-line parsing has some limits (\gls{PCL} users won't be surprised): it supports only \texttt{--param value} format, \texttt{--param=value} is not accepted. Unknown options are ignored. Options may be arbitrarily mixed with filenames. There are no short versions for parameters.
 
@@ -231,7 +231,7 @@ rosrun map_merge_3d registration_visualisation [--param value]
 map1.pcd map2.pcd
 \end{code}
 
-After one step of the estimation a visualisation window appears. You can freely navigate the pointcloud, save a screenshot or camera parameters (press \texttt{h} to see all shortcuts). After the window is closed, estimation continues with the next phase and the next visualisation window appears. Details about estimation progress are printed to \texttt{stdout}.
+After one step of the estimation a visualisation window appears. You can freely navigate the point cloud, save a screenshot or camera parameters (press \texttt{h} to see all shortcuts). After the window is closed, estimation continues with the next phase and the next visualisation window appears. Details about estimation progress are printed to \texttt{stdout}.
 
 \section{Acknowledgements}
 

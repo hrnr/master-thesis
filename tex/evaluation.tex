@@ -5,7 +5,7 @@ The presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) has be
 
 Sensors used include stereo rig cameras, active \gls{RGB-D} cameras and laser range finders? This variety of sensors and robots covers many typical multi-robot deployments. All datasets has been captured under real-word conditions, none of them uses simulated data.
 
-The evaluation focuses on properties of the presented pair-wise transformation estimation algorithm for pointclouds (section~\ref{sec:estimate-pair-wise}), which is the core algorithm of the implemented map-merging \gls{ROS} node (section~\ref{sec:ros-package}). Accuracy of the estimation algorithm is critical for the overall map-merging process.
+The evaluation focuses on properties of the presented pair-wise transformation estimation algorithm for point clouds (section~\ref{sec:estimate-pair-wise}), which is the core algorithm of the implemented map-merging \gls{ROS} node (section~\ref{sec:ros-package}). Accuracy of the estimation algorithm is critical for the overall map-merging process.
 
 \section{The EuRoC micro aerial vehicle dataset collection}
 \label{sec:euroc-dataset}
@@ -35,7 +35,7 @@ The dataset contains $11$ mapping sessions in $3$ different environments (``Mach
 \subsection{Maps generation}
 \label{sec:euroc-generating-maps}
 
-The dataset is intended for evaluating \gls{SLAM} algorithms, for our purposes it was necessary to process the data with a \gls{SLAM} algorithm to create a pointcloud maps.
+The dataset is intended for evaluating \gls{SLAM} algorithms, for our purposes it was necessary to process the data with a \gls{SLAM} algorithm to create a point cloud maps.
 
 First, I have used the provided calibration sequence and I have created a calibration data for \gls{ROS} using the \texttt{camera\_calibration} tool available with \gls{ROS}.
 
@@ -52,14 +52,14 @@ Using a different \gls{SLAM} pipelines for each of the maps contributed to intro
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/euroc_mh_02.png}
-    \caption[Machine hall pointcloud map]{ETH Machine hall pointcloud map. The map was produced from ``Machine Hall 02'' dataset using an {ORB-SLAM2} visual odometry~\citep{mur2017orb} and RTAB-Map loop-closure approach~\citep{labbe2014online}.}
+    \caption[Machine hall point cloud map]{ETH Machine hall point cloud map. The map was produced from ``Machine Hall 02'' dataset using an {ORB-SLAM2} visual odometry~\citep{mur2017orb} and RTAB-Map loop-closure approach~\citep{labbe2014online}.}
     \label{fig:euroc_mh_02}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/euroc_v2_02.png}
-    \caption[Pointcloud map of a small room]{A pointcloud map of a small room. The map was produced from ``Vicon Room 2 02'' dataset using an {ORB-SLAM2} visual odometry~\citep{mur2017orb} and RTAB-Map loop-closure approach~\citep{labbe2014online}.}
+    \caption[Point cloud map of a small room]{A point cloud map of a small room. The map was produced from ``Vicon Room 2 02'' dataset using an {ORB-SLAM2} visual odometry~\citep{mur2017orb} and RTAB-Map loop-closure approach~\citep{labbe2014online}.}
     \label{fig:euroc_v2_02}
 \end{figure}
 
@@ -85,7 +85,7 @@ Maps (figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the si
         \includegraphics[width=\textwidth]{../img/aau_fc_dnav6_top.png}
         \caption{``\gls{AAU} forest 2'' map}
     \end{subfigure}
-    \caption[Forest pointcloud maps -- top view]{Top view of the two pointcloud maps from \gls{AAU} outdoor forest dataset. Notice the stripe of direct sunlight on the ground causing difficult conditions for stereo matching.}
+    \caption[Forest point cloud maps -- top view]{Top view of the two point cloud maps from \gls{AAU} outdoor forest dataset. Notice the stripe of direct sunlight on the ground causing difficult conditions for stereo matching.}
     \label{fig:aau_top}
 \end{figure}
 
@@ -100,7 +100,7 @@ Maps (figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the si
         \includegraphics[width=\textwidth]{../img/aau_fc_dnav6_lateral.png}
         \caption{``\gls{AAU} forest 2'' map}
     \end{subfigure}
-    \caption[Forest pointcloud maps -- lateral view]{Lateral view of the two pointcloud maps from \gls{AAU} outdoor forest dataset. In both maps there is a non-flat terrain and number of outliers caused by branches and difficult mapping conditions.}
+    \caption[Forest point cloud maps -- lateral view]{Lateral view of the two point cloud maps from \gls{AAU} outdoor forest dataset. In both maps there is a non-flat terrain and number of outliers caused by branches and difficult mapping conditions.}
     \label{fig:aau_lateral}
 \end{figure}
 

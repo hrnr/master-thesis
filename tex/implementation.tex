@@ -3,7 +3,7 @@
 
 I have implemented the map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) in the \gls{ROS} framework (section~\ref{sec:ros}). This allows the implementation to be used with various readily available \gls{SLAM} algorithms and inter-robot communication solutions.
 
-Pointcloud algorithms are implemented with \gls{PCL} (section~\ref{sec:pcl}). \gls{PCL} is a popular open-source library for manipulating point-cloud data.
+Point cloud algorithms are implemented with \gls{PCL} (section~\ref{sec:pcl}). \gls{PCL} is a popular open-source library for manipulating point-cloud data.
 
 \section{Robot Operating System}
 \label{sec:ros}
@@ -17,7 +17,7 @@ Software in the \gls{ROS} project is organised in a form of community-maintained
 \section{Point Cloud Library}
 \label{sec:pcl}
 
-\gls{PCL} is an open-source library for pointcloud processing. It contains routines for feature estimation, surface reconstruction, registration, nearest neighbour search, model fitting, including \gls{RANSAC} algorithm, and segmentation. The library offers serialisation of pointclouds to its native, but widely supported \texttt{pcd} file format. \Gls{PCL} is supported in \gls{ROS}, with \gls{PCL} pointcloud format being supported for message serialisation into \gls{ROS} messages.
+\gls{PCL} is an open-source library for point cloud processing. It contains routines for feature estimation, surface reconstruction, registration, nearest neighbour search, model fitting, including \gls{RANSAC} algorithm, and segmentation. The library offers serialisation of point clouds to its native, but widely supported \texttt{pcd} file format. \Gls{PCL} is supported in \gls{ROS}, with \gls{PCL} point cloud format being supported for message serialisation into \gls{ROS} messages.
 
 I have used \gls{PCL} to implement the presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) and to read and save \texttt{pcd} files for the command-line tools (section~\ref{sec:commandline-tools}).
 
@@ -26,7 +26,7 @@ I have used \gls{PCL} to implement the presented map-merging algorithm (chapter~
 \section{\texttt{map\_merge\_3d} package}
 \label{sec:ros-package}
 
-The software for this thesis is organised in a \gls{ROS} package \texttt{map\_merge\_3d}. This package contains \gls{ROS} node for online map-merging as well as command-line applications for offline map-merging and visualisation of pointcloud files.
+The software for this thesis is organised in a \gls{ROS} package \texttt{map\_merge\_3d}. This package contains \gls{ROS} node for online map-merging as well as command-line applications for offline map-merging and visualisation of point cloud files.
 
 The \texttt{map\_merge\_3d} package is distributed within \gls{ROS} starting from \gls{ROS} Melodic release. The package documentation is maintained as wiki text available online, a reproduction of the documentation is attached (attachement~\ref{chap:map_merge-wiki}).
 
@@ -54,7 +54,7 @@ Choosing a correct map representation is important to allow interoperability and
 
 Widespread \gls{3D} \gls{SLAM} approaches in \gls{ROS} produce maps as \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which are now de-facto standard for representing \gls{3D} maps in \gls{ROS}. This representation is suitable for the presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}).
 
-Unfortunately there is no standard message format in \gls{ROS} to represent maps as a pose graph of pointclouds, which would allow to implement map-merging on pointcloud pose graph discussed in section~\ref{sec:map-merging-on-pointclouds}, which allows to repair mapping errors.
+Unfortunately there is no standard message format in \gls{ROS} to represent maps as a pose graph of point clouds, which would allow to implement map-merging on point cloud pose graph discussed in section~\ref{sec:map-merging-on-point-clouds}, which allows to repair mapping errors.
 
 The map-merging node therefore uses monolithic maps represented in \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which always encode whole map, to allow the highest degree of interoperability with existing \gls{ROS} packages.
 
@@ -85,10 +85,10 @@ The transformations estimation task uses computationally demanding algorithm (ch
 \subsection{Offline map-merging and visualisation}
 \label{sec:commandline-tools}
 
-The \gls{ROS} package contains also two command-line applications beside the main \gls{ROS} node. The applications work with pointclouds saved in \texttt{pcd} files, a pointcloud file format of the \gls{PCL} library.
+The \gls{ROS} package contains also two command-line applications beside the main \gls{ROS} node. The applications work with point clouds saved in \texttt{pcd} files, a point cloud file format of the \gls{PCL} library.
 
-The first application, \texttt{map\_merge\_tool}, is designed for the offline map-merging. It accepts $n$ pointcloud files and produces a single merged map saved to a file. It uses the same algorithm for map-merging as the \gls{ROS} node. Typical usage might include multi-session mapping of large environment with a single robot and producing a complete map for later robot deployment.
+The first application, \texttt{map\_merge\_tool}, is designed for the offline map-merging. It accepts $n$ point cloud files and produces a single merged map saved to a file. It uses the same algorithm for map-merging as the \gls{ROS} node. Typical usage might include multi-session mapping of large environment with a single robot and producing a complete map for later robot deployment.
 
-The second application, \texttt{registration\_visualisation}, accepts two pointclouds and visualises pair-wise transformation estimation algorithm as described in chapter~\ref{chap:mergingalgorithm}. The tool is mostly controlled by the command-line arguments, but the visualisation window is graphical. Each step of the estimation is visualised in \gls{3D}, user is able to freely navigate the pointclouds or save the visualisation as an image. This application can be used for estimation parameter tuning and learning about the map-merging process.
+The second application, \texttt{registration\_visualisation}, accepts two point clouds and visualises pair-wise transformation estimation algorithm as described in chapter~\ref{chap:mergingalgorithm}. The tool is mostly controlled by the command-line arguments, but the visualisation window is graphical. Each step of the estimation is visualised in \gls{3D}, user is able to freely navigate the point clouds or save the visualisation as an image. This application can be used for estimation parameter tuning and learning about the map-merging process.
 
 % todo screenshot
