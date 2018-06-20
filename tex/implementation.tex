@@ -28,7 +28,7 @@ I have used \gls{PCL} to implement the presented map-merging algorithm (chapter~
 
 The software for this thesis is organised in a \gls{ROS} package \texttt{map\_merge\_3d}. This package contains \gls{ROS} node for online map-merging as well as command-line applications for offline map-merging and visualisation of point cloud files.
 
-The \texttt{map\_merge\_3d} package is distributed within \gls{ROS} starting from \gls{ROS} Melodic release. The package documentation is maintained as wiki text available online, a reproduction of the documentation is attached (attachement~\ref{chap:map_merge-wiki}).
+The \texttt{map\_merge\_3d} package is distributed within \gls{ROS} starting from \gls{ROS} Melodic release. The package documentation is maintained as wiki text available online, a reproduction of the documentation is attached (attachment~\ref{chap:map_merge-wiki}).
 
 Care has been taken to integrate the package with the rest of the \gls{ROS} ecosystem. The package is not tied to any particular package for inter-robot communication (section~\ref{sec:communication}) and it depends on commonly used map representation in \gls{ROS} (section~\ref{sec:map-representation}).
 
@@ -39,9 +39,9 @@ The \gls{ROS} node supports auto-discovery of the robots (section~\ref{sec:confi
 
 The \gls{ROS} node is designed work with any software for inter-robot communication. This architecture allows user to use any kind of communication media and software solution that is available for a given multi-robot system. The package therefore does not provide nor expect any particular communication between robots.
 
-To achieve the loose coupling with communication software, the node expects map topics to be available within local \gls{ROS} graph. User of the package is then expected to setup communication between robots that publishes robot maps within local \gls{ROS} graph. There are several solutions available within \gls{ROS} to achieve this setup.
+To achieve the loose coupling with communication software, the node expects map topics to be available within local \gls{ROS} graph. User of the package is then expected to configure communication between robots that publishes robot maps within local \gls{ROS} graph. There are several solutions available within \gls{ROS} to achieve this setup.
 
-First of all, \gls{ROS} natively supports sending messages between multiple computers connected in the same network. However, the \gls{ROS} master directory listing (broker) service is not distributed and it needs to run on one of those computers. This creates a single point-of-failure that is not acceptable for unreliable communication media.
+First of all, \gls{ROS} natively supports sending messages between multiple computers connected in the same network. However, the \gls{ROS} master directory listing (broker) service is not distributed and it needs to run on one of those computers. This creates a single-point-of-failure that is not acceptable for unreliable communication media.
 
 To achieve reliable multi-robot communication \gls{ROS} Multimaster Special Interest Group was formed with intent to support running multiple \gls{ROS} master broker services. \citet{hernadez2015multi} developed \texttt{multimaster\_fkie} package, that deals with most of the problems of the multi-robot communication. This package can be used together with \texttt{map\_merge\_3d} to run online map-merging for multiple robots.
 
@@ -85,7 +85,7 @@ The transformations estimation task uses computationally demanding algorithm (ch
 \subsection{Offline map-merging and visualisation}
 \label{sec:commandline-tools}
 
-The \gls{ROS} package contains also two command-line applications beside the main \gls{ROS} node. The applications work with point clouds saved in \texttt{pcd} files, a point cloud file format of the \gls{PCL} library.
+The \gls{ROS} package contains also two command-line applications besides the main \gls{ROS} node. The applications work with point clouds saved in \texttt{pcd} files, a point cloud file format of the \gls{PCL} library.
 
 The first application, \texttt{map\_merge\_tool}, is designed for the offline map-merging. It accepts $n$ point cloud files and produces a single merged map saved to a file. It uses the same algorithm for map-merging as the \gls{ROS} node. Typical usage might include multi-session mapping of large environment with a single robot and producing a complete map for later robot deployment.
 

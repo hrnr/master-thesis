@@ -39,25 +39,25 @@ To deal with inaccurate estimates each transformation estimate is evaluated usin
 
 As we are working with possibly large-scale maps, input point clouds may contain millions of points. To reduce computation times it is highly desirable to reduce number of points.
 
-Common technique for reducing resolution of point cloud is voxelisation, which produces a voxel grid. The voxel grid is a regularly spaced, three-dimensional grid (figure~\ref{fig:v1-downsampled}). We can represent the voxel grid as a normal point cloud, with each point representing a voxel of the voxel grid. We don't usually save empty space information, so the grid is sparse.
+Common technique for reducing resolution of point cloud is voxelization, which produces a voxel grid. The voxel grid is a regularly spaced, three-dimensional grid (figure~\ref{fig:v1-downsampled}). We can represent the voxel grid as a normal point cloud, with each point representing a voxel of the voxel grid. We don't usually save empty space information, so the grid is sparse.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/v1-downsampled.png}
-    \caption[Voxelised point cloud map]{Point cloud map voxelised to resolution 0.05 meter per voxel. Notice the regular spacing between points.}
+    \caption[Voxelized point cloud map]{Point cloud map voxelized to resolution 0.05 meter per voxel. Notice the regular spacing between points.}
     \label{fig:v1-downsampled}
 \end{figure}
 
-Algorithm for voxelisation is following. For each voxel (size of the voxel is determined by the resolution) we take all points contained in the voxel and approximate them with their centroid.
+Algorithm for voxelization is following. For each voxel (size of the voxel is determined by the resolution) we take all points contained in the voxel and approximate them with their centroid.
 
 As discussed in section~\ref{chap:analysis}, in multi-robot system the down-sampling is typically performed by \gls{SLAM} algorithm running on each robot before publishing the map, thus saving bandwidth of the communication. However in typical situation we might want to reduce the resolution even further for the purpose of transformation estimation to reduce the computation time (for example each robot might publish a map with typical resolution $0.05$ meter per voxel, but for estimation we work with resolution just $0.1$ meter per voxel).
 
-We show is the section~\ref{chap:evaluation} that our algorithm can reliable estimate the transformation when using $0.1$ meter per voxel resolution.
+We show is the section~\ref{chap:evaluation} that our algorithm can reliably estimate the transformation when using $0.1$ meter per voxel resolution.
 
 \subsection{Removing outliers}
 \label{sec:outlier-removal}
 
-Although the voxelisation can deal with some of the noise and inaccuracies, during experiments it has been beneficial to perform further outliers filtering to remove far laying points. Far-laying outliers may end-up being detected as keypoints, but they are usually not matched. Reducing the number of detected keypoints speeds up the later phases of estimation.
+Although the voxelization can deal with some of the noise and inaccuracies, during experiments it has been beneficial to perform further outliers filtering to remove far laying points. Far-laying outliers may end-up being detected as keypoints, but they are usually not matched. Reducing the number of detected keypoints speeds up the later phases of estimation.
 
 I have selected to use a simple radius-based outlier removal. This method searches for neighbours of each point within certain radius and removes points that have below threshold neighbours count.
 
@@ -73,7 +73,7 @@ The last preprocessing step is to estimate surface normals (figure~\ref{fig:v1-n
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/v1-normals.png}
-    \caption[Point cloud map with estimated surface normals]{Voxelised point cloud map with estimated surface normals (red). Only each fifth normal is visualised.}
+    \caption[Point cloud map with estimated surface normals]{Voxelized point cloud map with estimated surface normals (red). Only each fifth normal is visualised.}
     \label{fig:v1-normals}
 \end{figure}
 
@@ -147,7 +147,7 @@ The algorithm combines random matching of $k$-nearest descriptors and \gls{RANSA
 
 % TODO describe why wanted the new algorithm
 
-The algorithm was originally developed to work with \gls{FPFH} descriptors, that are fast to compute, but less descriptive that \gls{PFH}. With \gls{PFH} and \gls{PFHRGB} descriptors \gls{SAC-IA} sometimes yields sub-optimal transformation, even when there are good potential matches available in the descriptors sets, because it selects matching candidates randomly instead of preferring better matches. This lets us to development a new matching algorithm (algorithm~\ref{alg:cross-match}). This algorithm is deterministic to avoid problems caused by the randomness in \gls{SAC-IA}.
+The algorithm was originally developed to work with \gls{FPFH} descriptors, that are fast to compute, but less descriptive that \gls{PFH}. With \gls{PFH} and \gls{PFHRGB} descriptors \gls{SAC-IA} sometimes yields sub-optimal transformation, even when there are good potential matches available in the descriptors sets, because it selects matching candidates randomly instead of preferring better matches. This motivated me to develop a new matching algorithm (algorithm~\ref{alg:cross-match}). This algorithm is deterministic to avoid problems caused by the randomness in \gls{SAC-IA}.
 
 The algorithm is based on the idea of reciprocal match validation. When we are considering match $d_i \rightarrow d_j$, we try to match also $d_j \rightarrow d_i$. We consider all $k$-nearest neighbours for matching to deal with potential low descriptiveness and then select the best match with reciprocal match validation. We do not include \gls{RANSAC} in the scheme, output of the algorithm are just matched pairs of descriptors.
 
@@ -184,7 +184,7 @@ Both \gls{SAC-IA} and our reciprocal matching algorithm need to quickly find $k$
 
 \gls{RANSAC} transformation estimate is always based on the minimum number of points required to estimate the model (rigid transformation). To get better estimate for all inliers pairs we recompute the transformation estimate using least-squares on inlier pairs. We use \gls{SVD} to compute the new estimate, the technique is described by~\citet{golub1970svd}. Another widely used technique in Computer Vision is to use a non-linear least squares approach, such as Levenberg-Marquardt algorithm described by~\citet{more1978levmarq}, to optimize the transformation estimate re-projection error considering all inliers. Because we refine the transformation further with \gls{ICP}, there hasn't been any observed difference between using Levenberg-Marquardt or \gls{SVD}-based technique. The implementation uses \gls{SVD} to refine the transformation on inliers.
 
-So far we have used only detected keypoints and descriptors computed around the keypoints to estimate the transformation. To refine the transformation using all the points in the point cloud we use \gls{ICP} algorithm introduced by~\citet{besl1992icp}. \gls{ICP} algorithm tries to minimize euclidean error distance between estimated corresponding points (figure~\ref{fig:v1-refined}). The estimated transformation from either \gls{SAC-IA} or the reciprocal matching scheme presented in section~\ref{sec:matching} is used as an initial guess for \gls{ICP}.
+So far we have used only detected keypoints and descriptors computed around the keypoints to estimate the transformation. To refine the transformation using all the points in the point cloud we use \gls{ICP} algorithm introduced by~\citet{besl1992icp}. \gls{ICP} algorithm tries to minimize Euclidean error distance between estimated corresponding points (figure~\ref{fig:v1-refined}). The estimated transformation from either \gls{SAC-IA} or the reciprocal matching scheme presented in section~\ref{sec:matching} is used as an initial guess for \gls{ICP}.
 
 \begin{figure}
     \centering
@@ -195,7 +195,7 @@ So far we have used only detected keypoints and descriptors computed around the 
 
 The initial guess is usually close to the final transformation estimated by \gls{ICP}, especially when using the reciprocal matching algorithm~\ref{alg:cross-match} and \gls{RANSAC} for the estimation. Even though we use all the points with \gls{ICP}, because of the proximity of the guess to the final transformation only a couple of iterations is needed for \gls{ICP} to converge, so the refinement does not impact overall performance significantly.
 
-Since the introduction of \gls{ICP} many \gls{ICP}-derived algorithms have been introduced to overcome issues associated with \gls{ICP}, especially to avoid local minima. A comprehensive review is given by~\citet{pomerleau2015reviewregistration}. Because our initial transformation is usually very close to the final transformation, the original \gls{ICP} algorithm performed well for our usecase during experiments.
+Since the introduction of \gls{ICP} many \gls{ICP}-derived algorithms have been introduced to overcome issues associated with \gls{ICP}, especially to avoid local minima. A comprehensive review is given by~\citet{pomerleau2015reviewregistration}. Because our initial transformation is usually very close to the final transformation, the original \gls{ICP} algorithm performed well for our use case during experiments.
 
 \gls{ICP} refinement is the last step in estimating pairwise transformation. We use the output of the \gls{ICP} as the final estimated transformation between two maps.
 
@@ -225,7 +225,7 @@ Map-merging problem for two maps is discussed in section~\ref{sec:estimate-pair-
     A graph whose nodes correspond to robots' maps and whose edges represent pair-wise transformation estimates between the maps.
 \end{defn}
 
-To construct a map-merging graph for $n$ maps we need to estimate $\bigO(n^2)$ pair-wise transformations. Depending on the environment and maps relations map-merging graph might be dense of sparse, but typically will be missing some the edges, because some of the transformations could not be estimated, or could be estimated only with low confidence, see section~\ref{sec:transform-evaluation}.
+To construct a map-merging graph for $n$ maps we need to estimate $\bigO(n^2)$ pair-wise transformations. Depending on the environment and maps relations map-merging graph might be dense or sparse, but typically will be missing some the edges, because some of the transformations could not be estimated, or could be estimated only with low confidence, see section~\ref{sec:transform-evaluation}.
 
 Once we have constructed the map-merging graph, the global merged map can be computed by finding a spatial configuration of the nodes (maps) that is consistent with the transformations represented by the edges. In other words we want to find a transformation for each map from the global reference frame to the particular map consistent with the pairwise transformations.
 
@@ -233,7 +233,7 @@ Once we have constructed the map-merging graph, the global merged map can be com
 
 The idea of map-merging graph is similar to the idea of the pose graph used in graph-based \gls{SLAM}. Graph-based \gls{SLAM} uses a so-called graph-based formulation of the \gls{SLAM} problem. ``Solving a graph-based \gls{SLAM} problem involves to construct a graph whose nodes represent robot poses or landmarks and in which an edge between two nodes encodes a sensor measurement that constrains the connected poses.''~\citep{grisetti2010tutorial}.
 
-In the graph-based \gls{SLAM} graph we have poses at different points in time, in the map-merging graph we have maps with origins in unknown positions. In the map-merging graph we associate our pairwise transformations estimates with edges and in the \gls{SLAM} graph we use usually direct sensor measurements. In both graphs we want to find the spatial configuration of the nodes of the graph that is the most consistent with constrains represented by the edges. If we are able to construct the map-merging graph (for which we need to do $\bigO(n^2)$ pair-wise transformation estimates), we can apply the graph-based \gls{SLAM} techniques on the map-merging graph to find the spatial configuration of the nodes that is consistent with our pair-wise estimates. Typically Gauss-Newton, described by~\citet{fletcher2013practical}, or Levenberg-Marquardt algorithm, described by~\citet{more1978levmarq}, are used to optimize the pose graph in graph-based \gls{SLAM}.
+In the graph-based \gls{SLAM} graph we have poses at different points in time, in the map-merging graph we have maps with origins in unknown positions. In the map-merging graph we associate our pairwise transformations estimates with edges and in the \gls{SLAM} graph we use usually direct sensor measurements. In both graphs we want to find the spatial configuration of the nodes of the graph that is the most consistent with constraints represented by the edges. If we are able to construct the map-merging graph (for which we need to do $\bigO(n^2)$ pair-wise transformation estimates), we can apply the graph-based \gls{SLAM} techniques on the map-merging graph to find the spatial configuration of the nodes that is consistent with our pair-wise estimates. Typically Gauss-Newton, described by~\citet{fletcher2013practical}, or Levenberg-Marquardt algorithm, described by~\citet{more1978levmarq}, are used to optimize the pose graph in graph-based \gls{SLAM}.
 
 To support graph-based \gls{SLAM} approaches, there are libraries specifically focusing on graph optimization under constraints. Well-established examples include \texttt{G2O}, developed by~\citet{kummerle2011g2o}, and \texttt{TORO}, developed by~\citet{grisetti2007toro}. These libraries can be leveraged to solve the map-merging problem for $n$ maps.
 

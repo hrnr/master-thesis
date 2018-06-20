@@ -3,14 +3,14 @@
 
 The presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) has been evaluated on number of demanding robotics datasets. The datasets include data captured by small aerial vehicles (sections~\ref{sec:euroc-dataset}, \ref{sec:aau-dataset}) as well as ground-based robots. The datasets include both widely used benchmark datasets in robotics research as well as data recorded by the author.
 
-Sensors used include stereo rig cameras, active \gls{RGB-D} cameras and laser range finders? This variety of sensors and robots covers many typical multi-robot deployments. All datasets has been captured under real-word conditions, none of them uses simulated data.
+Sensors used include stereo rig cameras and active \gls{RGB-D} cameras, which are popular visual sensors in the mobile robotics. This variety of sensors and robots covers many typical multi-robot deployments. All datasets has been captured under real-world conditions, none of them uses simulated data.
 
 The evaluation focuses on properties of the presented pair-wise transformation estimation algorithm for point clouds (section~\ref{sec:estimate-pair-wise}), which is the core algorithm of the implemented map-merging \gls{ROS} node (section~\ref{sec:ros-package}). Accuracy of the estimation algorithm is critical for the overall map-merging process.
 
 \section{The EuRoC micro aerial vehicle dataset collection}
 \label{sec:euroc-dataset}
 
-The publicly available datasets introduced by~\citet{Burri2016} was collected on-board a micro aerial vehicle (figure~\ref{fig:euroc_platform}) equipped with stereo camera rig and \gls{IMU}. Calibration data for the cameras and ground-truth data are provided with the dataset. This dataset has been used extensively by researches for evaluation of the visual \gls{SLAM} algorithms and visual odometry approaches.
+The publicly available datasets introduced by~\citet{Burri2016} was collected onboard a micro aerial vehicle (figure~\ref{fig:euroc_platform}) equipped with stereo camera rig and \gls{IMU}. Calibration data for the cameras and ground-truth data are provided with the dataset. This dataset has been used extensively by researches for evaluation of the visual \gls{SLAM} algorithms and visual odometry approaches.
 
 \begin{figure}
     \centering
@@ -45,7 +45,7 @@ Based on evaluations of \gls{SLAM} methods in \gls{ROS} done by~\citet{silva2017
 
 The odometry for mapping was provided from stereo camera data, using a visual odometry approach, the available \gls{IMU} data were not used. For the $01$ sessions I have used a native visual odometry approach of RTAB-Map. For the $02$ sessions I have used visual odometry approach of {ORB-SLAM2}, introduced by~\citet{mur2017orb}, because the data exhibit more dynamic motions, which lead to frequent loss on visual odometry using the first approach. {ORB-SLAM2} visual odometry exhibited better robustness for this data. In both cases loop-closure approach of~\citet{labbe2014online} has been used.
 
-The maps has been voxelised to the resolution of $0.05$ meter per voxel, which yields suitable map sizes for map exchange in a multi-robot system.
+The maps has been voxelized to the resolution of $0.05$ meter per voxel, which yields suitable map sizes for map exchange in a multi-robot system.
 
 Using a different \gls{SLAM} pipelines for each of the maps contributed to introducing different mapping errors and artefacts, which makes map-merging of such maps more difficult.
 
@@ -109,12 +109,12 @@ Maps (figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the si
 
 \section{Accuracy}
 
-For both the aerial datasets the map-merging is able to correctly merge the maps. The euclidean error scores, according to section~\ref{sec:transform-evaluation}, are small across the datasets (figure~\ref{fig:plot:euc_dist}). There are larger errors for the ``AAU forest'' and ``Machine Hall'' datasets caused by the outliers and mapping errors in those datasets, as those datasets has been recorded in tough conditions. Considering the artefacts in the datasets the alignment almost perfect and would allow precise coordination of the robots.
+For both the aerial datasets the map-merging is able to correctly merge the maps. The Euclidean error scores, according to section~\ref{sec:transform-evaluation}, are small across the datasets (figure~\ref{fig:plot:euc_dist}). There are larger errors for the ``AAU forest'' and ``Machine Hall'' datasets caused by the outliers and mapping errors in those datasets, as those datasets has been recorded in tough conditions. Considering the artefacts in the datasets the alignment almost perfect and would allow precise coordination of the robots.
 
 \begin{figure}
   \centering
   \input{../img/plots/euc_dist}
-  \caption[Euclidean error scores for aerial datasets]{Euclidean error scores (sum of euclidean distances for corresponding points) across the datasets. A threshold of $1.0$ has been used to cut-off fair laying point in non-overlapping areas, see section~\ref{sec:transform-evaluation} for details. The map-merging run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints. The first two scores are for initial estimation using descriptors matching, using my reciprocal matching scheme and \gls{SAC-IA} algorithm respectively (section~\ref{sec:matching}). The last score is the euclidean error after final refining with \gls{ICP} (section~\ref{sec:final-estimation}), the initial estimate from the reciprocal matching has been used for the \gls{ICP} refinement.}
+  \caption[Euclidean error scores for aerial datasets]{Euclidean error scores (sum of Euclidean distances for corresponding points) across the datasets. A threshold of $1.0$ has been used to cut-off fair laying point in non-overlapping areas, see section~\ref{sec:transform-evaluation} for details. The map-merging run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints. The first two scores are for initial estimation using descriptors matching, using my reciprocal matching scheme and \gls{SAC-IA} algorithm respectively (section~\ref{sec:matching}). The last score is the Euclidean error after final refining with \gls{ICP} (section~\ref{sec:final-estimation}), the initial estimate from the reciprocal matching has been used for the \gls{ICP} refinement.}
   \label{fig:plot:euc_dist}
 \end{figure}
 
@@ -133,7 +133,7 @@ Important measure of estimation robustness is the number of inliers (figure~\ref
   \label{fig:plot:inliers}
 \end{figure}
 
-The inlier ratio to number of matches is quite low, even for \gls{PFH} descriptors (figure~\ref{fig:plot:inliers}), the similar ratios has been observed for all the descriptors. This is partially caused by the matching scheme designed to accept also more distant matches to improve inlier ratio for less descriptive descriptors as discussed din section~\ref{sec:matching}. The same behaviour causes number of matches to be relatively high compared to number of keypoints (figure~\ref{fig:plot:inliers}).
+The inlier ratio to number of matches is quite low, even for \gls{PFH} descriptors (figure~\ref{fig:plot:inliers}), the similar ratios has been observed for all the descriptors. This is partially caused by the matching scheme designed to accept also more distant matches to improve inlier ratio for less descriptive descriptors as discussed in section~\ref{sec:matching}. The same behaviour causes number of matches to be relatively high compared to number of keypoints (figure~\ref{fig:plot:inliers}).
 
 The ``AAU forest'' and ``Vicon Room 2'' datasets have low numbers of inliers, which might impact robustness in such environments. The ``AAU forest'' is a relatively small, difficult environment for mapping containing noise and mapping errors. Only a few regions in maps are suitable for producing reliable matching points, which leads to small number of inliers.
 
@@ -159,7 +159,7 @@ Euclidean error distances (figure~\ref{fig:plot:desc_dist}) mostly reflects numb
 \begin{figure}
   \centering
   \input{../img/plots/desc_dist}
-  \caption[Euclidean error scores per descriptors]{Euclidean error scores (sum of euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similarly to figure~\ref{fig:plot:euc_dist} the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using initial estimate from the reciprocal matching algorithm.}
+  \caption[Euclidean error scores per descriptors]{Euclidean error scores (sum of Euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similarly to figure~\ref{fig:plot:euc_dist} the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using initial estimate from the reciprocal matching algorithm.}
   \label{fig:plot:desc_dist}
 \end{figure}
 
