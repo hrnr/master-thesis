@@ -1,16 +1,16 @@
 \chapter{Evaluation}
 \label{chap:evaluation}
 
-The presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) has been evaluated on number of demanding robotics datasets. The datasets include data captured by small aerial vehicles (sections~\ref{sec:euroc-dataset}, \ref{sec:aau-dataset}) as well as ground-based robots. The datasets include both widely used benchmark datasets in robotics research as well as data recorded by the author.
+The presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) has been evaluated on a number of demanding robotics datasets. The datasets include data captured by small aerial vehicles (Sections~\ref{sec:euroc-dataset}, \ref{sec:aau-dataset}) as well as ground-based robots. The datasets include both widely used benchmark datasets in robotics research as well as data recorded by the author.
 
-Sensors used include stereo rig cameras and active \gls{RGB-D} cameras, which are popular visual sensors in the mobile robotics. This variety of sensors and robots covers many typical multi-robot deployments. All datasets has been captured under real-world conditions, none of them uses simulated data.
+Sensors used include stereo rig cameras and active \gls{RGB-D} cameras, which are popular visual sensors in the mobile robotics. This variety of sensors and robots covers many typical multi-robot deployments. All datasets have been captured under real-world conditions, none of them uses simulated data.
 
-The evaluation focuses on properties of the presented pair-wise transformation estimation algorithm for point clouds (section~\ref{sec:estimate-pair-wise}), which is the core algorithm of the implemented map-merging \gls{ROS} node (section~\ref{sec:ros-package}). Accuracy of the estimation algorithm is critical for the overall map-merging process.
+The evaluation focuses on properties of the presented pair-wise transformation estimation algorithm for point clouds (section~\ref{sec:estimate-pair-wise}), which is the core algorithm of the implemented map-merging \gls{ROS} node (section~\ref{sec:ros-package}). The accuracy of the estimation algorithm is critical for the overall map-merging process.
 
 \section{The EuRoC micro aerial vehicle dataset collection}
 \label{sec:euroc-dataset}
 
-The publicly available datasets introduced by~\citet{Burri2016} was collected onboard a micro aerial vehicle (figure~\ref{fig:euroc_platform}) equipped with stereo camera rig and \gls{IMU}. Calibration data for the cameras and ground-truth data are provided with the dataset. This dataset has been used extensively by researches for evaluation of the visual \gls{SLAM} algorithms and visual odometry approaches.
+The publicly available datasets introduced by~\citet{Burri2016} was collected onboard a micro aerial vehicle (Figure~\ref{fig:euroc_platform}) equipped with a stereo camera rig and an \gls{IMU}. Calibration data for the cameras and ground-truth data are provided with the dataset. This dataset has been used extensively by researches for evaluation of the visual \gls{SLAM} algorithms and visual odometry approaches.
 
 \begin{figure}
     \centering
@@ -21,9 +21,9 @@ The publicly available datasets introduced by~\citet{Burri2016} was collected on
 
 \subsection{Dataset description}
 
-The cameras produce a WVGA monochrome (greyscale) images at $20$ frames per second. Cameras have a global shutter. The automatic exposure control is independent for both cameras. According to the published errata~\citep{Burri2016}, this ``resulted in different shutter times and in turn in different image brightnesses, rendering stereo matching and feature tracking more challenging''.
+The cameras produce a WVGA monochrome (greyscale) images at 20 frames per second. Cameras have a global shutter. The automatic exposure control is independent for both cameras. According to the published errata~\citep{Burri2016}, this ``resulted in different shutter times and in turn in different image brightnesses, rendering stereo matching and feature tracking more challenging''.
 
-The dataset contains $11$ mapping sessions in $3$ different environments (``Machine Hall'', ``Vicon Room 1'', ``Vicon Room 2''). Each mapping session is available in a single \gls{ROS} bag file. First $5$ sessions were captured in ETH machine hall (figure~\ref{fig:eth-machine-hall}), a fairly large industrial environment featuring piping, reservoirs and many different types of surfaces. Second and third batch of datasets were captured in a smaller furnished rectangular room. For the second and the third batch the furnishing was different.
+The dataset contains 11 mapping sessions in 3 different environments (``Machine Hall'', ``Vicon Room 1'', ``Vicon Room 2''). Each mapping session is available in a single \gls{ROS} bag file. First 5 sessions were captured in ETH machine hall (figure~\ref{fig:eth-machine-hall}), a fairly large industrial environment featuring piping, reservoirs and many different types of surfaces. The second and the third batch of datasets were captured in a smaller furnished rectangular room. For the second and the third batch, the furnishing was different.
 
 \begin{figure}
     \centering
@@ -35,19 +35,19 @@ The dataset contains $11$ mapping sessions in $3$ different environments (``Mach
 \subsection{Maps generation}
 \label{sec:euroc-generating-maps}
 
-The dataset is intended for evaluating \gls{SLAM} algorithms, for our purposes it was necessary to process the data with a \gls{SLAM} algorithm to create a point cloud maps.
+The dataset is intended for evaluating \gls{SLAM} algorithms, for our purposes, it was necessary to process the data with a \gls{SLAM} algorithm to create a point cloud maps.
 
 First, I have used the provided calibration sequence and I have created a calibration data for \gls{ROS} using the \texttt{camera\_calibration} tool available with \gls{ROS}.
 
-Second, for each environment I created a pair of maps using the $01$ and $02$ mapping sessions from the datasets, which were used further for the evaluation of the map-merging (figures~\ref{fig:euroc_mh_02}, \ref{fig:v1-greyscale}, \ref{fig:euroc_v2_02}).
+Second, for each environment, I created a pair of maps using the ``01'' and ``02'' mapping sessions from the datasets, which were used further for the evaluation of the map-merging (Figures~\ref{fig:euroc_mh_02}, \ref{fig:v1-greyscale}, \ref{fig:euroc_v2_02}).
 
-Based on evaluations of \gls{SLAM} methods in \gls{ROS} done by~\citet{silva2017experimental} and \citet{ibragimov2017comparison}, I used a RTAB-Map \gls{SLAM}, developed by~\citet{labbe2014online}, to create the maps. The RTAB-Map can work with both stereo cameras and \gls{RGB-D} sensors and produces dense maps of good quality, as noted by both~\citet{silva2017experimental,ibragimov2017comparison}. ``RTAB-Map computed coherent SLAM solutions on all evaluated datasets and thus can be considered an efficient solution for 3D mapping scenarios'', summarise the results of RTAB-Map \citet{silva2017experimental}.
+Based on evaluations of \gls{SLAM} methods in \gls{ROS} done by~\citet{silva2017experimental} and \citet{ibragimov2017comparison}, I used RTAB-Map \gls{SLAM}, developed by~\citet{labbe2014online}, to create the maps. RTAB-Map can work with both stereo cameras and \gls{RGB-D} sensors and produces dense maps of good quality, as noted by both~\citet{silva2017experimental,ibragimov2017comparison}. ``RTAB-Map computed coherent SLAM solutions on all evaluated datasets and thus can be considered an efficient solution for 3D mapping scenarios'', summarise the results of RTAB-Map \citet{silva2017experimental}.
 
-The odometry for mapping was provided from stereo camera data, using a visual odometry approach, the available \gls{IMU} data were not used. For the $01$ sessions I have used a native visual odometry approach of RTAB-Map. For the $02$ sessions I have used visual odometry approach of {ORB-SLAM2}, introduced by~\citet{mur2017orb}, because the data exhibit more dynamic motions, which lead to frequent loss on visual odometry using the first approach. {ORB-SLAM2} visual odometry exhibited better robustness for this data. In both cases loop-closure approach of~\citet{labbe2014online} has been used.
+The odometry for mapping was provided from stereo camera data, using a visual odometry approach, the available \gls{IMU} data were not used. For the ``01'' sessions I have used a native visual odometry approach of RTAB-Map. For the ``02'' sessions I have used visual odometry approach of {ORB-SLAM2}, introduced by~\citet{mur2017orb}, because the data exhibit more dynamic motions, which lead to a frequent loss on visual odometry using the first approach. {ORB-SLAM2} visual odometry exhibited better robustness for this data. In both cases, a loop-closure approach of~\citet{labbe2014online} has been used.
 
-The maps has been voxelized to the resolution of $0.05$ meter per voxel, which yields suitable map sizes for map exchange in a multi-robot system.
+The maps have been voxelized to the resolution of $0.05$ meters per voxel, which yields suitable map sizes for map exchange in a multi-robot system.
 
-Using a different \gls{SLAM} pipelines for each of the maps contributed to introducing different mapping errors and artefacts, which makes map-merging of such maps more difficult.
+Using a different \gls{SLAM} pipeline for each of the maps contributed to introducing different mapping errors and artefacts, which makes map-merging of such maps more difficult.
 
 \begin{figure}
     \centering
@@ -68,9 +68,9 @@ Using a different \gls{SLAM} pipelines for each of the maps contributed to intro
 
 The dataset recorded at \acrfull{AAU} on-board a micro aerial vehicle in an outdoor forest environment. The vehicle was equipped with a stereo camera rig and \gls{IMU}. The cameras produce greyscale images.
 
-This dataset contains two mapping sessions. The environment consists or medium-sized trees, the ground is covered with leaves. The lighting conditions are challenging as there are areas of direct sunlight as well as areas in the shade. The lighting conditions are similar in the both sessions, as the sessions were captured in the similar time of day. This setup causes difficult conditions for stereo matching and pose estimation, introducing mapping errors into the maps, which in turn make the map-merging a challenging task.
+This dataset contains two mapping sessions. The environment consists or medium-sized trees, the ground is covered with leaves. The lighting conditions are challenging as there are areas of direct sunlight as well as areas in the shade. The lighting conditions are similar in both sessions, as the sessions were captured in the similar time of day. This setup causes difficult conditions for the stereo matching and the pose estimation, introducing mapping errors into the maps, which in turn make the map-merging a challenging task.
 
-Maps (figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the similar manner as described in section~\ref{sec:euroc-generating-maps}. Mapping has been done with RTAB-Map \gls{SLAM}~\citep{labbe2014online} using a its native visual odometry approach.
+Maps (Figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the similar manner as described in Section~\ref{sec:euroc-generating-maps}. Mapping has been done with RTAB-Map \gls{SLAM}~\citep{labbe2014online} using its native visual odometry approach.
 
 % todo atribution
 
@@ -109,7 +109,7 @@ Maps (figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the si
 
 \section{Accuracy}
 
-For both the aerial datasets the map-merging is able to correctly merge the maps. The Euclidean error scores, according to section~\ref{sec:transform-evaluation}, are small across the datasets (figure~\ref{fig:plot:euc_dist}). There are larger errors for the ``AAU forest'' and ``Machine Hall'' datasets caused by the outliers and mapping errors in those datasets, as those datasets has been recorded in tough conditions. Considering the artefacts in the datasets the alignment almost perfect and would allow precise coordination of the robots.
+For both the aerial datasets, the map-merging is able to correctly merge the maps. The Euclidean error scores, according to Section~\ref{sec:transform-evaluation}, are small across the datasets (figure~\ref{fig:plot:euc_dist}). There are larger errors for the ``AAU forest'' and ``Machine Hall'' datasets caused by the outliers and mapping errors in those datasets, as those datasets have been recorded in tough conditions. Considering the artefacts in the datasets the alignment almost perfect and would allow precise coordination of the robots.
 
 \begin{figure}
   \centering
@@ -120,11 +120,11 @@ For both the aerial datasets the map-merging is able to correctly merge the maps
 
 Both ``Vicon Room'' datasets show very small Euclidean error, well beyond the size of one voxel ($0.05$ m).
 
-The Euclidean error for the initial estimate is significantly lower for the presented reciprocal matching method (section~\ref{sec:matching}). For the \gls{SAC-IA} algorithm the error is higher because the randomness used in the algorithm introduces additional errors in case of well-performing \gls{PFH} descriptors. The initial estimate produced by the presented matching method is close to the final estimate refined with \gls{ICP}. The \gls{ICP} refinement is then very fast without negative impact on the overall time of the map-merging algorithm (figure~\ref{fig:plot:perf}).
+The Euclidean error for the initial estimate is significantly lower for the presented reciprocal matching method (section~\ref{sec:matching}). For the \gls{SAC-IA} algorithm, the error is higher because the randomness used in the algorithm introduces additional errors in case of well-performing \gls{PFH} descriptors. The initial estimate produced by the presented matching method is close to the final estimate refined with \gls{ICP}. The \gls{ICP} refinement is then very fast without negative impact on the overall time of the map-merging algorithm (figure~\ref{fig:plot:perf}).
 
 \section{Estimation robustness}
 
-Important measure of estimation robustness is the number of inliers (figure~\ref{fig:plot:inliers}) in the \gls{RANSAC} estimate (section~\ref{sec:transform-evaluation}). Inliers are the points which are ultimately used for computing transformation estimate. Estimates based on small number of inliers might be severely affected by the noise. On the other hand estimates based on large number of inliers, especially with high inliers ratio to all points, are supposed to be reasonably confident in typical applications.
+An important measure of estimation robustness is the number of inliers (figure~\ref{fig:plot:inliers}) in the \gls{RANSAC} estimate (section~\ref{sec:transform-evaluation}). Inliers are the points which are ultimately used for computing transformation estimate. Estimates based on a small number of inliers might be severely affected by the noise. On the other hand, estimates based on a large number of inliers, especially with the high inliers ratio to all points, are supposed to be reasonably confident in typical applications.
 
 \begin{figure}
   \centering
@@ -133,17 +133,17 @@ Important measure of estimation robustness is the number of inliers (figure~\ref
   \label{fig:plot:inliers}
 \end{figure}
 
-The inlier ratio to number of matches is quite low, even for \gls{PFH} descriptors (figure~\ref{fig:plot:inliers}), the similar ratios has been observed for all the descriptors. This is partially caused by the matching scheme designed to accept also more distant matches to improve inlier ratio for less descriptive descriptors as discussed in section~\ref{sec:matching}. The same behaviour causes number of matches to be relatively high compared to number of keypoints (figure~\ref{fig:plot:inliers}).
+The inlier ratio (the number of matches to the number of inliers) is quite low, even for \gls{PFH} descriptors (figure~\ref{fig:plot:inliers}), the similar ratios have been observed for all the descriptors. This is partially caused by the matching scheme designed to accept also more distant matches to improve inlier ratio for less descriptive descriptors as discussed in Section~\ref{sec:matching}. The same behaviour causes the number of matches to be relatively high compared to the number of keypoints (Figure~\ref{fig:plot:inliers}).
 
-The ``AAU forest'' and ``Vicon Room 2'' datasets have low numbers of inliers, which might impact robustness in such environments. The ``AAU forest'' is a relatively small, difficult environment for mapping containing noise and mapping errors. Only a few regions in maps are suitable for producing reliable matching points, which leads to small number of inliers.
+The ``AAU forest'' and ``Vicon Room 2'' datasets have low numbers of inliers, which might impact robustness in such environments. The ``AAU forest'' is a relatively small, difficult environment for mapping containing noise and mapping errors. Only a few regions in maps are suitable for producing reliable matching points, which leads to the small number of inliers.
 
-For the ``Vicon Room 2'' dataset colour-based descriptors exhibited generally better performance (figure~\ref{fig:plot:desc_inliers}) allow robust estimation for this dataset. The ``Vicon Room 2'' maps also contain noise caused by the dynamic motion of the aerial vehicle.
+For the ``Vicon Room 2'' dataset colour-based descriptors exhibited generally better performance (Figure~\ref{fig:plot:desc_inliers}) allow robust estimation for this dataset. The ``Vicon Room 2'' maps also contain noise caused by the dynamic motion of the aerial vehicle.
 
-Interestingly in both cases with limited number of inliers, the map-merging algorithm has been able to produce an accurate merge (figure~\ref{fig:plot:euc_dist}), even before \gls{ICP} refining. The inliers proved to be the correct matches.
+Interestingly in both cases with a limited number of inliers, the map-merging algorithm has been able to produce an accurate merge (Figure~\ref{fig:plot:euc_dist}), even before \gls{ICP} refining. The inliers proved to be the correct matches.
 
 \section{Descriptors}
 
-As already noted in the previous section, the performance of the descriptors varies significantly in some cases (figure~\ref{fig:plot:desc_inliers}). The \gls{PFHRGB} descriptors exhibited the highest number of inliers across the datasets (figure~\ref{fig:plot:desc_inliers}). The \gls{SHOT} descriptors with colour also exhibited decent amount of inliers, especially considering the fast processing speed (section~\ref{sec:runtime-perf}).
+As already noted in the previous section, the performance of the descriptors varies significantly in some cases (figure~\ref{fig:plot:desc_inliers}). The \gls{PFHRGB} descriptors exhibited the highest number of inliers across the datasets (figure~\ref{fig:plot:desc_inliers}). The \gls{SHOT} descriptors with colour also exhibited a decent amount of inliers, especially considering the fast processing speed (section~\ref{sec:runtime-perf}).
 
 \begin{figure}
   \centering
@@ -152,9 +152,9 @@ As already noted in the previous section, the performance of the descriptors var
   \label{fig:plot:desc_inliers}
 \end{figure}
 
-The lowest number of inliers have been produced by \gls{SC3D} descriptors. Moreover the \gls{PCL} implementation of \gls{SC3D} crashed in two instances. Together with \gls{RSD} descriptors, which has not been able to produce any inliers and are not shown in the plots, the \gls{SC3D} may not be suitable for map-merging in the evaluated setup.
+The lowest number of inliers have been produced by \gls{SC3D} descriptors. Moreover, the \gls{PCL} implementation of \gls{SC3D} crashed in two instances. Together with \gls{RSD} descriptors, which has not been able to produce any inliers and are not shown in the plots, the \gls{SC3D} may not be suitable for map-merging in the evaluated setup.
 
-Euclidean error distances (figure~\ref{fig:plot:desc_dist}) mostly reflects number of inliers for respective descriptors, with \gls{PFHRGB} descriptors generally providing the best initial transformation. With one exception, the \gls{ICP} refining was able to produce high-quality alignment for all descriptors with small error differences, neglecting the differences between initial alignments for different descriptors. For the \gls{FPFH} descriptors the initial estimate in ``Machine Hall'' dataset has significantly higher error and the \gls{ICP} refining stuck in the local extreme.
+Euclidean error distances (figure~\ref{fig:plot:desc_dist}) mostly reflects the number of inliers for respective descriptors, with \gls{PFHRGB} descriptors generally providing the best initial transformation. With one exception, the \gls{ICP} refining was able to produce high-quality alignment for all descriptors with small error differences, neglecting the differences between initial alignments for different descriptors. For the \gls{FPFH} descriptors, the initial estimate in ``Machine Hall'' dataset has a significantly higher error and the \gls{ICP} refining stuck in the local extreme.
 
 \begin{figure}
   \centering
@@ -166,7 +166,7 @@ Euclidean error distances (figure~\ref{fig:plot:desc_dist}) mostly reflects numb
 \section{Runtime performance}
 \label{sec:runtime-perf}
 
-Although the runtime performance was not a primary concern of the presented algorithm, it is interesting to take a look on the processing time. In the default configuration (figure~\ref{fig:plot:perf}), there are order of magnitude differences between algorithm steps as presented in section~\ref{sec:estimate-pair-wise}. Most of the processing time is taken by the \gls{SIFT} keypoints detection and computation of \gls{PFH} descriptors.
+Although the runtime performance was not a primary concern of the presented algorithm, it is interesting to take a look at the processing time. In the default configuration (figure~\ref{fig:plot:perf}), there are orders of magnitude differences between algorithm steps as presented in Section~\ref{sec:estimate-pair-wise}. Most of the processing time is taken by the \gls{SIFT} keypoints detection and computation of \gls{PFH} descriptors.
 
 \begin{figure}
   \centering
@@ -175,9 +175,9 @@ Although the runtime performance was not a primary concern of the presented algo
   \label{fig:plot:perf}
 \end{figure}
 
-There are, however, significant differences between descriptors regarding processing time (figure~\ref{fig:plot:desc_perf}). All \gls{PFH}-family descriptors require order of magnitude higher processing time. There are also significant differences between the \gls{PFH}-family, the processing time nearly doubles between \gls{FPFH}, \gls{PFH} and \gls{PFHRGB} descriptors.
+There are, however, significant differences between descriptors regarding processing time (figure~\ref{fig:plot:desc_perf}). All \gls{PFH}-family descriptors require orders of magnitude higher processing time. There are also significant differences between the \gls{PFH}-family, the processing time nearly doubles between \gls{FPFH}, \gls{PFH} and \gls{PFHRGB} descriptors.
 
-The \gls{SHOT} descriptors with colour are very fast, which makes them compelling choice, considering also they showed good robustness (figure~\ref{fig:plot:desc_inliers}). \gls{PFHRGB} descriptors exhibited the best robustness, but also the longest processing time.
+The \gls{SHOT} descriptors with colour are very fast, which makes them a compelling choice, considering also they showed good robustness (figure~\ref{fig:plot:desc_inliers}). \gls{PFHRGB} descriptors exhibited the best robustness, but also the longest processing time.
 
 \begin{figure}
   \centering
@@ -188,6 +188,6 @@ The \gls{SHOT} descriptors with colour are very fast, which makes them compellin
 
 \section{Initial estimate algorithm}
 
-Comparing the presented reciprocal matching algorithm with \gls{SAC-IA}, the reciprocal matching algorithm produces better initial estimate in most of the evaluated cases (figure~\ref{fig:plot:desc_dist}). Significantly worse initial estimate was produced only for the \gls{FPFH} descriptors in ``Machine Hall'' dataset, which may not come as a surprise as the \gls{SAC-IA} algorithm was introduced with the \gls{FPFH} descriptors.
+Comparing the presented reciprocal matching algorithm with \gls{SAC-IA}, the reciprocal matching algorithm produces a better initial estimate in most of the evaluated cases (figure~\ref{fig:plot:desc_dist}). A significantly worse initial estimate was produced only for the \gls{FPFH} descriptors in ``Machine Hall'' dataset, which may not come as a surprise as the \gls{SAC-IA} algorithm was introduced with the \gls{FPFH} descriptors.
 
-For \gls{PFH}, \gls{FPFH} and \gls{SHOT} descriptors the reciprocal matching algorithm produced better initial estimates in evaluation than the \gls{SAC-IA} algorithm. Especially for the \gls{PFH} and \gls{PFHRGB} descriptors the Euclidean error distance is significantly lower for the initial estimates produced by the reciprocal matching algorithm.
+For \gls{PFH}, \gls{FPFH} and \gls{SHOT} descriptors the reciprocal matching algorithm produced better initial estimates in evaluation than the \gls{SAC-IA} algorithm. Especially for the \gls{PFH} and \gls{PFHRGB} descriptors, the Euclidean error distance is significantly lower for the initial estimates produced by the reciprocal matching algorithm.

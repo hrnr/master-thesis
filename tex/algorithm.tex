@@ -256,7 +256,7 @@ Below I present fast, non-iterative algorithm (algorithm~\ref{alg:global-transfo
         \Function{extractGlobalPoses}{$G = (V, E)$ map-merging graph, $P_e \forall e \in E$ pair-wise transformations estimates}
             \State $C = (V_C, E_C) \gets$ the largest connected component in $G$
             \State $T \gets$ maximum spanning tree of $C$ using confidences as weights
-            \State $r \gets$ any node from $T$, selected as reference frame
+            \State $r \gets$ any node from $T$, selected as the reference frame
             \State $E_s \gets$ edges of $T$ sorted by the distance from $r$
             \State $A_r \gets I$
             \ForAll{$(i,j) \in E_s$}
