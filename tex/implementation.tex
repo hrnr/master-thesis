@@ -1,9 +1,9 @@
 \chapter{Implementation}
 \label{chap:implementation}
 
-I have implemented the map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) in the \gls{ROS} framework (section~\ref{sec:ros}). This allows the implementation to be used with various readily available \gls{SLAM} algorithms and inter-robot communication solutions.
+I have implemented the map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}) in the \gls{ROS} framework (Section~\ref{sec:ros}). This allows the implementation to be used with various readily available \gls{SLAM} algorithms and inter-robot communication solutions.
 
-Point cloud algorithms are implemented with \gls{PCL} (section~\ref{sec:pcl}). \gls{PCL} is a popular open-source library for manipulating point-cloud data.
+Point cloud algorithms are implemented with \gls{PCL} (Section~\ref{sec:pcl}). \gls{PCL} is a popular open-source library for manipulating point-cloud data.
 
 \section{Robot Operating System}
 \label{sec:ros}
@@ -19,7 +19,7 @@ Software in the \gls{ROS} project is organised in a form of community-maintained
 
 \gls{PCL} is an open-source library for point cloud processing. It contains routines for feature estimation, surface reconstruction, registration, nearest neighbour search, model fitting, including \gls{RANSAC} algorithm, and segmentation. The library offers serialisation of point clouds to its native, but widely supported \texttt{pcd} file format. \Gls{PCL} is supported in \gls{ROS}, with \gls{PCL} point cloud format being supported for message serialisation into \gls{ROS} messages.
 
-I have used \gls{PCL} to implement the presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) and to read and save \texttt{pcd} files for the command-line tools (section~\ref{sec:commandline-tools}).
+I have used \gls{PCL} to implement the presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}) and to read and save \texttt{pcd} files for the command-line tools (Section~\ref{sec:commandline-tools}).
 
 % todo mention dispatch?
 
@@ -30,9 +30,9 @@ The software for this thesis is organised in a \gls{ROS} package \texttt{map\_me
 
 The \texttt{map\_merge\_3d} package is distributed within \gls{ROS} starting from \gls{ROS} Melodic release. The package documentation is maintained as wiki text available online, a reproduction of the documentation is attached (attachment~\ref{chap:map_merge-wiki}).
 
-Care has been taken to integrate the package with the rest of the \gls{ROS} ecosystem. The package is not tied to any particular package for inter-robot communication (section~\ref{sec:communication}) and it depends on commonly used map representation in \gls{ROS} (section~\ref{sec:map-representation}).
+Care has been taken to integrate the package with the rest of the \gls{ROS} ecosystem. The package is not tied to any particular package for inter-robot communication (Section~\ref{sec:communication}) and it depends on commonly used map representation in \gls{ROS} (Section~\ref{sec:map-representation}).
 
-The \gls{ROS} node supports auto-discovery of the robots (section~\ref{sec:configuration}) and is designed to partially mitigate the high computing demands of the map-merging (section~\ref{sec:node-architecture}). The package also contains command-line tools for offline map-merging and visualisation (section~\ref{sec:commandline-tools}).
+The \gls{ROS} node supports auto-discovery of the robots (Section~\ref{sec:configuration}) and is designed to partially mitigate the high computing demands of the map-merging (Section~\ref{sec:node-architecture}). The package also contains command-line tools for offline map-merging and visualisation (Section~\ref{sec:commandline-tools}).
 
 \subsection{Communication}
 \label{sec:communication}
@@ -52,7 +52,7 @@ Users are free to choose any other communication solution meeting their needs fo
 
 Choosing a correct map representation is important to allow interoperability and re-usability within the \gls{ROS} ecosystem. We need to select a map format that is supported by the most \gls{SLAM} implementations in \gls{ROS} to be able to consume maps from the robots.
 
-Widespread \gls{3D} \gls{SLAM} approaches in \gls{ROS} produce maps as \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which are now de-facto standard for representing \gls{3D} maps in \gls{ROS}. This representation is suitable for the presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}).
+Widespread \gls{3D} \gls{SLAM} approaches in \gls{ROS} produce maps as \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which are now de-facto standard for representing \gls{3D} maps in \gls{ROS}. This representation is suitable for the presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}).
 
 Unfortunately, there is no standard message format in \gls{ROS} to represent maps as a pose graph of point clouds, which would allow implementing map-merging on point cloud pose graph discussed in Section~\ref{sec:map-merging-on-point-clouds}, which allows repairing mapping errors.
 
@@ -74,7 +74,7 @@ Full documentation of this mechanism is described in Attachment~\ref{chap:map_me
 \subsection{ROS node architecture}
 \label{sec:node-architecture}
 
-Estimating transformations between maps with the presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) is computationally intensive and can take a long time, especially when merging many large-scale maps.
+Estimating transformations between maps with the presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}) is computationally intensive and can take a long time, especially when merging many large-scale maps.
 
 To achieve high update rates of the merged map, the \gls{ROS} node uses an asynchronous architecture. Because the map origins do not change, we don't need to re-estimate transformations between maps every time we are updating the merged map, we can use the previous estimates to update the map.
 

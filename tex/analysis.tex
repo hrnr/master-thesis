@@ -13,12 +13,12 @@ The \textit{map-merging problem} for multi-robot systems, which is the focus of 
 
 \Gls{3D} maps are becoming more common in the robotics as the capable sensors are getting more affordable and suitable for many applications. Unlike \gls{2D} occupancy grids used extensively in the past, \gls{3D} maps enable cooperation of robots, that are not fixed to a \gls{2D} plane, such as aerial vehicles, humanoid robots, outdoor robots operating in a rough terrain as well as traditional ground-based platforms. This allows us to create possibly heterogeneous multi-robot teams, that are able to take advantage of their different strengths and weaknesses to solve the assigned task efficiently. For example, a robotic team can consist of aerial vehicles, capable of fast reconnaissance in large-scale outdoor environments, and ground-based vehicles carrying heavy equipment.
 
-This work expects maps represented as point clouds (definition~\ref{def:point-cloud}). Point clouds can be implemented as an array of points, making them suitable for serialisation and exchange between robots. Points in the point cloud can have assigned additional information, such as \gls{RGB} colour information or reflection intensity, based on the available sensor. Especially colour information, that is provided by stereo camera rigs and active \gls{RGB-D} cameras is commonly exploited for further processing (figure~\ref{fig:v1-greyscale}).
+This work expects maps represented as point clouds (definition~\ref{def:point-cloud}). Point clouds can be implemented as an array of points, making them suitable for serialisation and exchange between robots. Points in the point cloud can have assigned additional information, such as \gls{RGB} colour information or reflection intensity, based on the available sensor. Especially colour information, that is provided by stereo camera rigs and active \gls{RGB-D} cameras is commonly exploited for further processing (Figure~\ref{fig:v1-greyscale}).
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/v1-greyscale.png}
-    \caption[Point cloud map with greyscale colours]{Partial point cloud map of a room created from aerial vehicle equipped with greyscale stereo cameras rig. Intensity captured by camera is stored alongside the points and visualised in greyscale. The map was created from The EuRoC micro aerial vehicle dataset ``Vicon Room 1 02'' (section~\ref{sec:euroc-dataset}).}
+    \caption[Point cloud map with greyscale colours]{Partial point cloud map of a room created from aerial vehicle equipped with greyscale stereo cameras rig. Intensity captured by camera is stored alongside the points and visualised in greyscale. The map was created from The EuRoC micro aerial vehicle dataset ``Vicon Room 1 02'' (Section~\ref{sec:euroc-dataset}).}
     \label{fig:v1-greyscale}
 \end{figure}
 
@@ -81,7 +81,7 @@ Using point clouds can also save communication bandwidth especially compared to 
 	mff-mapping\_2018-04-12-13-30-41 & 350 MiB & 16 MiB & 0.046 \\
 	\bottomrule
 	\end{tabular}
-	\caption{Table comparing sizes of the local database of loop closure data for map-merging used by~\citet{labbe2014online} and the point cloud representation of the same maps. Ratio denotes fraction of the point cloud size to the database size. The maps are presented in section~\ref{sec:mff-dataset}.}
+	\caption{Table comparing sizes of the local database of loop closure data for map-merging used by~\citet{labbe2014online} and the point cloud representation of the same maps. Ratio denotes fraction of the point cloud size to the database size. The maps are presented in Section~\ref{sec:mff-dataset}.}
 	\label{tabl:rtabmap-db-vs-point-clouds}
 \end{table}
 

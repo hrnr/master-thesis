@@ -1,11 +1,11 @@
 \chapter{Evaluation}
 \label{chap:evaluation}
 
-The presented map-merging algorithm (chapter~\ref{chap:mergingalgorithm}) has been evaluated on a number of demanding robotics datasets. The datasets include data captured by small aerial vehicles (Sections~\ref{sec:euroc-dataset}, \ref{sec:aau-dataset}) as well as ground-based robots. The datasets include both widely used benchmark datasets in robotics research as well as data recorded by the author.
+The presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}) has been evaluated on a number of demanding robotics datasets. The datasets include data captured by small aerial vehicles (Sections~\ref{sec:euroc-dataset}, \ref{sec:aau-dataset}) as well as ground-based robots. The datasets include both widely used benchmark datasets in robotics research as well as data recorded by the author.
 
 Sensors used include stereo rig cameras and active \gls{RGB-D} cameras, which are popular visual sensors in the mobile robotics. This variety of sensors and robots covers many typical multi-robot deployments. All datasets have been captured under real-world conditions, none of them uses simulated data.
 
-The evaluation focuses on properties of the presented pair-wise transformation estimation algorithm for point clouds (section~\ref{sec:estimate-pair-wise}), which is the core algorithm of the implemented map-merging \gls{ROS} node (section~\ref{sec:ros-package}). The accuracy of the estimation algorithm is critical for the overall map-merging process.
+The evaluation focuses on properties of the presented pair-wise transformation estimation algorithm for point clouds (Section~\ref{sec:estimate-pair-wise}), which is the core algorithm of the implemented map-merging \gls{ROS} node (Section~\ref{sec:ros-package}). The accuracy of the estimation algorithm is critical for the overall map-merging process.
 
 \section{The EuRoC micro aerial vehicle dataset collection}
 \label{sec:euroc-dataset}
@@ -23,7 +23,7 @@ The publicly available datasets introduced by~\citet{Burri2016} was collected on
 
 The cameras produce a WVGA monochrome (greyscale) images at 20 frames per second. Cameras have a global shutter. The automatic exposure control is independent for both cameras. According to the published errata~\citep{Burri2016}, this ``resulted in different shutter times and in turn in different image brightnesses, rendering stereo matching and feature tracking more challenging''.
 
-The dataset contains 11 mapping sessions in 3 different environments (``Machine Hall'', ``Vicon Room 1'', ``Vicon Room 2''). Each mapping session is available in a single \gls{ROS} bag file. First 5 sessions were captured in ETH machine hall (figure~\ref{fig:eth-machine-hall}), a fairly large industrial environment featuring piping, reservoirs and many different types of surfaces. The second and the third batch of datasets were captured in a smaller furnished rectangular room. For the second and the third batch, the furnishing was different.
+The dataset contains 11 mapping sessions in 3 different environments (``Machine Hall'', ``Vicon Room 1'', ``Vicon Room 2''). Each mapping session is available in a single \gls{ROS} bag file. First 5 sessions were captured in ETH machine hall (Figure~\ref{fig:eth-machine-hall}), a fairly large industrial environment featuring piping, reservoirs and many different types of surfaces. The second and the third batch of datasets were captured in a smaller furnished rectangular room. For the second and the third batch, the furnishing was different.
 
 \begin{figure}
     \centering
@@ -109,31 +109,31 @@ Maps (Figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the si
 
 \section{Accuracy}
 
-For both the aerial datasets, the map-merging is able to correctly merge the maps. The Euclidean error scores, according to Section~\ref{sec:transform-evaluation}, are small across the datasets (figure~\ref{fig:plot:euc_dist}). There are larger errors for the ``AAU forest'' and ``Machine Hall'' datasets caused by the outliers and mapping errors in those datasets, as those datasets have been recorded in tough conditions. Considering the artefacts in the datasets the alignment almost perfect and would allow precise coordination of the robots.
+For both the aerial datasets, the map-merging is able to correctly merge the maps. The Euclidean error scores, according to Section~\ref{sec:transform-evaluation}, are small across the datasets (Figure~\ref{fig:plot:euc_dist}). There are larger errors for the ``AAU forest'' and ``Machine Hall'' datasets caused by the outliers and mapping errors in those datasets, as those datasets have been recorded in tough conditions. Considering the artefacts in the datasets the alignment almost perfect and would allow precise coordination of the robots.
 
 \begin{figure}
   \centering
   \input{../img/plots/euc_dist}
-  \caption[Euclidean error scores for aerial datasets]{Euclidean error scores (sum of Euclidean distances for corresponding points) across the datasets. A threshold of $1.0$ has been used to cut-off fair laying point in non-overlapping areas, see section~\ref{sec:transform-evaluation} for details. The map-merging run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints. The first two scores are for initial estimation using descriptors matching, using my reciprocal matching scheme and \gls{SAC-IA} algorithm respectively (section~\ref{sec:matching}). The last score is the Euclidean error after final refining with \gls{ICP} (section~\ref{sec:final-estimation}), the initial estimate from the reciprocal matching has been used for the \gls{ICP} refinement.}
+  \caption[Euclidean error scores for aerial datasets]{Euclidean error scores (sum of Euclidean distances for corresponding points) across the datasets. A threshold of $1.0$ has been used to cut-off fair laying point in non-overlapping areas, see Section~\ref{sec:transform-evaluation} for details. The map-merging run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints. The first two scores are for initial estimation using descriptors matching, using my reciprocal matching scheme and \gls{SAC-IA} algorithm respectively (Section~\ref{sec:matching}). The last score is the Euclidean error after final refining with \gls{ICP} (Section~\ref{sec:final-estimation}), the initial estimate from the reciprocal matching has been used for the \gls{ICP} refinement.}
   \label{fig:plot:euc_dist}
 \end{figure}
 
 Both ``Vicon Room'' datasets show very small Euclidean error, well beyond the size of one voxel ($0.05$ m).
 
-The Euclidean error for the initial estimate is significantly lower for the presented reciprocal matching method (section~\ref{sec:matching}). For the \gls{SAC-IA} algorithm, the error is higher because the randomness used in the algorithm introduces additional errors in case of well-performing \gls{PFH} descriptors. The initial estimate produced by the presented matching method is close to the final estimate refined with \gls{ICP}. The \gls{ICP} refinement is then very fast without negative impact on the overall time of the map-merging algorithm (figure~\ref{fig:plot:perf}).
+The Euclidean error for the initial estimate is significantly lower for the presented reciprocal matching method (Section~\ref{sec:matching}). For the \gls{SAC-IA} algorithm, the error is higher because the randomness used in the algorithm introduces additional errors in case of well-performing \gls{PFH} descriptors. The initial estimate produced by the presented matching method is close to the final estimate refined with \gls{ICP}. The \gls{ICP} refinement is then very fast without negative impact on the overall time of the map-merging algorithm (Figure~\ref{fig:plot:perf}).
 
 \section{Estimation robustness}
 
-An important measure of estimation robustness is the number of inliers (figure~\ref{fig:plot:inliers}) in the \gls{RANSAC} estimate (section~\ref{sec:transform-evaluation}). Inliers are the points which are ultimately used for computing transformation estimate. Estimates based on a small number of inliers might be severely affected by the noise. On the other hand, estimates based on a large number of inliers, especially with the high inliers ratio to all points, are supposed to be reasonably confident in typical applications.
+An important measure of estimation robustness is the number of inliers (Figure~\ref{fig:plot:inliers}) in the \gls{RANSAC} estimate (Section~\ref{sec:transform-evaluation}). Inliers are the points which are ultimately used for computing transformation estimate. Estimates based on a small number of inliers might be severely affected by the noise. On the other hand, estimates based on a large number of inliers, especially with the high inliers ratio to all points, are supposed to be reasonably confident in typical applications.
 
 \begin{figure}
   \centering
   \input{../img/plots/inliers}
-  \caption[Number of keypoints, matches and inliers for aerial datasets]{Number of keypoints, descriptor matches and number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (section~\ref{sec:matching}) has been used for matching. Keypoints are shown for the first map of each environment.}
+  \caption[Number of keypoints, matches and inliers for aerial datasets]{Number of keypoints, descriptor matches and number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (Section~\ref{sec:matching}) has been used for matching. Keypoints are shown for the first map of each environment.}
   \label{fig:plot:inliers}
 \end{figure}
 
-The inlier ratio (the number of matches to the number of inliers) is quite low, even for \gls{PFH} descriptors (figure~\ref{fig:plot:inliers}), the similar ratios have been observed for all the descriptors. This is partially caused by the matching scheme designed to accept also more distant matches to improve inlier ratio for less descriptive descriptors as discussed in Section~\ref{sec:matching}. The same behaviour causes the number of matches to be relatively high compared to the number of keypoints (Figure~\ref{fig:plot:inliers}).
+The inlier ratio (the number of matches to the number of inliers) is quite low, even for \gls{PFH} descriptors (Figure~\ref{fig:plot:inliers}), the similar ratios have been observed for all the descriptors. This is partially caused by the matching scheme designed to accept also more distant matches to improve inlier ratio for less descriptive descriptors as discussed in Section~\ref{sec:matching}. The same behaviour causes the number of matches to be relatively high compared to the number of keypoints (Figure~\ref{fig:plot:inliers}).
 
 The ``AAU forest'' and ``Vicon Room 2'' datasets have low numbers of inliers, which might impact robustness in such environments. The ``AAU forest'' is a relatively small, difficult environment for mapping containing noise and mapping errors. Only a few regions in maps are suitable for producing reliable matching points, which leads to the small number of inliers.
 
@@ -143,51 +143,51 @@ Interestingly in both cases with a limited number of inliers, the map-merging al
 
 \section{Descriptors}
 
-As already noted in the previous section, the performance of the descriptors varies significantly in some cases (figure~\ref{fig:plot:desc_inliers}). The \gls{PFHRGB} descriptors exhibited the highest number of inliers across the datasets (figure~\ref{fig:plot:desc_inliers}). The \gls{SHOT} descriptors with colour also exhibited a decent amount of inliers, especially considering the fast processing speed (section~\ref{sec:runtime-perf}).
+As already noted in the previous section, the performance of the descriptors varies significantly in some cases (Figure~\ref{fig:plot:desc_inliers}). The \gls{PFHRGB} descriptors exhibited the highest number of inliers across the datasets (Figure~\ref{fig:plot:desc_inliers}). The \gls{SHOT} descriptors with colour also exhibited a decent amount of inliers, especially considering the fast processing speed (Section~\ref{sec:runtime-perf}).
 
 \begin{figure}
   \centering
   \input{../img/plots/desc_inliers}
-  \caption[Number of inliers per descriptors]{Number of inliers across the datasets for different descriptor algorithms. Apart from descriptors algorithms, the default parameters has been used including \gls{SIFT} keypoints and the reciprocal matching algorithm (section~\ref{sec:matching}). The \gls{PCL} implementation of \gls{SC3D} descriptors crashed on ``Machine Hall'' and ``Vicon Room 2'' datasets. This might indicate that the implementation in \gls{PCL} is probably not as mature as the remaining descriptors, but I have not investigated further.}
+  \caption[Number of inliers per descriptors]{Number of inliers across the datasets for different descriptor algorithms. Apart from descriptors algorithms, the default parameters has been used including \gls{SIFT} keypoints and the reciprocal matching algorithm (Section~\ref{sec:matching}). The \gls{PCL} implementation of \gls{SC3D} descriptors crashed on ``Machine Hall'' and ``Vicon Room 2'' datasets. This might indicate that the implementation in \gls{PCL} is probably not as mature as the remaining descriptors, but I have not investigated further.}
   \label{fig:plot:desc_inliers}
 \end{figure}
 
 The lowest number of inliers have been produced by \gls{SC3D} descriptors. Moreover, the \gls{PCL} implementation of \gls{SC3D} crashed in two instances. Together with \gls{RSD} descriptors, which has not been able to produce any inliers and are not shown in the plots, the \gls{SC3D} may not be suitable for map-merging in the evaluated setup.
 
-Euclidean error distances (figure~\ref{fig:plot:desc_dist}) mostly reflects the number of inliers for respective descriptors, with \gls{PFHRGB} descriptors generally providing the best initial transformation. With one exception, the \gls{ICP} refining was able to produce high-quality alignment for all descriptors with small error differences, neglecting the differences between initial alignments for different descriptors. For the \gls{FPFH} descriptors, the initial estimate in ``Machine Hall'' dataset has a significantly higher error and the \gls{ICP} refining stuck in the local extreme.
+Euclidean error distances (Figure~\ref{fig:plot:desc_dist}) mostly reflects the number of inliers for respective descriptors, with \gls{PFHRGB} descriptors generally providing the best initial transformation. With one exception, the \gls{ICP} refining was able to produce high-quality alignment for all descriptors with small error differences, neglecting the differences between initial alignments for different descriptors. For the \gls{FPFH} descriptors, the initial estimate in ``Machine Hall'' dataset has a significantly higher error and the \gls{ICP} refining stuck in the local extreme.
 
 \begin{figure}
   \centering
   \input{../img/plots/desc_dist}
-  \caption[Euclidean error scores per descriptors]{Euclidean error scores (sum of Euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similarly to figure~\ref{fig:plot:euc_dist} the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using initial estimate from the reciprocal matching algorithm.}
+  \caption[Euclidean error scores per descriptors]{Euclidean error scores (sum of Euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similarly to Figure~\ref{fig:plot:euc_dist} the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using initial estimate from the reciprocal matching algorithm.}
   \label{fig:plot:desc_dist}
 \end{figure}
 
 \section{Runtime performance}
 \label{sec:runtime-perf}
 
-Although the runtime performance was not a primary concern of the presented algorithm, it is interesting to take a look at the processing time. In the default configuration (figure~\ref{fig:plot:perf}), there are orders of magnitude differences between algorithm steps as presented in Section~\ref{sec:estimate-pair-wise}. Most of the processing time is taken by the \gls{SIFT} keypoints detection and computation of \gls{PFH} descriptors.
+Although the runtime performance was not a primary concern of the presented algorithm, it is interesting to take a look at the processing time. In the default configuration (Figure~\ref{fig:plot:perf}), there are orders of magnitude differences between algorithm steps as presented in Section~\ref{sec:estimate-pair-wise}. Most of the processing time is taken by the \gls{SIFT} keypoints detection and computation of \gls{PFH} descriptors.
 
 \begin{figure}
   \centering
   \input{../img/plots/perf}
-  \caption[Processing time per algorithm parts]{Processing time for the respective parts of the map-merging algorithm (section~\ref{sec:estimate-pair-wise}) across the datasets. The data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and do not incorporate measurements from multiple runs to deal with various sources of non-determinism, although the runtime of the algorithm has been observed to be quite stable. The data are intended to show order of magnitude differences of processing time between particular parts of the algorithm. The map-merging algorithm has been run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints.}
+  \caption[Processing time per algorithm parts]{Processing time for the respective parts of the map-merging algorithm (Section~\ref{sec:estimate-pair-wise}) across the datasets. The data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and do not incorporate measurements from multiple runs to deal with various sources of non-determinism, although the runtime of the algorithm has been observed to be quite stable. The data are intended to show order of magnitude differences of processing time between particular parts of the algorithm. The map-merging algorithm has been run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints.}
   \label{fig:plot:perf}
 \end{figure}
 
-There are, however, significant differences between descriptors regarding processing time (figure~\ref{fig:plot:desc_perf}). All \gls{PFH}-family descriptors require orders of magnitude higher processing time. There are also significant differences between the \gls{PFH}-family, the processing time nearly doubles between \gls{FPFH}, \gls{PFH} and \gls{PFHRGB} descriptors.
+There are, however, significant differences between descriptors regarding processing time (Figure~\ref{fig:plot:desc_perf}). All \gls{PFH}-family descriptors require orders of magnitude higher processing time. There are also significant differences between the \gls{PFH}-family, the processing time nearly doubles between \gls{FPFH}, \gls{PFH} and \gls{PFHRGB} descriptors.
 
-The \gls{SHOT} descriptors with colour are very fast, which makes them a compelling choice, considering also they showed good robustness (figure~\ref{fig:plot:desc_inliers}). \gls{PFHRGB} descriptors exhibited the best robustness, but also the longest processing time.
+The \gls{SHOT} descriptors with colour are very fast, which makes them a compelling choice, considering also they showed good robustness (Figure~\ref{fig:plot:desc_inliers}). \gls{PFHRGB} descriptors exhibited the best robustness, but also the longest processing time.
 
 \begin{figure}
   \centering
   \input{../img/plots/desc_perf}
-  \caption[Processing time per descriptors]{Processing time for descriptors algorithms across the datasets. Similarly to figure~\ref{fig:plot:perf}, the data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and are intended to show order of magnitude differences of processing time between particular descriptors.}
+  \caption[Processing time per descriptors]{Processing time for descriptors algorithms across the datasets. Similarly to Figure~\ref{fig:plot:perf}, the data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and are intended to show order of magnitude differences of processing time between particular descriptors.}
   \label{fig:plot:desc_perf}
 \end{figure}
 
 \section{Initial estimate algorithm}
 
-Comparing the presented reciprocal matching algorithm with \gls{SAC-IA}, the reciprocal matching algorithm produces a better initial estimate in most of the evaluated cases (figure~\ref{fig:plot:desc_dist}). A significantly worse initial estimate was produced only for the \gls{FPFH} descriptors in ``Machine Hall'' dataset, which may not come as a surprise as the \gls{SAC-IA} algorithm was introduced with the \gls{FPFH} descriptors.
+Comparing the presented reciprocal matching algorithm with \gls{SAC-IA}, the reciprocal matching algorithm produces a better initial estimate in most of the evaluated cases (Figure~\ref{fig:plot:desc_dist}). A significantly worse initial estimate was produced only for the \gls{FPFH} descriptors in ``Machine Hall'' dataset, which may not come as a surprise as the \gls{SAC-IA} algorithm was introduced with the \gls{FPFH} descriptors.
 
 For \gls{PFH}, \gls{FPFH} and \gls{SHOT} descriptors the reciprocal matching algorithm produced better initial estimates in evaluation than the \gls{SAC-IA} algorithm. Especially for the \gls{PFH} and \gls{PFHRGB} descriptors, the Euclidean error distance is significantly lower for the initial estimates produced by the reciprocal matching algorithm.
