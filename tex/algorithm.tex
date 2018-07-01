@@ -1,11 +1,11 @@
-\chapter{Merging algorithm}
+\chapter{The map-merging algorithm}
 \label{chap:mergingalgorithm}
 
-% TODO add visualisation
+This section presents a novel map-merging algorithm for estimating transformations between $n$ maps and merging them together. The algorithm is based on feature-matching approach and works solely on \gls{3D} point cloud maps without any additional auxiliary information. As discussed in Chapter~\ref{chap:analysis}, we work with maps represented as point clouds, possibly with \gls{RGB} information for each point. To the best of my knowledge, the presented approach is the first implemented map-merging algorithm working directly on point clouds without any extra information.
 
-This section presents an algorithm for estimating transformations between $n$ maps and merging them together. As discussed in Chapter~\ref{chap:analysis}, we work with maps represented as point clouds, possibly with \gls{RGB} information for each point.
+The feature-matching approach uses point cloud features designed to work with high-density direct sensor measurements, using the features with low-density point cloud maps is challenging. To overcome some of the challenges, I introduce a novel feature matching scheme (Section~\ref{sec:matching}).
 
-There are two core problems for estimating the transformations. First, we need to be able to estimate pair-wise transformation for two maps using only geometrical and possibly colour information available within point clouds. We discuss our method in Section~\ref{sec:estimate-pair-wise}. Second, we want to get a transformation for each of the maps to the selected reference frame. This is discussed in Section~\ref{sec:estimate-global}.
+Generally, there are two core problems for estimating the transformations between maps. First, we need to be able to estimate pair-wise transformation for two maps using only geometrical and possibly colour information available within point clouds. We discuss our method in Section~\ref{sec:estimate-pair-wise}. Second, we want to get a transformation for each of the maps to the selected reference frame. This is discussed in Section~\ref{sec:estimate-global}.
 
 After we have estimated the transformations we can stitch them to create the global map.
 
@@ -52,7 +52,7 @@ Algorithm for voxelization is following. For each voxel (size of the voxel is de
 
 As discussed in Section~\ref{chap:analysis}, in a multi-robot system the down-sampling is typically performed by \gls{SLAM} algorithm running on each robot before publishing the map, thus saving bandwidth of the communication. However, in a typical situation, we might want to reduce the resolution even further for the purpose of transformation estimation to reduce the computation time (for example each robot might publish a map with the typical resolution of $0.05$ meters per voxel, but for estimation we work with the resolution of just $0.1$ meters per voxel).
 
-We show in Section~\ref{chap:evaluation} that our algorithm can reliably estimate the transformation for point clouds with $0.1$ meters per voxel resolution.
+We show in Section~\ref{chap:evaluation} that the presented algorithm can reliably estimate the transformation for point clouds with $0.1$ meters per voxel resolution.
 
 \subsection{Removing outliers}
 \label{sec:outlier-removal}
@@ -145,11 +145,9 @@ To overcome the issue, \gls{SAC-IA} algorithm has been proposed by~\citet{rusu20
 
 The algorithm combines random matching of $k$-nearest descriptors and \gls{RANSAC} algorithm, introduced by~\citet{fischler1981ransac}.
 
-% TODO describe why wanted the new algorithm
+The algorithm was originally developed to work with \gls{FPFH} descriptors, that are fast to compute, but less descriptive that \gls{PFH}. With \gls{PFH} and \gls{PFHRGB} descriptors, \gls{SAC-IA} sometimes yields sub-optimal transformation, even when there are good potential matches available in the descriptors sets because it selects matching candidates randomly instead of preferring better matches. This motivated me to develop a new matching algorithm (Algorithm~\ref{alg:cross-match}). This algorithm is deterministic to avoid problems caused by the randomness in \gls{SAC-IA}, has a good accuracy across different descriptors (Section~\ref{sec:initial-estimate-algorithms}) and requires a very little configuration (the only parameter is $k$), which does not need to be adjusted per descriptor.
 
-The algorithm was originally developed to work with \gls{FPFH} descriptors, that are fast to compute, but less descriptive that \gls{PFH}. With \gls{PFH} and \gls{PFHRGB} descriptors, \gls{SAC-IA} sometimes yields sub-optimal transformation, even when there are good potential matches available in the descriptors sets because it selects matching candidates randomly instead of preferring better matches. This motivated me to develop a new matching algorithm (Algorithm~\ref{alg:cross-match}). This algorithm is deterministic to avoid problems caused by the randomness in \gls{SAC-IA}.
-
-The algorithm is based on the idea of reciprocal match validation. When we are considering match $d_i \rightarrow d_j$, we try to match also $d_j \rightarrow d_i$. We consider all $k$-nearest neighbours for matching to deal with potential low descriptiveness and then select the best match with reciprocal match validation. We do not include \gls{RANSAC} in the scheme, the output of the algorithm is just matched pairs of descriptors.
+The algorithm is based on the idea of reciprocal match validation. When we are considering match $d_i \rightarrow d_j$, we try to match also $d_j \rightarrow d_i$. We consider all $k$-nearest neighbours for matching to deal with potential low descriptiveness and then select the best match with reciprocal match validation. Considering $k$-nearest neighbours is a key idea, that can improve robustness of the matching for point cloud descriptors compared to typically employed ``1-on-1'' matching with reciprocal match validation (Section~\ref{sec:initial-estimate-algorithms}). Unlike \gls{SAC-IA}, the \gls{RANSAC} algorithm is not incorporated in the scheme, the output of the algorithm is just matched pairs of descriptors.
 
 \begin{algorithm}
     \caption[Reciprocal $k$-nearest matching]{My matching approach using $k$-nearest matches validated with reciprocal matching}
@@ -173,14 +171,14 @@ The algorithm is based on the idea of reciprocal match validation. When we are c
     \end{algorithmic}
 \end{algorithm}
 
-Notice that our algorithm does not need any threshold for the maximum match distance and, therefore, can work with various kinds of descriptors without any need for a specific configuration. The only parameter is $k$ -- number of neighbours. As discussed in Section~\ref{chap:evaluation} our approach shows better performance when there are enough good possible matches and is not influenced by randomness.
+Notice that our algorithm does not need any threshold for the maximum match distance and, therefore, can work with various kinds of descriptors without any need for a specific configuration. The only parameter is $k$ -- number of neighbours. As discussed in Section~\ref{sec:initial-estimate-algorithms}, my approach shows better performance than \gls{SAC-IA} in most of the cases and is not influenced by the randomness.
 
-Both \gls{SAC-IA} and our reciprocal matching algorithm need to quickly find $k$-nearest neighbours. To achieve a good performance we use an approximative nearest neighbour search introduced by~\citet{muja2014flann}. This solution allows us to match a large number of descriptors quickly, even though computational complexity rises significantly with $k$. During the experiments, the matching step takes usually just a fraction of time needed to extract keypoints and descriptors.
+Both \gls{SAC-IA} and my reciprocal matching algorithm need to quickly find $k$-nearest neighbours. To achieve a good performance we use an approximative nearest neighbour search introduced by~\citet{muja2014flann}. This solution allows us to match a large number of descriptors quickly, even though computational complexity rises significantly with $k$. During the experiments, the matching step takes usually just a fraction of time needed to extract keypoints and descriptors.
 
 \subsection{Estimating the final transformation}
 \label{sec:final-estimation}
 
-\gls{SAC-IA} embeds \gls{RANSAC} into its algorithm and therefore provides directly an initial transformation estimate. When we use our matching scheme as per Algorithm~\ref{alg:cross-match}, we need to run \gls{RANSAC} step with rigid transformation model after the matching to get inlier matches. In the typical scenario most of the matches are outliers, so without the \gls{RANSAC} step, it is not possible to estimate a consistent transformation.
+\gls{SAC-IA} embeds \gls{RANSAC} into its algorithm and therefore provides directly an initial transformation estimate. When we use the reciprocal matching scheme (Algorithm~\ref{alg:cross-match}), we need to run \gls{RANSAC} step with rigid transformation model after the matching to get inlier matches. In the typical scenario most of the matches are outliers, so without the \gls{RANSAC} step, it is not possible to estimate a consistent transformation.
 
 \gls{RANSAC} transformation estimate is always based on the minimum number of points required to estimate the model (rigid transformation). To get a better estimate for all inliers pairs we recompute the transformation estimate using least-squares on inlier pairs. We use \gls{SVD} to compute the new estimate, the technique is described by~\citet{golub1970svd}. Another widely used technique in Computer Vision is to use a non-linear least squares approach, such as Levenberg-Marquardt algorithm described by~\citet{more1978levmarq}, to optimize the transformation estimate re-projection error considering all inliers. Because we refine the transformation further with \gls{ICP}, there hasn't been any observed difference between using Levenberg-Marquardt or \gls{SVD}-based technique. The implementation uses \gls{SVD} to refine the transformation on inliers.
 
