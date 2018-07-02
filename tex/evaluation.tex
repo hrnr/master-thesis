@@ -189,28 +189,28 @@ The \gls{SHOT} descriptors with colour are very fast, which makes them a compell
 \section{Initial estimate algorithms}
 \label{sec:initial-estimate-algorithms}
 
-Comparing the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) with \gls{SAC-IA}, the reciprocal matching algorithm produces a better initial estimate in most of the evaluated cases (Figure~\ref{fig:plot:desc_dist}). A significantly worse initial estimate was produced only for the \gls{FPFH} descriptors in ``Machine Hall'' dataset, which may not come as a surprise as the \gls{SAC-IA} algorithm was introduced with the \gls{FPFH} descriptors.
+Comparing the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) with \gls{SAC-IA}, the reciprocal matching algorithm produces a better initial estimate in most of the evaluated cases (Figure~\ref{fig:plot:desc_dist}). A significantly worse initial estimate was produced only for the \gls{FPFH} descriptors in ``Machine Hall'' dataset, which may not come as a surprise as the \gls{SAC-IA} algorithm was introduced with \gls{FPFH} descriptors.
 
-For \gls{PFH}, \gls{PFHRGB} and \gls{SHOT} descriptors the reciprocal matching algorithm produced better initial estimates in evaluation than the \gls{SAC-IA} algorithm. Especially for the \gls{PFH} and \gls{PFHRGB} descriptors, the Euclidean error distance is significantly lower for the initial estimates produced by the reciprocal matching algorithm.
+For \gls{PFH}, \gls{PFHRGB} and \gls{SHOT} descriptors the reciprocal matching algorithm produced better initial estimates in the evaluation than the \gls{SAC-IA} algorithm. Especially for the \gls{PFH} and \gls{PFHRGB} descriptors, the Euclidean error distance is significantly lower for the initial estimates produced by the reciprocal matching algorithm.
 
 \begin{figure}
   \centering
   \input{../img/plots/matching_k_inliers}
-  \caption[The number of inliers per $k$ in the reciprocal matching algorithm]{The number of inliers in matches produced by the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) for different $k$ and the evaluated descriptors. For $k=1$ the algorithm is standard ``1-on-1'' matching with reciprocal match validation. The test has been using the default parameters.}
+  \caption[The number of inliers per $k$ in the reciprocal matching algorithm]{The number of inliers in matches produced by the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) for different $k$ and the evaluated descriptors. For $k=1$ the algorithm is standard ``1-on-1'' matching with reciprocal match validation. The evaluation was running with default parameters.}
   \label{fig:plot:matching_k_inliers}
 \end{figure}
 
 \begin{figure}
   \centering
   \input{../img/plots/matching_k_dist}
-  \caption[The Euclidean distance per $k$ in the reciprocal matching algorithm]{The Euclidean error distance for different number of neighbours ($k$) of the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}). For $k=1$ the algorithm is standard ``1-on-1'' matching with reciprocal match validation. The test has been using the default parameters.}
+  \caption[The Euclidean distance per $k$ in the reciprocal matching algorithm]{The Euclidean error distance for different number of neighbours ($k$) of the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}). For $k=1$ the algorithm is standard ``1-on-1'' matching with reciprocal match validation. The evaluation was running with default parameters.}
   \label{fig:plot:matching_k_dist}
 \end{figure}
 
 Comparing the presented algorithm with standard ``1-on-1'' matching with reciprocal match validation, the presented approach can improve robustness in terms of number of inliers (Figure~\ref{fig:plot:matching_k_inliers}) and consecutively also accuracy in terms of smaller Euclidean distance (Figure~\ref{fig:plot:matching_k_dist}). The standard ``1-on-1'' matching, which considers only the nearest match, is equivalent to the presented reciprocal matching with $k=1$.
 
-As expected, the increased number of neighbours considered for matching is beneficial for \gls{FPFH} descriptors, where increased $k$ is essential for a good initial estimate in some cases. With higher that default $k=10$, the reciprocal matching algorithm can produce a significantly better initial matching estimate than \gls{SAC-IA} algorithm.
+As expected, the increased number of neighbours considered for matching is beneficial for \gls{FPFH} descriptors, where increased $k$ is essential for a good initial estimate in some cases. With higher than default $k=10$, the reciprocal matching algorithm can produce a significantly better initial matching estimate than \gls{SAC-IA} algorithm.
 
-Surprisingly, we can obverse the increased number of inliers also for \gls{PFH} and \gls{PFHRGB} descriptors with $k=5$ (Figure~\ref{fig:plot:matching_k_inliers}). Further increasing to $k=10$ does not seems to increase robustness significantly for \gls{PFH} and \gls{PFHRGB} descriptors, in same case the number of inliers is even lower than for $k=5$. The \gls{SHOT} descriptors with colour generally slightly benefit from increasing $k$, but in the case of ``Machine Hall'' dataset the number inliers decreases with increasing $k$. For \gls{SC3D} descriptors, there is less data as the implementation in \gls{PCL} crashed in ``Machine Hall'' and ``Vicon Room 2'' datasets. However it seems that \gls{SC3D} descriptors work well with the increasing $k$, in ``AAU forest'' dataset there are no inliers for the standard ``1-on-1'' matching, but the presented matching approach was able to generate $5$ inliers yielding a good initial estimate (Figure~\ref{fig:plot:matching_k_dist}).
+Surprisingly, we can obverse the increased number of inliers also for \gls{PFH} and \gls{PFHRGB} descriptors with $k=5$ (Figure~\ref{fig:plot:matching_k_inliers}). Further broadening neighbour search to $k=10$ does not seem to increase robustness significantly for \gls{PFH} and \gls{PFHRGB} descriptors, in same cases the number of inliers is even lower than for $k=5$. The \gls{SHOT} descriptors with colour generally slightly benefit from increased $k$, but in the case of ``Machine Hall'' dataset the number of inliers decreases with increasing $k$. For \gls{SC3D} descriptors, there are less data as the implementation in \gls{PCL} crashed in ``Machine Hall'' and ``Vicon Room 2'' datasets. However it seems that \gls{SC3D} descriptors work well with the increased $k$, in ``AAU forest'' dataset there are no inliers for the standard ``1-on-1'' matching, but the presented matching approach was able to generate $5$ inliers with increased $k$, yielding a good initial estimate (Figure~\ref{fig:plot:matching_k_dist}).
 
-Good performance across different descriptors makes the presented reciprocal matching a preferred matching strategy over \gls{SAC-IA} algorithm.
+Good performance across different descriptors makes the presented reciprocal matching a preferred matching strategy over \gls{SAC-IA} algorithm for the map-merging of point cloud maps.
