@@ -139,7 +139,7 @@ The datasets used for evaluation were recorded in two different spaces ``Rotunda
         \includegraphics[width=\textwidth]{../img/mff_rotunda_2.png}
         \caption{``MFF Rotunda 2'' map}
     \end{subfigure}
-    \caption[MFF Rotunda maps]{Maps of ``Rotunda'' computer laboratory with adjacent rooms recorded at the faculty building. The maps share a common mid-size area of the half-circular laboratory. Both maps contain several mapping errors.}
+    \caption[MFF Rotunda maps]{Maps of ``Rotunda'' computer laboratory with adjacent rooms recorded at the faculty building. The maps share a common mid-size area of a symmetrical half-circular laboratory. Both maps contain several mapping errors.}
     \label{fig:mff_rotunda}
 \end{figure}
 
@@ -276,11 +276,11 @@ As the presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}) rel
 
 First of all, the size of the common area in maps is the most influencing factor. Large common areas can possibly contain more features, which in turn can yield more feature matches and inliers providing a more robust transformation estimate.
 
-In real-world environments, however, even a fairly large common areas might not be sufficient if they do not contain enough outstanding landmarks for the feature detection. These feature-poor areas are fairly common in man-made environments and industrial areas. Flat, single-colour surfaces typically pose a great challenge for common feature-based methods.
+In real-world environments, however, even a fairly large common areas might not be sufficient if they do not contain enough outstanding landmarks for the feature detection. These feature-poor areas are fairly common in man-made environments including industrial areas. Flat, single-colour surfaces typically pose a great challenge for common feature-based methods.
 
-For example, ``MFF Refectory'' dataset (Figure~\ref{fig:mff_refectory}) contains two maps with overlapping area at the corridor. Although the area is fairly large, it has proven to be insufficient for a reliable transformation estimate and the map-merging. The corridor does not contain enough significant landmarks. Moreover, the same lack of landmarks in corridor areas lead to mapping errors in the maps, that make map-merging even more challenging. If no common feature-rich areas are present in maps, the map-merging based exclusively on point cloud maps is expected to be a challenging task.
+For example, ``MFF Refectory'' dataset (Figure~\ref{fig:mff_refectory}) contains two maps with an overlapping area at the corridor. Although the area is fairly large, it has proven to be insufficient for a reliable transformation estimate and the map-merging. The corridor does not contain enough significant landmarks. Moreover, the same lack of landmarks in corridor areas leads to mapping errors in the maps, that make map-merging even more challenging. If no common feature-rich areas are present in maps, the map-merging based exclusively on point cloud maps is expected to be a challenging task.
 
-Ambiguities and self-similarities in the environment may also compromise the map-merging. ``MFF Rotunda'' dataset (Figure~\ref{fig:mff_rotunda}) was recorded in symmetrical half-circular laboratory with many similarly looking workplaces. The symmetry of the environment causes \gls{SAC-IA} algorithm to wrongly match the maps upside down (Figure~\ref{fig:mff_rotunda_sac}).
+Ambiguities and self-similarities in the environment may also compromise the map-merging. ``MFF Rotunda'' dataset (Figure~\ref{fig:mff_rotunda}) was recorded in a symmetrical half-circular laboratory with many similarly looking workplaces. The symmetry of the environment causes \gls{SAC-IA} algorithm to wrongly match the maps upside down (Figure~\ref{fig:mff_rotunda_sac}).
 
 \begin{figure}
     \centering
@@ -296,3 +296,7 @@ Ambiguities and self-similarities in the environment may also compromise the map
     \caption[\gls{SAC-IA} initial estimate for ``MFF Rotunda '' dataset.]{The initial transformation estimate of \gls{SAC-IA} algorithm for ``MFF Rotunda'' dataset. The symmetry of the environment causes wrong upside down match of the second map.}
     \label{fig:mff_rotunda_sac}
 \end{figure}
+
+The presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) using a more strict non-probabilistic approach is able to avoid the upside down match. However, inliers are clustered in one particular area of the map (Figure~\ref{}), which leads to a visible angular error. Other parts of the common area proved unable to provide stable matches, especially the circular area seems to contain only unstable features and more mapping errors.
+
+This example shows that even fairly large common areas might not be suitable for the map-merging. Suitable common areas allowing a robust transformation estimate between maps should contain a decent amount of significant landmarks and should contain minimal amount of ambiguities, self-similarities and symmetries.
