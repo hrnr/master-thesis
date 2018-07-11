@@ -54,13 +54,13 @@ Choosing a correct map representation is important to allow interoperability and
 
 Widespread \gls{3D} \gls{SLAM} approaches in \gls{ROS} produce maps as \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which are now de-facto standard for representing \gls{3D} maps in \gls{ROS}. This representation is suitable for the presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}).
 
-Unfortunately, there is no standard message format in \gls{ROS} to represent maps as a pose graph of point clouds, which would allow implementing map-merging on point cloud pose graph discussed in Section~\ref{sec:map-merging-on-point-clouds}, which allows repairing mapping errors.
+Unfortunately, there is no standard message format in \gls{ROS} to represent maps as a pose graph of point clouds, which would allow implementing map-merging on point cloud pose graph discussed in Section~\ref{sec:map-merging-on-point-clouds}. The point cloud pose graph format allows repairing mapping errors.
+
+The future standardised map format may take inspiration from Google's Cartographer \gls{SLAM} introduced by~\citet{hess2016cartographer}. This \gls{2D} \gls{SLAM} works on a graph of occupancy grid \textit{submaps}. This format would be suitable for the error correcting approach (Section~\ref{sec:map-merging-on-point-clouds}). The format would need to be adapted to support \gls{3D} maps or it could be extended to support both \gls{2D} and \gls{3D} maps. Standardising the message format in \gls{ROS} would require a community discussion to ensure that the format can be supported across different \gls{SLAM} approaches. While some \gls{SLAM} implementations in \gls{ROS} export their internal \gls{SLAM} graph, to the best my knowledge, Google's Cartographer is the only implementation in \gls{ROS} that offers a suitable pose graph map format that would be suitable for the map-merging on pose graphs. However, the offered map format is custom to Cartographer \gls{SLAM} and it is supporting only \gls{2D} maps as Cartographer is a \gls{2D} \gls{SLAM}, so it cannot be used in this work.
 
 The map-merging node, therefore, uses monolithic maps represented in \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which always encode the whole map, to allow the highest degree of interoperability with existing \gls{ROS} packages.
 
 Apart from not being able to correct mapping errors, a monolithic map representation also causes unnecessary transfers of already-explored space, that slows map update rate for large-scale maps. A standardised pose graph map representation in \gls{ROS} might help to solve both issues.
-
-% mention rtabmap, google cartographer?
 
 \subsection{Configuration}
 \label{sec:configuration}
