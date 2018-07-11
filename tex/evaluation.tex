@@ -297,6 +297,23 @@ Ambiguities and self-similarities in the environment may also compromise the map
     \label{fig:mff_rotunda_sac}
 \end{figure}
 
-The presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) using a more strict non-probabilistic approach is able to avoid the upside down match. However, inliers are clustered in one particular area of the map (Figure~\ref{}), which leads to a visible angular error. Other parts of the common area proved unable to provide stable matches, especially the circular area seems to contain only unstable features and more mapping errors.
+The presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) using a more strict non-probabilistic approach is able to avoid the upside down match. However, inliers are clustered in one particular area of the map (Figure~\ref{fig:mff_rotunda_matching_inliers}), which leads to a visible angular error (Figure~\ref{fig:mff_rotunda_matching_estimate}). Other parts of the common area proved unable to provide stable matches, especially the circular area seems to contain only unstable features and more mapping errors.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{\textwidth}
+        \includegraphics[width=\textwidth]{../img/mff_rotunda_matching_inliers.png}
+        \caption{Inliers}
+        \label{fig:mff_rotunda_matching_inliers}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{\textwidth}
+        \includegraphics[width=\textwidth]{../img/mff_rotunda_matching_estimate.png}
+        \caption{The initial estimate with an angular error}
+        \label{fig:mff_rotunda_matching_estimate}
+    \end{subfigure}
+    \caption[The initial estimate for ``MFF Rotunda '' dataset produced by the reciprocal matching]{The initial transformation estimate and inliers of the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) for ``MFF Rotunda'' dataset. The inliers are clustered in a single area, which introduces an angular error in the initial transformation estimate.}
+    \label{fig:mff_rotunda_matching}
+\end{figure}
 
 This example shows that even fairly large common areas might not be suitable for the map-merging. Suitable common areas allowing a robust transformation estimate between maps should contain a decent amount of significant landmarks and should contain minimal amount of ambiguities, self-similarities and symmetries.
