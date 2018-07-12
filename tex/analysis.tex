@@ -31,7 +31,12 @@ Other data structures used in the \gls{3D} mapping, such as octree-based maps us
 
 Point clouds data messages are supported and well established in the \gls{ROS} framework. There are mature libraries to work with point clouds, such as \gls{PCL}. This makes point clouds suitable map representation for multi-robot systems.
 
-\section{Direct map-merging}
+\section{Related works}
+
+The map-merging is often a core part of a multi-robot system and various approaches has been developed to solve the map-merging problem. Most of the listed techniques work with robots operating in the \gls{2D} space (ground-based robots), but some of those techniques may be adapted to work in the \gls{3D} space too. The robot rendezvous techniques (Section~\ref{sec:direct-map-merging}) and \textit{indirect map-merging} techniques (Section~\ref{sec:map-merging-grids}) have been used mostly with a \gls{2D} assumption, while distributed \gls{SLAM} techniques (Section~\ref{sec:map-merging-distributed-slam}) can be used also in the \gls{3D} case.
+
+\subsection{Direct map-merging}
+\label{sec:direct-map-merging}
 
 Early map-merging techniques, classified as \textit{direct map-merging} by~\citet{lee2012survey}, use direct sensor measurements to compute the transformation between robots. This involves especially the case of robot rendezvous used by~\citet{zhou2006rendezvous}, which relies on robots' ability to sense each other position directly. Popular techniques use a camera and special recognizable markers on the robots to compute the transformation using computer vision algorithms.
 
@@ -43,7 +48,8 @@ While purpose-adapted environments may greatly simplify the map-merging problem,
 
 Global localization systems are usually not available indoor and while such systems are a great aid for navigating large-scale outdoor environments, the provided accuracy is usually not high enough for merging high-resolution point cloud maps. The position from global localization systems can be however used as an initial guess for map-merging algorithms.
 
-\section{Map-merging on occupancy grids}
+\subsection{Map-merging on occupancy grids}
+\label{sec:map-merging-grids}
 
 Later developed techniques work with \gls{2D} maps, usually represented as occupancy grids. \citet{lee2012survey}~categorize these techniques as \textit{indirect map-merging}. These techniques rely on overlapping areas in maps for map-merging.
 
@@ -53,11 +59,12 @@ Map-merging techniques for \gls{2D} occupancy grids involves spectra-based appro
 
 My previous work is available in the \gls{ROS} distribution as a ready-made solution for merging \gls{2D} maps. It influenced the presented \gls{3D} map-merging algorithm as I have gathered feedback from the \gls{ROS} community. From experience, it is especially important to select a suitable interoperable map format in \gls{ROS}, so that the implementation can be used with existing \gls{SLAM} algorithms in \gls{ROS}. The idea of automatic robot discovery (Section~\ref{sec:configuration}) enabling convenient configuration and the idea of decoupling inter-robot communication platforms and the map-merging algorithm (Section~\ref{sec:communication}) are reused in the presented implementation (Chapter~\ref{chap:implementation}). However, the presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}) has been designed from scratch and is based on different techniques as the data structures for \gls{2D} maps (occupancy grid) and \gls{3D} maps (point cloud) are different. The idea of converting occupancy grids to images and the idea of reusing image-based techniques, as used in my previous work, are not applicable.
 
-\section{Map-merging as distributed SLAM}
+\subsection{Map-merging as distributed SLAM}
+\label{sec:map-merging-distributed-slam}
 
 Map-merging algorithms have been also implemented as distributed \gls{SLAM} algorithms. These techniques take advantage of the research in the area of \gls{SLAM} algorithms and use loop-closure techniques developed for \gls{SLAM} to implement map-merging. Especially graph-based \gls{SLAM} implementations can be naturally extended to merge maps from multiple robots. Nodes from other robots can be added to the \gls{SLAM} graph and connected through loop-closures with existing nodes to form a single map.
 
-When a loop-closure between 2 maps is detected, it can be used to compute the transformation between maps. We need to extend the loop detection to work across map boundaries, not only within a single map as usual in the \gls{SLAM}, which typically requires exchanging implementation-specific data between robots. This poses several disadvantages. Based on the \gls{SLAM} loop-closure approach the internal \gls{SLAM} data may be quite large (see Table~\ref{tabl:rtabmap-db-vs-point-clouds}), stressing communication bandwidth. Exchanging implementation-specific data usually leads to running the same \gls{SLAM} algorithm on all robots in the multi-robot system, or the implementations must be adapted to exchange compatible loop-closure data. This is challenging for heterogeneous multi-robot systems when individual robots use different sensors, which is often the case when using both ground-based and aerial robots. For example, if ground-based robots are equipped with accurate heavy \gls{3D} laser range finder and aerial vehicles use lightweight stereo rig cameras, the \gls{SLAM} approaches are typically different and the loop-closure data are inherently incompatible (image features and \gls{3D} laser scans). In such scenarios, we need to use a different approach.
+When a loop-closure between 2 maps is detected, it can be used to compute the transformation between maps. We need to extend the loop detection to work across map boundaries, not only within a single map as usual in the \gls{SLAM}, which typically requires exchanging implementation-specific data between robots. This poses several disadvantages. Based on the \gls{SLAM} loop-closure approach the internal \gls{SLAM} data may be quite large (Table~\ref{tabl:rtabmap-db-vs-point-clouds}), stressing communication bandwidth. Exchanging implementation-specific data usually leads to running the same \gls{SLAM} algorithm on all robots in the multi-robot system, or the implementations must be adapted to exchange compatible loop-closure data. This is challenging for heterogeneous multi-robot systems when individual robots use different sensors, which is often the case when using both ground-based and aerial robots. For example, if ground-based robots are equipped with accurate heavy \gls{3D} laser range finder and aerial vehicles use lightweight stereo rig cameras, the \gls{SLAM} approaches are typically different and the loop-closure data are inherently incompatible (image features and \gls{3D} laser scans). In such scenarios, we need to use a different approach.
 
 \citet{lee2012survey}~list scan matching loop closure approaches used for map-merging, which are used with \gls{2D} \gls{SLAM} algorithms. \gls{2D} distributed \gls{SLAM} based on scan matching was implemented by~\citet{pfingsthorn2007scalable} for RoboCup Rescue Virtual Robots competition. \citet{fox2006distributed} used a direct exchange of laser range scans and odometry motion information coupled with a particle filter to localize robot in the second map.
 
