@@ -24,5 +24,6 @@
 *.loa
 vzor-dp
 papers
+attachments/
 !img/*.pdf
 !img/plots/*.pdf

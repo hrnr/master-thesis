@@ -1,7 +1,69 @@
 \chapwithtoc{List of Attached Files}
 \label{chap:files}
 
-This is a list of files in the electronical attachment to this work. The attachment contains source code for the presented \gls{ROS} package (Chapter~\ref{chap:implementation}), the package documentation and experimental data (Chapter~\ref{chap:evaluation}). Source code for the \gls{ROS} package is also available online (\url{https://github.com/hrnr/map-merge}). A reproduction of the package documentation is attached in the printed version (Appendix~\ref{chap:map_merge-wiki}).
+This is a list of files in the electronic attachment to this work. The attachment contains source code for the presented \gls{ROS} package (Chapter~\ref{chap:implementation}), the package documentation and experimental data (Chapter~\ref{chap:evaluation}). Source code for the \gls{ROS} package is also available online (\url{https://github.com/hrnr/map-merge}). A reproduction of the package documentation is attached in the printed version (Appendix~\ref{chap:map_merge-wiki}).
 
 \medskip
-
+\dirtree{%
+.1 attachments.zip. %
+.2 evaluation\DTcomment{datasets used in evaluation}. %
+.3 README.md. %
+.3 AAU\DTcomment{Section~\ref{sec:aau-dataset}}. %
+.4 AAU forest 2.pcd. %
+.4 AAU forest 1.pcd. %
+.3 EuRoC\DTcomment{Section~\ref{sec:euroc-dataset}}. %
+.4 Vicon Room 1 02.pcd. %
+.4 Vicon Room 1 01.pcd. %
+.4 Machine Hall 02.pcd. %
+.4 Machine Hall 01.pcd. %
+.4 Vicon Room 2 01.pcd. %
+.4 Vicon Room 2 02.pcd. %
+.3 MFF\DTcomment{Section~\ref{sec:mff-dataset}}. %
+.4 MFF Rotunda 1.pcd. %
+.4 MFF Refectory 1.pcd. %
+.4 MFF Refectory 2.pcd. %
+.4 MFF Rotunda 2.pcd. %
+.2 map-merge\DTcomment{sources for the \gls{ROS} package}. %
+.3 LICENSE. %
+.3 README.md. %
+.3 map\_merge\_3d\DTcomment{Section~\ref{sec:ros-package}}. %
+.4 rosdoc.yaml. %
+.4 CMakeLists.txt. %
+.4 package.xml. %
+.4 CHANGELOG.rst. %
+.4 src. %
+.5 visualise.cpp. %
+.5 graph.cpp. %
+.5 visualise.h. %
+.5 map\_merging.cpp. %
+.5 dispatch\_descriptors.h. %
+.5 registration\_visualisation.cpp. %
+.5 map\_merge\_node.cpp. %
+.5 matching.cpp. %
+.5 map\_merge\_tool.cpp. %
+.5 graph.h. %
+.5 features.cpp. %
+.4 launch. %
+.5 map\_merge\_3d.rviz. %
+.5 from\_pcds.launch. %
+.5 map\_merge.launch. %
+.4 include. %
+.5 map\_merge\_3d. %
+.6 typedefs.h. %
+.6 map\_merging.h. %
+.6 matching.h. %
+.6 map\_merge\_node.h. %
+.6 features.h. %
+.6 enum.h. %
+.4 test. %
+.5 test\_map\_merging.cpp. %
+.4 doc. %
+.5 mainpage.dox. %
+.5 architecture.svg. %
+.5 screenshot.jpg. %
+.5 wiki.txt. %
+.5 architecture.dia. %
+.2 doc\DTcomment{generated code documentation for the \gls{ROS} package}. %
+.3 html. %
+.3 manifest.yaml. %
+}
