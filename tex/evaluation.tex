@@ -172,7 +172,7 @@ For all the aerial datasets, the map-merging is able to correctly merge the maps
   \label{fig:plot:euc_dist}
 \end{figure}
 
-Both ``Vicon Room'' datasets show very small Euclidean error, well beyond the size of one voxel ($0.05$ m).
+Both ``Vicon Room'' datasets show very small Euclidean error, well beyond the size of one voxel ($0.05$ m). Considering the maps are down-sampled to the resolution of $0.1$ meters per voxel for the registration to allow merging of larger maps in real-world conditions, the presented algorithm can achieve a sub-voxel accuracy. The registration resolution of $0.1$ meters per voxel was used for all the evaluated maps.
 
 The Euclidean error for the initial estimate is significantly lower for the presented reciprocal matching method (Section~\ref{sec:matching}). For the \gls{SAC-IA} algorithm, the error is higher because the randomness used in the algorithm introduces additional errors in case of well-performing \gls{PFH} descriptors. The initial estimate produced by the presented matching method is close to the final estimate refined with \gls{ICP}. The \gls{ICP} refinement is then very fast without negative impact on the overall time of the map-merging algorithm (Figure~\ref{fig:plot:perf}).
 
