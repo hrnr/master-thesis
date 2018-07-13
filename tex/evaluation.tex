@@ -43,7 +43,7 @@ Second, for each environment, I created a pair of maps using the ``01'' and ``02
 
 Based on evaluations of \gls{SLAM} methods in \gls{ROS} done by~\citet{silva2017experimental} and \citet{ibragimov2017comparison}, I used RTAB-Map \gls{SLAM}, developed by~\citet{labbe2014online}, to create the maps. RTAB-Map can work with both stereo cameras and \gls{RGB-D} sensors and produces dense maps of good quality, as noted by both~\citet{silva2017experimental,ibragimov2017comparison}. ``RTAB-Map computed coherent SLAM solutions on all evaluated datasets and thus can be considered an efficient solution for 3D mapping scenarios'', summarise the results of RTAB-Map \citet{silva2017experimental}.
 
-The odometry for mapping was provided from stereo camera data, using a visual odometry approach, the available \gls{IMU} data were not used. For the ``01'' sessions I have used a native visual odometry approach of RTAB-Map. For the ``02'' sessions I have used visual odometry approach of {ORB-SLAM2}, introduced by~\citet{mur2017orb}, because the data exhibit more dynamic motions, which lead to a frequent loss on visual odometry using the first approach. {ORB-SLAM2} visual odometry exhibited better robustness for this data. In both cases, a loop-closure approach of~\citet{labbe2014online} has been used.
+The odometry for mapping was provided from stereo camera data, using a visual odometry approach, the available \gls{IMU} data were not used. For the ``01'' sessions I have used a native visual odometry approach of RTAB-Map. For the ``02'' sessions I have used visual odometry approach of {ORB-SLAM2}, introduced by~\citet{mur2017orb} because the data exhibit more dynamic motions, which lead to a frequent loss on visual odometry using the first approach. {ORB-SLAM2} visual odometry exhibited better robustness for this data. In both cases, a loop-closure approach of~\citet{labbe2014online} has been used.
 
 The maps have been voxelized to the resolution of $0.05$ meters per voxel, which yields suitable map sizes for map exchange in a multi-robot system.
 
@@ -100,33 +100,33 @@ Maps (Figures~\ref{fig:aau_top}, \ref{fig:aau_lateral}) were generated in the si
         \includegraphics[width=\textwidth]{../img/aau_fc_dnav6_lateral.png}
         \caption{``\gls{AAU} forest 2'' map}
     \end{subfigure}
-    \caption[Forest point cloud maps -- lateral view]{Lateral view of the two point cloud maps from \gls{AAU} outdoor forest dataset. In both maps there is a non-flat terrain and number of outliers caused by branches and difficult mapping conditions.}
+    \caption[Forest point cloud maps -- lateral view]{Lateral view of the two point cloud maps from \gls{AAU} outdoor forest dataset. In both maps, there is a non-flat terrain and number of outliers caused by branches and difficult mapping conditions.}
     \label{fig:aau_lateral}
 \end{figure}
 
 \section{MFF dataset}
 \label{sec:mff-dataset}
 
-This dataset consists of my own experiments conducted at the campus of Faculty of Mathematics and Physics, Charles University. I have conducted two series of experiments.
+This dataset consists of my own experiments conducted at the campus of the Faculty of Mathematics and Physics, Charles University. I have conducted two series of experiments.
 
-The first series were using a handheld Orbbec Astra \gls{RGB-D} camera. I intended to create multi-floor maps of the campus building and evaluate this scenario with the map-merging algorithm. It has soon became apparent that without odometry source such mapping is challenging even for state of the art visual odometry approaches (Figure~\ref{fig:mff_second_third_floor}).
+The first series of experiments was using a handheld Orbbec Astra \gls{RGB-D} camera. I intended to create multi-floor maps of the campus building and evaluate this scenario with the map-merging algorithm. It has soon become apparent that without odometry source such mapping is challenging even for state of the art visual odometry approaches (Figure~\ref{fig:mff_second_third_floor}).
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../img/mff_second_third_floor.png}
-    \caption[A broken point cloud map of multiple campus floors]{The point cloud map of the second and third floor of the faculty building recorded during handheld mapping. The visual odometry was reset immediately after the tracking was lost. Due to frequent visual odometry failures the mapping attempt was not successful, although there are some partially consistent areas within the map.}
+    \caption[A broken point cloud map of multiple campus floors]{The point cloud map of the second and third floor of the faculty building recorded during handheld mapping. The visual odometry was reset immediately after the tracking was lost. Due to frequent visual odometry failures, the mapping attempt was not successful, although there are some partially consistent areas within the map.}
     \label{fig:mff_second_third_floor}
 \end{figure}
 
-Typically, during the mapping in narrow spaces, with difficult lighting conditions or during fast movements, the visual odometry tracking is lost and needs to be reset. Without the \gls{IMU} or any other external odometry source to bridge the loss of the visual odometry, it is hard to maintain a plausible odometry estimate. Two situations has been observed to be especially challenging for visual odometry approaches: rough movements (especially rotations) typical for handheld mapping, as humans tend to do less disciplined movements than robots, and transitions between spaces though narrow passages (e.g. doors), especially between spaces with different lighting conditions. Orbbec Astra camera does not contain an \gls{IMU} and, therefore, is less suitable for the handheld mapping, which typically exhibits rough movements.
+Typically, during the mapping in narrow spaces, in difficult lighting conditions or during fast movements, the visual odometry tracking is lost and needs to be reset. Without the \gls{IMU} or any other external odometry source to bridge the loss of the visual odometry, it is hard to maintain a plausible odometry estimate. Two situations have been observed to be especially challenging for visual odometry approaches: rough movements (especially rotations) typical for handheld mapping, as humans tend to do less disciplined movements than robots, and transitions between spaces through narrow passages (e.g. doors), especially between spaces with different lighting conditions. Orbbec Astra camera does not contain an \gls{IMU} and, therefore, is less suitable for the handheld mapping, which typically exhibits rough movements.
 
 Bridging the visual odometry gaps with \gls{SLAM} loop-closures is not always possible, especially for the second aforementioned type of errors. If the odometry is always lost when moving in and out of the specific room, such room became an isolated part of the \gls{SLAM} graph without any connections to the rest of the graph. Loop-closures between these two spaces connected by the narrow passage are very hard to achieve.
 
-Because of the presented issues, I have conducted the second series of experiments with TurtleBot2 robot. It is a ground-based robot research platform designed to operate on flat surfaces.
+Because of the presented issues, I have conducted the second series of experiments with a TurtleBot2 robot. It is a ground-based robot research platform designed to operate on flat surfaces.
 
 The robot was equipped with Asus Xtion PRO \gls{RGB-D} camera, which was used for mapping, a gyroscope and wheel encoders providing \gls{2D} odometry.
 
-The datasets used for evaluation were recorded in two different spaces ``Rotunda'', a half-circle computer laboratory with adjacent rooms (Figure~\ref{fig:mff_rotunda}), and ``Refectory'', containing a baroque refectory and lecture rooms at the first floor of the faculty building (Figure~\ref{fig:mff_refectory}). In each of the environments two maps were recorded.
+The datasets used for evaluation were recorded in two different spaces ``Rotunda'', a half-circle computer laboratory with adjacent rooms (Figure~\ref{fig:mff_rotunda}), and ``Refectory'', containing a baroque refectory and lecture rooms at the first floor of the faculty building (Figure~\ref{fig:mff_refectory}). In each of the environments, two maps were recorded.
 
 \begin{figure}
     \centering
@@ -139,7 +139,7 @@ The datasets used for evaluation were recorded in two different spaces ``Rotunda
         \includegraphics[width=\textwidth]{../img/mff_rotunda_2.png}
         \caption{``MFF Rotunda 2'' map}
     \end{subfigure}
-    \caption[MFF Rotunda maps]{Maps of ``Rotunda'' computer laboratory with adjacent rooms recorded at the faculty building. The maps share a common mid-size area of a symmetrical half-circular laboratory. Both maps contain several mapping errors.}
+    \caption[MFF Rotunda maps]{Maps of ``Rotunda'' computer laboratory with adjacent rooms recorded at the faculty building. The maps share a common mid-size area of the symmetrical half-circular laboratory. Both maps contain several mapping errors.}
     \label{fig:mff_rotunda}
 \end{figure}
 
@@ -154,12 +154,12 @@ The datasets used for evaluation were recorded in two different spaces ``Rotunda
         \includegraphics[width=\textwidth]{../img/mff_refectory_2_highlight.png}
         \caption{``MFF Refectory 2'' map}
     \end{subfigure}
-    \caption[MFF Refectory maps]{Point cloud maps recorded at the first floor of the faculty building. The common area is highlighted. The larger map contains a baroque refectory with adjacent areas while the smaller map contains two lecture rooms. Notice the mapping errors in the corridor area, especially in the larger map.}
+    \caption[MFF Refectory maps]{Point cloud maps recorded on the first floor of the faculty building. The common area is highlighted. The larger map contains a baroque refectory with adjacent areas while the smaller map contains two lecture rooms. Notice the mapping errors in the corridor area, especially in the larger map.}
     \label{fig:mff_refectory}
 \end{figure}
 
 
-The maps were generated by RTAB-Map \gls{SLAM} as in the previous datasets. I used \gls{EKF} to fuse odometry data from the gyroscope, wheel encoders and the visual odometry provided by the native RTAB-Map approach. I used an \gls{EKF} implementation for \gls{ROS} by~\citet{moore2016ekf}. The filtering was using a \gls{2D} assumption as the robot operates in the plane. Together, those data provided a reliable odometry source for the \gls{SLAM} algorithm. The resulting maps were voxelized to the resolution of 0.05 meters per voxel. The maps are examined in Section~\ref{sec:mff-evaluation}.
+The maps were generated by RTAB-Map \gls{SLAM} as in the previous datasets. I used \gls{EKF} to fuse odometry data from the gyroscope, wheel encoders and the visual odometry provided by the native RTAB-Map approach. I used an \gls{EKF} implementation for \gls{ROS} by~\citet{moore2016ekf}. The filtering was using a \gls{2D} assumption as the robot operates in the plane. Together, these data provided a reliable odometry source for the \gls{SLAM} algorithm. The resulting maps were voxelized to the resolution of 0.05 meters per voxel. The maps are examined in Section~\ref{sec:mff-evaluation}.
 
 \section{Accuracy}
 
@@ -183,7 +183,7 @@ An important measure of estimation robustness is the number of inliers (Figure~\
 \begin{figure}
   \centering
   \input{../img/plots/inliers}
-  \caption[Number of keypoints, matches and inliers for aerial datasets]{Number of keypoints, descriptor matches and number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (Section~\ref{sec:matching}) has been used for matching. Keypoints are shown for the first map of each environment.}
+  \caption[The number of keypoints, matches and inliers for aerial datasets]{The number of keypoints, descriptor matches and the number of inliers across the datasets with default parameters. Default parameters include \gls{PFH} descriptors and \gls{SIFT} keypoints. The reciprocal matching algorithm (Section~\ref{sec:matching}) has been used for matching. Keypoints are shown for the first map of each environment.}
   \label{fig:plot:inliers}
 \end{figure}
 
@@ -191,7 +191,7 @@ The inlier ratio (the number of matches to the number of inliers) is quite low, 
 
 The ``AAU forest'' and ``Vicon Room 2'' datasets have low numbers of inliers, which might impact robustness in such environments. The ``AAU forest'' is a relatively small, difficult environment for mapping containing noise and mapping errors. Only a few regions in maps are suitable for producing reliable matching points, which leads to the small number of inliers.
 
-For the ``Vicon Room 2'' dataset colour-based descriptors exhibited generally better performance (Figure~\ref{fig:plot:desc_inliers}) allow robust estimation for this dataset. The ``Vicon Room 2'' maps also contain noise caused by the dynamic motion of the aerial vehicle.
+For the ``Vicon Room 2'' dataset, colour-based descriptors exhibited generally better performance (Figure~\ref{fig:plot:desc_inliers}) allow robust estimation for this dataset. The ``Vicon Room 2'' maps also contain noise caused by the dynamic motion of the aerial vehicle.
 
 Interestingly in both cases with a limited number of inliers, the map-merging algorithm has been able to produce an accurate merge (Figure~\ref{fig:plot:euc_dist}), even before \gls{ICP} refining. The inliers proved to be the correct matches.
 
@@ -202,7 +202,7 @@ As already noted in the previous section, the performance of the descriptors var
 \begin{figure}
   \centering
   \input{../img/plots/desc_inliers}
-  \caption[Number of inliers per descriptors]{Number of inliers across the datasets for different descriptor algorithms. Apart from descriptors algorithms, the default parameters has been used including \gls{SIFT} keypoints and the reciprocal matching algorithm (Section~\ref{sec:matching}). The \gls{PCL} implementation of \gls{SC3D} descriptors crashed on ``Machine Hall'' and ``Vicon Room 2'' datasets. This might indicate that the implementation in \gls{PCL} is probably not as mature as the remaining descriptors, but I have not investigated further.}
+  \caption[Number of inliers per descriptors]{Number of inliers across the datasets for different descriptor algorithms. Apart from descriptors algorithms, the default parameters have been used including \gls{SIFT} keypoints and the reciprocal matching algorithm (Section~\ref{sec:matching}). The \gls{PCL} implementation of \gls{SC3D} descriptors crashed on ``Machine Hall'' and ``Vicon Room 2'' datasets. This might indicate that the implementation in \gls{PCL} is probably not as mature as the remaining descriptors, but I have not investigated further.}
   \label{fig:plot:desc_inliers}
 \end{figure}
 
@@ -213,7 +213,7 @@ Euclidean error distances (Figure~\ref{fig:plot:desc_dist}) mostly reflects the 
 \begin{figure}
   \centering
   \input{../img/plots/desc_dist}
-  \caption[Euclidean error scores per descriptors]{Euclidean error scores (sum of Euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similarly to Figure~\ref{fig:plot:euc_dist} the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using initial estimate from the reciprocal matching algorithm. The reciprocal matching algorithm uses its default configuration of $k=5$ neighbours considered for matching.}
+  \caption[Euclidean error scores per descriptors]{Euclidean error scores (sum of Euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similarly to Figure~\ref{fig:plot:euc_dist}, the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using the initial estimate from the reciprocal matching algorithm. The reciprocal matching algorithm uses its default configuration of $k=5$ neighbours considered for matching.}
   \label{fig:plot:desc_dist}
 \end{figure}
 
@@ -225,7 +225,7 @@ Although the runtime performance was not a primary concern of the presented algo
 \begin{figure}
   \centering
   \input{../img/plots/perf}
-  \caption[Processing time per algorithm parts]{Processing time for the respective parts of the map-merging algorithm (Section~\ref{sec:estimate-pair-wise}) across the datasets. The data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and do not incorporate measurements from multiple runs to deal with various sources of non-determinism, although the runtime of the algorithm has been observed to be quite stable. The data are intended to show order of magnitude differences of processing time between particular parts of the algorithm. The map-merging algorithm has been run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints.}
+  \caption[Processing time per algorithm parts]{Processing time for the respective parts of the map-merging algorithm (Section~\ref{sec:estimate-pair-wise}) across the datasets. The data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and do not incorporate measurements from multiple runs to deal with various sources of non-determinism, although the runtime of the algorithm has been observed to be quite stable. The data are intended to show the order of magnitude differences of processing time between particular parts of the algorithm. The map-merging algorithm has been run with default parameters including \gls{PFH} descriptors and \gls{SIFT} keypoints.}
   \label{fig:plot:perf}
 \end{figure}
 
@@ -236,7 +236,7 @@ The \gls{SHOT} descriptors with colour are very fast, which makes them a compell
 \begin{figure}
   \centering
   \input{../img/plots/desc_perf}
-  \caption[Processing time per descriptors]{Processing time for descriptors algorithms across the datasets. Similarly to Figure~\ref{fig:plot:perf}, the data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and are intended to show order of magnitude differences of processing time between particular descriptors.}
+  \caption[Processing time per descriptors]{Processing time for descriptors algorithms across the datasets. Similarly to Figure~\ref{fig:plot:perf}, the data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and are intended to show the order of magnitude differences of processing time between particular descriptors.}
   \label{fig:plot:desc_perf}
 \end{figure}
 
@@ -250,22 +250,22 @@ For \gls{PFH}, \gls{PFHRGB} and \gls{SHOT} descriptors the reciprocal matching a
 \begin{figure}
   \centering
   \input{../img/plots/matching_k_inliers}
-  \caption[The number of inliers per $k$ in the reciprocal matching algorithm]{The number of inliers in matches produced by the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) for different $k$ and the evaluated descriptors. For $k=1$ the algorithm is standard ``1-on-1'' matching with reciprocal match validation. The evaluation was running with default parameters.}
+  \caption[The number of inliers per $k$ in the reciprocal matching algorithm]{The number of inliers in matches produced by the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) for different $k$ and the evaluated descriptors. For $k=1$ the algorithm is the standard ``1-on-1'' matching with reciprocal match validation. The evaluation was running with default parameters.}
   \label{fig:plot:matching_k_inliers}
 \end{figure}
 
 \begin{figure}
   \centering
   \input{../img/plots/matching_k_dist}
-  \caption[The Euclidean distance per $k$ in the reciprocal matching algorithm]{The Euclidean error distance for different number of neighbours ($k$) of the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}). For $k=1$ the algorithm is standard ``1-on-1'' matching with reciprocal match validation. The evaluation was running with default parameters.}
+  \caption[The Euclidean distance per $k$ in the reciprocal matching algorithm]{The Euclidean error distance for a different number of neighbours ($k$) of the presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}). For $k=1$ the algorithm is the standard ``1-on-1'' matching with reciprocal match validation. The evaluation was running with default parameters.}
   \label{fig:plot:matching_k_dist}
 \end{figure}
 
-Comparing the presented algorithm with standard ``1-on-1'' matching with reciprocal match validation, the presented approach can improve robustness in terms of number of inliers (Figure~\ref{fig:plot:matching_k_inliers}) and consecutively also accuracy in terms of smaller Euclidean distance (Figure~\ref{fig:plot:matching_k_dist}). The standard ``1-on-1'' matching, which considers only the nearest match, is equivalent to the presented reciprocal matching with $k=1$.
+Comparing the presented algorithm with the standard ``1-on-1'' matching with reciprocal match validation, the presented approach can improve robustness in terms of number of inliers (Figure~\ref{fig:plot:matching_k_inliers}) and consecutively also accuracy in terms of smaller Euclidean distance (Figure~\ref{fig:plot:matching_k_dist}). The standard ``1-on-1'' matching, which considers only the nearest match, is equivalent to the presented reciprocal matching with $k=1$.
 
-As expected, the increased number of neighbours considered for matching is beneficial for \gls{FPFH} descriptors, where increased $k$ is essential for a good initial estimate in some cases. With higher than default $k=10$, the reciprocal matching algorithm can produce a significantly better initial matching estimate than \gls{SAC-IA} algorithm.
+As expected, the increased number of neighbours considered for matching is beneficial for \gls{FPFH} descriptors, where the increased $k$ is essential for a good initial estimate in some cases. With higher than default $k=10$, the reciprocal matching algorithm can produce a significantly better initial matching estimate than \gls{SAC-IA} algorithm.
 
-Surprisingly, we can obverse the increased number of inliers also for \gls{PFH} and \gls{PFHRGB} descriptors with $k=5$ (Figure~\ref{fig:plot:matching_k_inliers}). Further broadening neighbour search to $k=10$ does not seem to increase robustness significantly for \gls{PFH} and \gls{PFHRGB} descriptors, in same cases the number of inliers is even lower than for $k=5$. The \gls{SHOT} descriptors with colour generally slightly benefit from increased $k$, but in the case of ``Machine Hall'' dataset the number of inliers decreases with increasing $k$. For \gls{SC3D} descriptors, there are less data as the implementation in \gls{PCL} crashed in ``Machine Hall'' and ``Vicon Room 2'' datasets. However it seems that \gls{SC3D} descriptors work well with the increased $k$, in ``AAU forest'' dataset there are no inliers for the standard ``1-on-1'' matching, but the presented matching approach was able to generate $5$ inliers with increased $k$, yielding a good initial estimate (Figure~\ref{fig:plot:matching_k_dist}).
+Surprisingly, we can obverse the increased number of inliers also for \gls{PFH} and \gls{PFHRGB} descriptors with $k=5$ (Figure~\ref{fig:plot:matching_k_inliers}). Further broadening neighbour search to $k=10$ does not seem to increase robustness significantly for \gls{PFH} and \gls{PFHRGB} descriptors, in some cases the number of inliers is even lower than for $k=5$. The \gls{SHOT} descriptors with colour generally slightly benefit from the increased $k$, but in the case of ``Machine Hall'' dataset, the number of inliers decreases with increasing $k$. For \gls{SC3D} descriptors, there are less data as the implementation in \gls{PCL} crashed in ``Machine Hall'' and ``Vicon Room 2'' datasets. However it seems that \gls{SC3D} descriptors work well with the increased $k$, in ``AAU forest'' dataset there are no inliers for the standard ``1-on-1'' matching, but the presented matching approach was able to generate $5$ inliers with the increased $k$, yielding a good initial estimate (Figure~\ref{fig:plot:matching_k_dist}).
 
 Good performance across different descriptors makes the presented reciprocal matching a preferred matching strategy over \gls{SAC-IA} algorithm for the map-merging of point cloud maps.
 
@@ -276,11 +276,11 @@ As the presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}) rel
 
 First of all, the size of the common area in maps is the most influencing factor. Large common areas can possibly contain more features, which in turn can yield more feature matches and inliers providing a more robust transformation estimate.
 
-In real-world environments, however, even a fairly large common areas might not be sufficient if they do not contain enough outstanding landmarks for the feature detection. These feature-poor areas are fairly common in man-made environments including industrial areas. Flat, single-colour surfaces typically pose a great challenge for common feature-based methods.
+In real-world environments, however, even fairly large common areas might not be sufficient if they do not contain enough outstanding landmarks for the feature detection. These feature-poor areas are fairly common in man-made environments including industrial areas. Flat, single-colour surfaces typically pose a great challenge for common feature-based methods.
 
 For example, ``MFF Refectory'' dataset (Figure~\ref{fig:mff_refectory}) contains two maps with an overlapping area at the corridor. Although the area is fairly large, it has proven to be insufficient for a reliable transformation estimate and the map-merging. The corridor does not contain enough significant landmarks. Moreover, the same lack of landmarks in corridor areas leads to mapping errors in the maps, that make map-merging even more challenging. If no common feature-rich areas are present in maps, the map-merging based exclusively on point cloud maps is expected to be a challenging task.
 
-Ambiguities and self-similarities in the environment may also compromise the map-merging. ``MFF Rotunda'' dataset (Figure~\ref{fig:mff_rotunda}) was recorded in a symmetrical half-circular laboratory with many similarly looking workplaces. The symmetry of the environment causes \gls{SAC-IA} algorithm to wrongly match the maps upside down (Figure~\ref{fig:mff_rotunda_sac}).
+Ambiguities and self-similarities in the environment may also compromise the map-merging. ``MFF Rotunda'' dataset (Figure~\ref{fig:mff_rotunda}) was recorded in a symmetrical half-circular laboratory with many similar looking workplaces. The symmetry of the environment causes \gls{SAC-IA} algorithm to wrongly match the maps upside down (Figure~\ref{fig:mff_rotunda_sac}).
 
 \begin{figure}
     \centering
@@ -316,4 +316,4 @@ The presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) us
     \label{fig:mff_rotunda_matching}
 \end{figure}
 
-This example shows that even fairly large common areas might not be suitable for the map-merging. Suitable common areas allowing a robust transformation estimate between maps should contain a decent amount of significant landmarks and should contain minimal amount of ambiguities, self-similarities and symmetries.
+This example shows that even fairly large common areas might not be suitable for the map-merging. Suitable common areas allowing a robust transformation estimate between maps should contain a decent amount of significant landmarks and should contain a minimal amount of ambiguities, self-similarities and symmetries.

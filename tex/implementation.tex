@@ -30,7 +30,7 @@ The software for this thesis is organised in a \gls{ROS} package \texttt{map\_me
 
 The \texttt{map\_merge\_3d} package is distributed within \gls{ROS} starting from \gls{ROS} Melodic release. The package documentation is maintained as wiki text available online, a reproduction of the documentation is attached (Appendix~\ref{chap:map_merge-wiki}).
 
-Care has been taken to integrate the package with the rest of the \gls{ROS} ecosystem. The package is not tied to any particular package for inter-robot communication (Section~\ref{sec:communication}) and it depends on commonly used map representation in \gls{ROS} (Section~\ref{sec:map-representation}).
+Care has been taken to integrate the package with the rest of the \gls{ROS} ecosystem. The package is not tied to any particular package for inter-robot communication (Section~\ref{sec:communication}) and it depends on the commonly used map representation in \gls{ROS} (Section~\ref{sec:map-representation}).
 
 The \gls{ROS} node supports auto-discovery of the robots (Section~\ref{sec:configuration}) and is designed to partially mitigate the high computing demands of the map-merging (Section~\ref{sec:node-architecture}). The package also contains command-line tools for offline map-merging and visualisation (Section~\ref{sec:commandline-tools}).
 
@@ -39,11 +39,11 @@ The \gls{ROS} node supports auto-discovery of the robots (Section~\ref{sec:confi
 
 The \gls{ROS} node is designed to work with any software for inter-robot communication. This architecture allows users to use any kind of communication media and software solution that is available for a given multi-robot system. The package, therefore, does not provide nor expect any particular communication between robots.
 
-To achieve the loose coupling with communication software, the node expects map topics to be available within local \gls{ROS} graph. A user of the package is then expected to configure communication between robots that publishes robot maps within local \gls{ROS} graph. There are several solutions available within \gls{ROS} to achieve this setup.
+To achieve the loose coupling with communication software, the node expects map topics to be available within the local \gls{ROS} graph. A user of the package is then expected to configure communication between robots that publishes robot maps within the local \gls{ROS} graph. There are several solutions available in \gls{ROS} to achieve this setup.
 
 First of all, \gls{ROS} natively supports sending messages between multiple computers connected to the same network. However, the \gls{ROS} master directory listing (broker) service is not distributed and it needs to run on one of those computers. This creates a single-point-of-failure that is not acceptable for unreliable communication media.
 
-To achieve reliable multi-robot communication \gls{ROS} Multimaster Special Interest Group was formed with the intent to support running multiple \gls{ROS} master broker services. \citet{hernadez2015multi} developed \texttt{multimaster\_fkie} package, that deals with most of the problems of the multi-robot communication. This package can be used together with \texttt{map\_merge\_3d} to run online map-merging for multiple robots.
+To achieve reliable multi-robot communication \gls{ROS} Multimaster Special Interest Group was formed with the intent to support running multiple \gls{ROS} master broker services. \citet{hernadez2015multi} developed the \texttt{multimaster\_fkie} package, that deals with most of the problems of the multi-robot communication. This package can be used together with \texttt{map\_merge\_3d} to run online map-merging for multiple robots.
 
 Users are free to choose any other communication solution meeting their needs for their particular application, \texttt{map\_merge\_3d} does not depend on any particular multi-master setup and can run also under single-master setup, for example in a simulated multi-robot environment.
 
@@ -60,7 +60,7 @@ The future standardised map format may take inspiration from Google's Cartograph
 
 The map-merging node, therefore, uses monolithic maps represented in \texttt{sen\-sor\_msgs/\-Point\-Cloud2} messages, which always encode the whole map, to allow the highest degree of interoperability with existing \gls{ROS} packages.
 
-Apart from not being able to correct mapping errors, a monolithic map representation also causes unnecessary transfers of already-explored space, that slows map update rate for large-scale maps. A standardised pose graph map representation in \gls{ROS} might help to solve both issues.
+Apart from not being able to correct mapping errors, a monolithic map representation also causes unnecessary transfers of already-explored space, that slows the map update rate for large-scale maps. A standardised pose graph map representation in \gls{ROS} might help to solve both issues.
 
 \subsection{Configuration}
 \label{sec:configuration}
