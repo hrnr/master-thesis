@@ -27,3 +27,5 @@ papers
 attachments/
 !img/*.pdf
 !img/plots/*.pdf
+*.zip
+tex/*.txt
