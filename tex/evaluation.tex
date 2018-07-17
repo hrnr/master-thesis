@@ -1,7 +1,7 @@
 \chapter{Evaluation}
 \label{chap:evaluation}
 
-The presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}) has been evaluated on a number of demanding robotics datasets. The datasets include data captured by small aerial vehicles (Sections~\ref{sec:euroc-dataset}, \ref{sec:aau-dataset}) as well as ground-based robots. The datasets include both widely used benchmark datasets in robotics research as well as data recorded by the author.
+The presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}) has been evaluated on a number of demanding robotics datasets. The datasets include data captured by small aerial vehicles (Sections~\ref{sec:euroc-dataset}, \ref{sec:aau-dataset}) as well as ground-based robots. The datasets include both widely used benchmark datasets in robotics research and data recorded by the author.
 
 Sensors used include stereo rig cameras and active \gls{RGB-D} cameras, which are popular visual sensors in the mobile robotics. This variety of sensors and robots covers many typical multi-robot deployments. All datasets have been captured under real-world conditions, none of them uses simulated data.
 
@@ -23,7 +23,7 @@ The publicly available datasets introduced by~\citet{Burri2016} was collected on
 
 The cameras produce a WVGA monochrome (greyscale) images at 20 frames per second. Cameras have a global shutter. The automatic exposure control is independent for both cameras. According to the published errata~\citep{Burri2016}, this ``resulted in different shutter times and in turn in different image brightnesses, rendering stereo matching and feature tracking more challenging''.
 
-The dataset contains 11 mapping sessions in 3 different environments (``Machine Hall'', ``Vicon Room 1'', ``Vicon Room 2''). Each mapping session is available in a single \gls{ROS} bag file. First 5 sessions were captured in ETH machine hall (Figure~\ref{fig:eth-machine-hall}), a fairly large industrial environment featuring piping, reservoirs and many different types of surfaces. The second and the third batch of datasets were captured in a smaller furnished rectangular room. For the second and the third batch, the furnishing was different.
+The dataset contains 11 mapping sessions in 3 different environments (``Machine Hall'', ``Vicon Room 1'', ``Vicon Room 2''). Each mapping session is available in a single \gls{ROS} bag file. First 5 sessions were captured in ETH machine hall (Figure~\ref{fig:eth-machine-hall}), a fairly large industrial environment featuring piping, reservoirs and different types of surfaces. The second and the third batch of datasets were captured in a smaller furnished rectangular room. For the second and the third batch, the furnishing was different.
 
 \begin{figure}
     \centering
@@ -178,7 +178,7 @@ The Euclidean error for the initial estimate is significantly lower for the pres
 
 \section{Estimation robustness}
 
-An important measure of estimation robustness is the number of inliers (Figure~\ref{fig:plot:inliers}) in the \gls{RANSAC} estimate (Section~\ref{sec:transform-evaluation}). Inliers are the points which are ultimately used for computing transformation estimate. Estimates based on a small number of inliers might be severely affected by the noise. On the other hand, estimates based on a large number of inliers, especially with the high inliers ratio to all points, are supposed to be reasonably confident in typical applications.
+An important measure of estimation robustness is the number of inliers (Figure~\ref{fig:plot:inliers}) in the \gls{RANSAC} estimate (Section~\ref{sec:transform-evaluation}). Inliers are the points which are ultimately used for computing transformation estimate. Estimates based on a few inliers might be severely affected by the noise. On the other hand, estimates based on a large number of inliers, especially with the high inlier ratio (a ratio of inliers to all the matches), are supposed to be reasonably confident in typical applications.
 
 \begin{figure}
   \centering
@@ -213,7 +213,7 @@ Euclidean error distances (Figure~\ref{fig:plot:desc_dist}) mostly reflects the 
 \begin{figure}
   \centering
   \input{../img/plots/desc_dist}
-  \caption[Euclidean error scores per descriptors]{Euclidean error scores (sum of Euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similarly to Figure~\ref{fig:plot:euc_dist}, the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using the initial estimate from the reciprocal matching algorithm. The reciprocal matching algorithm uses its default configuration of $k=5$ neighbours considered for matching.}
+  \caption[Euclidean error scores per descriptors]{Euclidean error scores (sum of Euclidean distances for corresponding points) across the datasets for different descriptor algorithms. Similar to Figure~\ref{fig:plot:euc_dist}, the first two scores are for the initial estimates, using the reciprocal matching algorithm and the \gls{SAC-IA} respectively, the last score is for the final refining with \gls{ICP}, using the initial estimate from the reciprocal matching algorithm. The reciprocal matching algorithm uses its default configuration of $k=5$ neighbours considered for matching.}
   \label{fig:plot:desc_dist}
 \end{figure}
 
@@ -236,7 +236,7 @@ The \gls{SHOT} descriptors with colour are very fast, which makes them a compell
 \begin{figure}
   \centering
   \input{../img/plots/desc_perf}
-  \caption[Processing time per descriptors]{Processing time for descriptors algorithms across the datasets. Similarly to Figure~\ref{fig:plot:perf}, the data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and are intended to show the order of magnitude differences of processing time between particular descriptors.}
+  \caption[Processing time per descriptors]{Processing time for descriptors algorithms across the datasets. Similar to Figure~\ref{fig:plot:perf}, the data has been recorded during one run of the algorithm on Intel(R) Core(TM) i5-2520M and are intended to show the order of magnitude differences of processing time between particular descriptors.}
   \label{fig:plot:desc_perf}
 \end{figure}
 
@@ -265,7 +265,7 @@ Comparing the presented algorithm with the standard ``1-on-1'' matching with rec
 
 As expected, the increased number of neighbours considered for matching is beneficial for \gls{FPFH} descriptors, where the increased $k$ is essential for a good initial estimate in some cases. With higher than default $k=10$, the reciprocal matching algorithm can produce a significantly better initial matching estimate than \gls{SAC-IA} algorithm.
 
-Surprisingly, we can obverse the increased number of inliers also for \gls{PFH} and \gls{PFHRGB} descriptors with $k=5$ (Figure~\ref{fig:plot:matching_k_inliers}). Further broadening neighbour search to $k=10$ does not seem to increase robustness significantly for \gls{PFH} and \gls{PFHRGB} descriptors, in some cases the number of inliers is even lower than for $k=5$. The \gls{SHOT} descriptors with colour generally slightly benefit from the increased $k$, but in the case of ``Machine Hall'' dataset, the number of inliers decreases with increasing $k$. For \gls{SC3D} descriptors, there are less data as the implementation in \gls{PCL} crashed in ``Machine Hall'' and ``Vicon Room 2'' datasets. However it seems that \gls{SC3D} descriptors work well with the increased $k$, in ``AAU forest'' dataset there are no inliers for the standard ``1-on-1'' matching, but the presented matching approach was able to generate $5$ inliers with the increased $k$, yielding a good initial estimate (Figure~\ref{fig:plot:matching_k_dist}).
+Surprisingly, we can obverse the increased number of inliers also for \gls{PFH} and \gls{PFHRGB} descriptors with $k=5$ (Figure~\ref{fig:plot:matching_k_inliers}). Broadening the neighbour search further to $k=10$ does not seem to increase robustness significantly for \gls{PFH} and \gls{PFHRGB} descriptors, in some cases the number of inliers is even lower than for $k=5$. The \gls{SHOT} descriptors with colour generally slightly benefit from the increased $k$, but in the case of ``Machine Hall'' dataset, the number of inliers decreases with increasing $k$. For \gls{SC3D} descriptors, there are fewer data as the implementation in \gls{PCL} crashed in ``Machine Hall'' and ``Vicon Room 2'' datasets. However, it seems that \gls{SC3D} descriptors work well with the increased $k$, in ``AAU forest'' dataset there are no inliers for the standard ``1-on-1'' matching, but the presented matching approach was able to generate $5$ inliers with the increased $k$, yielding a good initial estimate (Figure~\ref{fig:plot:matching_k_dist}).
 
 Good performance across different descriptors makes the presented reciprocal matching a preferred matching strategy over \gls{SAC-IA} algorithm for the map-merging of point cloud maps.
 
@@ -274,7 +274,7 @@ Good performance across different descriptors makes the presented reciprocal mat
 
 As the presented map-merging algorithm (Chapter~\ref{chap:mergingalgorithm}) relies entirely on information contained in the point cloud maps, properties of the overlapping area in maps (which is the only source of information for the map-merging) greatly influence the map-merging process.
 
-First of all, the size of the common area in maps is the most influencing factor. Large common areas can possibly contain more features, which in turn can yield more feature matches and inliers providing a more robust transformation estimate.
+First of all, the size of the common area in maps is the most influencing factor. Large common areas may contain more features, which in turn can yield more feature matches and inliers providing a more robust transformation estimate.
 
 In real-world environments, however, even fairly large common areas might not be sufficient if they do not contain enough outstanding landmarks for the feature detection. These feature-poor areas are fairly common in man-made environments including industrial areas. Flat, single-colour surfaces typically pose a great challenge for common feature-based methods.
 
@@ -297,7 +297,7 @@ Ambiguities and self-similarities in the environment may also compromise the map
     \label{fig:mff_rotunda_sac}
 \end{figure}
 
-The presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) using a more strict non-probabilistic approach is able to avoid the upside down match. However, inliers are clustered in one particular area of the map (Figure~\ref{fig:mff_rotunda_matching_inliers}), which leads to a visible angular error (Figure~\ref{fig:mff_rotunda_matching_estimate}). Other parts of the common area proved unable to provide stable matches, especially the circular area seems to contain only unstable features and more mapping errors.
+The presented reciprocal matching algorithm (Algorithm~\ref{alg:cross-match}) using a stricter non-probabilistic approach is able to avoid the upside down match. However, inliers are clustered in one particular area of the map (Figure~\ref{fig:mff_rotunda_matching_inliers}), which leads to a visible angular error (Figure~\ref{fig:mff_rotunda_matching_estimate}). Other parts of the common area proved unable to provide stable matches, especially the circular area seems to contain only unstable features and more mapping errors.
 
 \begin{figure}
     \centering
