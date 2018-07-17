@@ -10,7 +10,7 @@ Point cloud algorithms are implemented with \gls{PCL} (Section~\ref{sec:pcl}). \
 
 \gls{ROS} is a popular open-source robotics middleware and distribution of community-maintained robotics software. \gls{ROS} provides hardware abstraction, low-level sensors control, implementations of commonly-used robotics algorithms, including several variants of \gls{SLAM}, message-passing between processes, build system, and package management.
 
-The core of the \gls{ROS} is a messaging system, that allows loose coupling between sensors, robotic algorithms and actuators. There are many community-established standard message formats for various sensor types, visualisation, maps, robot state, linear algebra etc., which enable software reuse.
+The core of the \gls{ROS} is a messaging system, that allows loose coupling between sensors, robotic algorithms and actuators. There are many community-established message formats for various sensor types, visualisation, maps, robot state, linear algebra etc., which enable software reuse.
 
 Software in the \gls{ROS} project is organised in a form of community-maintained packages. The first type of packages integrate particular hardware sensors, actuators or entire robot platforms with \gls{ROS} and provide a message interface using standard \gls{ROS} messages. The second type of packages implements robotics algorithms and usually depends only on standard \gls{ROS} messages, making them reusable between robots. The \gls{ROS} project builds and distributes binary packages for Linux.
 
