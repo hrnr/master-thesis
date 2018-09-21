@@ -22,6 +22,8 @@
 % poster specific
 \usepackage{lmodern}
 
+\usepackage{enumitem}
+
 \usepackage[pdftex,unicode]{hyperref}   % Must follow all other packages
 
 \include{definitions}
@@ -47,7 +49,8 @@
 \title{\uppercase{\ThesisTitle}}
 \author{\ThesisAuthor}
 \date{\YearSubmitted}
-\institute{advisor: RNDr. David Obdržálek, Ph.D.}
+\institute{Department of Theoretical Computer Science and Mathematical Logic}
+\def\Advisor{advisor: RNDr. David Obdržálek, Ph.D.}
 \titlegraphic{\includegraphics[height=15em]{logotyp_fakulty2.pdf}}
 
 % disable marketing
@@ -64,29 +67,30 @@
 % \begin{blockemph}
 
 \block{Motivation}{
-\begin{itemize}
+\vspace{0.5em}
+\begin{itemize}[leftmargin=*,labelindent=0.5em,labelsep=1em]
     \item A group of robots needs to coordinate to be efficient.
-    \item An efficient coordination of robots needs a global map.
+    \item An efficient coordination of robots requires a global map.
     \item How to create the global map with unknown initial positions of robots?
-    \item The implementation needs to be easily deployable, work with different communication systems and have low requirements on robot equipment.
+    \item The implementation needs to be easily deployable, work with different communication systems and have low requirements on~robot equipment.
     \item The algorithm must work with existing robust \gls{SLAM} algorithms.
 \end{itemize}
 \begin{minipage}[t]{0.27\linewidth}
-    \begin{tikzfigure}[Map 1]
+    \begin{tikzfigure}
         \centering
         \includegraphics[width=\linewidth]{../img/mff_rotunda_2.png}
     \end{tikzfigure}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.33\linewidth}
-    \begin{tikzfigure}[The global map]
+    \begin{tikzfigure}
         \centering
         \includegraphics[width=\linewidth]{rotunda_merged.png}
 \end{tikzfigure}
 \end{minipage}
 \hfill
 \begin{minipage}[t]{0.27\linewidth}
-    \begin{tikzfigure}[Map 2]
+    \begin{tikzfigure}
         \centering
         \includegraphics[width=\linewidth]{../img/mff_rotunda_1.png}
 \end{tikzfigure}
@@ -95,25 +99,19 @@
 % \end{blockemph}
 
 \block{Contribution}{
+\vspace{0.5em}
 % \begin{minipage}[t]{0.74\linewidth}
-\begin{itemize}
-    \item The presented approach is the first implemented map-merging algorithm working directly on point clouds without any auxiliary information.
-    \item The presented implementation is the first implementation of a \gls{3D} map-merging algorithm for multi-robot systems within the \gls{ROS} ecosystem.
-    \item A new reciprocal descriptor matching algorithm was introduced for estimating the initial transformation using feature-matching.
+\begin{itemize}[leftmargin=*,labelindent=0.5em,labelsep=1em]
+    \item The presented approach is the first implemented map-merging algorithm working directly on \textbf{point clouds without any auxiliary information}.
+    \item The presented implementation is the \textbf{first implementation} of a \gls{3D} map-merging algorithm for multi-robot systems within the \gls{ROS} ecosystem.
+    \item A \textbf{new reciprocal descriptor matching algorithm} was introduced for estimating the initial transformation using feature-matching.
 \end{itemize}
-% \end{minipage}
-% \hfill
-% \begin{minipage}[t]{0.24\linewidth}
-% \vspace{-1em}
-% \begin{tikzfigure}
-%   \centering
-%   \includegraphics[width=\linewidth]{matches.png}
-% \end{tikzfigure}
-% \end{minipage}
+\vspace{0.5em}
 } % end block
 
 \block{ROS package}{
-\begin{minipage}[t]{0.47\linewidth}
+\vspace{0.5em}
+\begin{minipage}[t]{0.50\linewidth}
 The implementation presented in this work leverages modularity of the widely-used \gls{ROS} framework and respects community established standards. This allows easy integration with existing planning, mapping and communication algorithms enabling quick development of multi-robot systems suited for the particular task.
 
 \vspace{1em}
@@ -137,18 +135,15 @@ Wiki: &\url{http://wiki.ros.org/map_merge_3d}
 \end{tikzfigure}
 \end{minipage}
 
-\vspace{1.3em}
+% \vspace{0.5em}
 } % end block
 
 \column{0.5}
 
 \block{Experiments and Results}{
-% v1-greyscale.png
-% euroc_mh_02.png
-% aau_fc_dnav6_lateral.png
-% eth_machine_room.jpg
+\vspace{0.5em}
 
-The map-merging algorithm has been evaluated on real-world datasets captured by both aerial and ground-based robots with a variety of stereo rig cameras and active \gls{RGB-D} cameras. It has been evaluated in both indoor and outdoor environments ranging from forest to a single furnished room. The datasets used for evaluation include both well-established benchmark robotics datasets and my own experiments.
+The map-merging algorithm has been evaluated on real-world datasets captured by both aerial and ground-based robots with a~variety of stereo rig cameras and active \gls{RGB-D} cameras. It has been evaluated in both indoor and outdoor environments ranging from forest to a single furnished room. The datasets used for evaluation include both well-established benchmark robotics datasets and my own experiments.
 
 \begin{minipage}[t]{0.24\linewidth}
 \begin{tikzfigure}
@@ -195,11 +190,13 @@ The map-merging algorithm has been evaluated on real-world datasets captured by 
 \end{tikzfigure}
 \end{minipage}
 
-In the most configurations, the new reciprocal matching scheme introduced in this work outperforms \gls{SAC-IA} algorithm for initial alignment available in the \gls{PCL}. The presented algorithm requires very little parametrisation and exhibited good performance across descriptors in the evaluation.
+In the most configurations, my new reciprocal matching scheme introduced in this work outperforms \gls{SAC-IA} algorithm for initial alignment available in the \gls{PCL}.
 
 \vspace{1em}
 
-The work showed the feasibility of the feature-matching approach for registration of low-density point cloud maps produced by \gls{SLAM} algorithms while using \gls{3D} point cloud features typically employed with high-density sensor data. The presented algorithm is applicable in heterogeneous multi-robot systems and the algorithm can work with different \gls{SLAM} approaches and sensor types.
+The work showed the feasibility of the feature-matching approach for registration of low-density point cloud maps produced by~\gls{SLAM} algorithms while using \gls{3D} point cloud features typically employed with high-density sensor data. The presented algorithm is applicable in heterogeneous multi-robot systems and the algorithm can work with different \gls{SLAM} approaches and sensor types.
+
+\vspace{1em}
 } % end block
 
 \end{columns}
