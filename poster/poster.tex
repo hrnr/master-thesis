@@ -1,0 +1,207 @@
+\documentclass[28pt, a4paper, landscape]{tikzposter}
+\usepackage[utf8]{inputenc}
+
+%% Further useful packages (included in most LaTeX distributions)
+\usepackage{amsmath}        % extensions for typesetting of math
+\usepackage{amsfonts}       % math fonts
+\usepackage{amsthm}         % theorems, definitions, etc.
+\usepackage{bbding}         % various symbols (squares, asterisks, scissors, ...)
+\usepackage{bm}             % boldface symbols (\bm)
+\usepackage{graphicx}       % embedding of pictures
+\usepackage{fancyvrb}       % improved verbatim environment
+\usepackage{natbib}         % citation style AUTHOR (YEAR), or AUTHOR [NUMBER]
+\usepackage{dcolumn}        % improved alignment of table columns
+\usepackage{booktabs}       % improved horizontal lines in tables
+\usepackage{paralist}       % improved enumerate and itemize
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{mathtools}
+\usepackage[acronym,toc]{glossaries}
+
+% poster specific
+\usepackage{lmodern}
+
+\usepackage[pdftex,unicode]{hyperref}   % Must follow all other packages
+
+\include{definitions}
+\input{../tex/macros.tex}
+\input{../tex/abbreviations.tex}
+\include{poster-macros}
+
+\def\ThesisTitle{Automatic Point Clouds Merging}
+\def\ThesisAuthor{Jiří Hörner}
+\def\YearSubmitted{2018}
+\def\Keywords{%
+{ROS} {map-merging} {Point cloud} {multi-robot systems}
+}
+
+\hypersetup{breaklinks=true}
+\hypersetup{pdftitle={\ThesisTitle}}
+\hypersetup{pdfauthor={\ThesisAuthor}}
+\hypersetup{pdfkeywords=\Keywords}
+\hypersetup{urlcolor=blue}
+
+\usetheme{Charles}
+
+\title{\uppercase{\ThesisTitle}}
+\author{\ThesisAuthor}
+\date{\YearSubmitted}
+\institute{advisor: RNDr. David Obdržálek, Ph.D.}
+\titlegraphic{\includegraphics[height=15em]{logotyp_fakulty2.pdf}}
+
+% disable marketing
+\tikzposterlatexaffectionproofoff
+
+\begin{document}
+
+\maketitle
+
+\begin{columns}
+\column{0.5}
+
+% different block color
+% \begin{blockemph}
+
+\block{Motivation}{
+\begin{itemize}
+    \item A group of robots needs to coordinate to be efficient.
+    \item An efficient coordination of robots needs a global map.
+    \item How to create the global map with unknown initial positions of robots?
+    \item The implementation needs to be easily deployable, work with different communication systems and have low requirements on robot equipment.
+    \item The algorithm must work with existing robust \gls{SLAM} algorithms.
+\end{itemize}
+\begin{minipage}[t]{0.27\linewidth}
+    \begin{tikzfigure}[Map 1]
+        \centering
+        \includegraphics[width=\linewidth]{../img/mff_rotunda_2.png}
+    \end{tikzfigure}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.33\linewidth}
+    \begin{tikzfigure}[The global map]
+        \centering
+        \includegraphics[width=\linewidth]{rotunda_merged.png}
+\end{tikzfigure}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.27\linewidth}
+    \begin{tikzfigure}[Map 2]
+        \centering
+        \includegraphics[width=\linewidth]{../img/mff_rotunda_1.png}
+\end{tikzfigure}
+\end{minipage}
+} % end block
+% \end{blockemph}
+
+\block{Contribution}{
+% \begin{minipage}[t]{0.74\linewidth}
+\begin{itemize}
+    \item The presented approach is the first implemented map-merging algorithm working directly on point clouds without any auxiliary information.
+    \item The presented implementation is the first implementation of a \gls{3D} map-merging algorithm for multi-robot systems within the \gls{ROS} ecosystem.
+    \item A new reciprocal descriptor matching algorithm was introduced for estimating the initial transformation using feature-matching.
+\end{itemize}
+% \end{minipage}
+% \hfill
+% \begin{minipage}[t]{0.24\linewidth}
+% \vspace{-1em}
+% \begin{tikzfigure}
+%   \centering
+%   \includegraphics[width=\linewidth]{matches.png}
+% \end{tikzfigure}
+% \end{minipage}
+} % end block
+
+\block{ROS package}{
+\begin{minipage}[t]{0.47\linewidth}
+The implementation presented in this work leverages modularity of the widely-used \gls{ROS} framework and respects community established standards. This allows easy integration with existing planning, mapping and communication algorithms enabling quick development of multi-robot systems suited for the particular task.
+
+\vspace{1em}
+
+This work has been accepted to the official \gls{ROS} distribution. It is available from \gls{ROS} Melodic.
+
+\vspace {1em}
+
+\begin{tabular}{ l l }
+Source: &\url{https://github.com/hrnr/map-merge} \\
+Wiki: &\url{http://wiki.ros.org/map_merge_3d}
+\end{tabular}
+
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.47\linewidth}
+
+\begin{tikzfigure}
+  \centering
+  \includegraphics[width=\linewidth]{ros_wiki.png}
+\end{tikzfigure}
+\end{minipage}
+
+\vspace{1.3em}
+} % end block
+
+\column{0.5}
+
+\block{Experiments and Results}{
+% v1-greyscale.png
+% euroc_mh_02.png
+% aau_fc_dnav6_lateral.png
+% eth_machine_room.jpg
+
+The map-merging algorithm has been evaluated on real-world datasets captured by both aerial and ground-based robots with a variety of stereo rig cameras and active \gls{RGB-D} cameras. It has been evaluated in both indoor and outdoor environments ranging from forest to a single furnished room. The datasets used for evaluation include both well-established benchmark robotics datasets and my own experiments.
+
+\begin{minipage}[t]{0.24\linewidth}
+\begin{tikzfigure}
+  \centering
+  \includegraphics[width=\linewidth]{../img/v1-greyscale.png}
+\end{tikzfigure}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.24\linewidth}
+\begin{tikzfigure}
+  \centering
+  \includegraphics[width=\linewidth]{../img/euroc_mh_02.png}
+\end{tikzfigure}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.24\linewidth}
+\begin{tikzfigure}
+  \centering
+  \includegraphics[width=\linewidth]{../img/euroc_v2_02.png}
+\end{tikzfigure}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.24\linewidth}
+\begin{tikzfigure}
+  \centering
+  \includegraphics[width=\linewidth]{../img/aau_fc_dnav5_top.png}
+\end{tikzfigure}
+\end{minipage}
+
+\begin{minipage}[t]{0.74\linewidth}
+\begin{tikzfigure}
+  \centering
+  \includegraphics[width=\linewidth]{euc_dist_2.png}
+\end{tikzfigure}
+\end{minipage}
+\begin{minipage}[t]{0.24\linewidth}
+\begin{tikzfigure}
+  \centering
+  \includegraphics[width=\linewidth]{../img/eth_machine_room.jpg}
+\end{tikzfigure}
+\begin{tikzfigure}
+  \centering
+  \includegraphics[width=\linewidth]{matches.png}
+\end{tikzfigure}
+\end{minipage}
+
+In the most configurations, the new reciprocal matching scheme introduced in this work outperforms \gls{SAC-IA} algorithm for initial alignment available in the \gls{PCL}. The presented algorithm requires very little parametrisation and exhibited good performance across descriptors in the evaluation.
+
+\vspace{1em}
+
+The work showed the feasibility of the feature-matching approach for registration of low-density point cloud maps produced by \gls{SLAM} algorithms while using \gls{3D} point cloud features typically employed with high-density sensor data. The presented algorithm is applicable in heterogeneous multi-robot systems and the algorithm can work with different \gls{SLAM} approaches and sensor types.
+} % end block
+
+\end{columns}
+
+\end{document}

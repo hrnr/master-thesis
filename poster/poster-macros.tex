@@ -1,0 +1,99 @@
+% poster styling
+
+% university color style
+\definecolorstyle{UKColorStyle}{
+    % Define default colors
+    % university red used in logo text
+    % \definecolor{colorOne}{HTML}{D62153}
+    \definecolor{colorOne}{cmyk}{0.1484,1,0.6729,0.0548}
+    % \definespotcolor{colorOne}{PANTONE 193 C}{0.14,1,0.66,0.03}
+    % \definecolor{colorOne}{cmyk}{0.14,1,0.66,0.03}
+    % \definecolor{colorOne}{RGB}{133,53,47}
+    % \definecolor{colorOne}{RGB}{198,9,59}
+    % nice gray
+    \definecolor{colorTwo}{HTML}{CCCCCC}
+    % university official red for logo
+    \definecolor{colorThree}{cmyk}{0,0.91,0.65,0.11}
+}{
+    % Background Colors
+    \colorlet{backgroundcolor}{white}
+    \colorlet{framecolor}{colorTwo}
+    % Title Colors
+    \colorlet{titlefgcolor}{black}
+    \colorlet{titlebgcolor}{white}
+    % Block Colors
+    \colorlet{blocktitlefgcolor}{white}
+    \colorlet{blocktitlebgcolor}{colorOne}
+    \colorlet{blockbodyfgcolor}{black}
+    \colorlet{blockbodybgcolor}{white}
+    % Innerblock Colors
+    \colorlet{innerblocktitlebgcolor}{colorThree}
+    \colorlet{innerblocktitlefgcolor}{white}
+    \colorlet{innerblockbodybgcolor}{white}
+    \colorlet{innerblockbodyfgcolor}{black}
+    % Note colors
+    \colorlet{notefgcolor}{black}
+    \colorlet{notebgcolor}{colorThree!40!white}
+    \colorlet{notefrcolor}{colorThree!40!white}
+ } % space is important here
+
+\definetitlestyle{FilledWithBottomLine}{
+    width=\paperwidth, roundedcorners=0, linewidth=0pt, innersep=1.5cm,
+    titletotopverticalspace=0mm, titletoblockverticalspace=20mm,
+    titlegraphictotitledistance=10pt
+}{
+    \draw[draw=none, fill=titlebgcolor]%
+    (\titleposleft,\titleposbottom) rectangle (\titleposright,\titlepostop); %
+    \draw[draw=none, fill=colorOne]%
+    (\titleposleft,\titleposbottom+40) rectangle (\titleposright,\titleposbottom); %
+}
+
+% theme for our university, created by me
+% aligned with university graphical manual
+\definelayouttheme{Charles}{
+    \usecolorstyle{UKColorStyle}
+    \usebackgroundstyle{Default}
+    \usetitlestyle{FilledWithBottomLine}
+    \useblockstyle{Basic}
+    \useinnerblockstyle{Default}
+    \usenotestyle{VerticalShading}
+}
+
+% custom title with logo at the left
+\makeatletter
+\renewcommand\TP@maketitle{%
+    \begin{minipage}{0.25\linewidth}
+       \centering
+       \@titlegraphic
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.75\linewidth}
+        \centering
+        \color{titlefgcolor}
+        % {\bfseries \Huge \sc \@title \par}
+        {\fontsize{50}{60} \bfseries \@title \par}
+        % {\Huge \bfseries \@title \par}
+        \vspace*{1.5em}
+        {\Huge \@author \par}
+        \vspace*{1.5em}
+        {\LARGE \@institute}
+    \end{minipage}%
+    \vspace{40pt}
+}
+\makeatother
+
+% fix bug with algorithm envirinment
+\AtBeginEnvironment{algorithm}{%
+  \setlength{\columnwidth}{\linewidth}%
+}
+
+% blocks with emphasis (different color)
+\newenvironment{blockemph}
+{
+    \begin{@empty}
+    \colorlet{blocktitlefgcolor}{colorOne}
+    \colorlet{blocktitlebgcolor}{white}
+    \colorlet{framecolor}{colorOne}
+}{
+    \end{@empty}
+}
