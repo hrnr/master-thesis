@@ -38,7 +38,7 @@
  } % space is important here
 
 \definetitlestyle{FilledWithBottomLine}{
-    width=\paperwidth, roundedcorners=0, linewidth=0pt, innersep=0cm,
+    width=\paperwidth, roundedcorners=0, linewidth=0pt, innersep=1.5cm,
     titletotopverticalspace=0mm, titletoblockverticalspace=15mm,
     titlegraphictotitledistance=5pt
 }{
@@ -64,6 +64,7 @@
 \renewcommand\TP@maketitle{%
     \begin{minipage}{0.25\linewidth}
        \centering
+       \vspace{-1.5em}
        \@titlegraphic
     \end{minipage}
     \hfill
@@ -75,7 +76,7 @@
         % {\Huge \bfseries \@title \par}
         \vspace*{1em}
         {\huge \@author \par}
-        \vspace*{1em}
+        \vspace*{0.5em}
         {\Large \Advisor~|~\@institute \par}
         % \vspace*{0.5em}
         % {\large \@institute}
