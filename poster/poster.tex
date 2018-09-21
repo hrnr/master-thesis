@@ -1,4 +1,4 @@
-\documentclass[28pt, a4paper, landscape]{tikzposter}
+\documentclass[50pt, a4paper, landscape]{tikzposter}
 \usepackage[utf8]{inputenc}
 
 %% Further useful packages (included in most LaTeX distributions)
@@ -51,10 +51,14 @@
 \date{\YearSubmitted}
 \institute{Department of Theoretical Computer Science and Mathematical Logic}
 \def\Advisor{advisor: RNDr. David Obdržálek, Ph.D.}
-\titlegraphic{\includegraphics[height=15em]{logotyp_fakulty2.pdf}}
+\titlegraphic{\includegraphics[height=10em]{logotyp_fakulty2.pdf}}
 
 % disable marketing
 \tikzposterlatexaffectionproofoff
+
+\makeatletter
+\input{theguy30pt.clo}
+\makeatother
 
 \begin{document}
 
@@ -68,7 +72,7 @@
 
 \block{Motivation}{
 \vspace{0.5em}
-\begin{itemize}[leftmargin=*,labelindent=0.5em,labelsep=1em]
+\begin{itemize}[leftmargin=*,labelindent=0.5em,labelsep=1em,itemsep=0em,parsep=0em]
     \item A group of robots needs to coordinate to be efficient.
     \item An efficient coordination of robots requires a global map.
     \item How to create the global map with unknown initial positions of robots?
@@ -99,14 +103,14 @@
 % \end{blockemph}
 
 \block{Contribution}{
-\vspace{0.5em}
+% \vspace{0.5em}
 % \begin{minipage}[t]{0.74\linewidth}
-\begin{itemize}[leftmargin=*,labelindent=0.5em,labelsep=1em]
+\begin{itemize}[leftmargin=*,labelindent=0.5em,labelsep=1em,itemsep=0em,parsep=0em]
     \item The presented approach is the first implemented map-merging algorithm working directly on \textbf{point clouds without any auxiliary information}.
     \item The presented implementation is the \textbf{first implementation} of a \gls{3D} map-merging algorithm for multi-robot systems within the \gls{ROS} ecosystem.
     \item A \textbf{new reciprocal descriptor matching algorithm} was introduced for estimating the initial transformation using feature-matching.
 \end{itemize}
-\vspace{0.5em}
+% \vspace{0.5em}
 } % end block
 
 \block{ROS package}{
@@ -173,7 +177,7 @@ The map-merging algorithm has been evaluated on real-world datasets captured by 
 \end{tikzfigure}
 \end{minipage}
 
-\begin{minipage}[t]{0.74\linewidth}
+\begin{minipage}[t]{0.70\linewidth}
 \begin{tikzfigure}
   \centering
   \includegraphics[width=\linewidth]{euc_dist_2.png}
@@ -196,7 +200,7 @@ In the most configurations, my new reciprocal matching scheme introduced in this
 
 The work showed the feasibility of the feature-matching approach for registration of low-density point cloud maps produced by~\gls{SLAM} algorithms while using \gls{3D} point cloud features typically employed with high-density sensor data. The presented algorithm is applicable in heterogeneous multi-robot systems and the algorithm can work with different \gls{SLAM} approaches and sensor types.
 
-\vspace{1em}
+\vspace{0.3em}
 } % end block
 
 \end{columns}

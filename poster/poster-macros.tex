@@ -39,8 +39,8 @@
 
 \definetitlestyle{FilledWithBottomLine}{
     width=\paperwidth, roundedcorners=0, linewidth=0pt, innersep=1.5cm,
-    titletotopverticalspace=0mm, titletoblockverticalspace=20mm,
-    titlegraphictotitledistance=10pt
+    titletotopverticalspace=0mm, titletoblockverticalspace=15mm,
+    titlegraphictotitledistance=5pt
 }{
     \draw[draw=none, fill=titlebgcolor]%
     (\titleposleft,\titleposbottom) rectangle (\titleposright,\titlepostop); %
@@ -71,16 +71,16 @@
         \centering
         \color{titlefgcolor}
         % {\bfseries \Huge \sc \@title \par}
-        {\fontsize{4em}{1.2em} \bfseries \@title \par}
+        {\fontsize{2.5em}{1em} \bfseries \@title \par}
         % {\Huge \bfseries \@title \par}
-        \vspace*{1.5em}
-        {\Huge \@author \par}
-        \vspace*{1.5em}
-        {\LARGE \Advisor \par}
         \vspace*{1em}
-        {\LARGE \@institute}
+        {\huge \@author \par}
+        \vspace*{1em}
+        {\Large \Advisor~|~\@institute \par}
+        % \vspace*{0.5em}
+        % {\large \@institute}
     \end{minipage}%
-    \vspace{40pt}
+    % \vspace{40pt}
 }
 \makeatother
 
